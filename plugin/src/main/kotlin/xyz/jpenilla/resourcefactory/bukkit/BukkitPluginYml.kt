@@ -168,22 +168,22 @@ class BukkitPluginYml(
 
     @ConfigSerializable
     class Serializable(yml: BukkitPluginYml) {
-        var apiVersion = yml.apiVersion.orNull
-        var name = yml.name.get()
-        var version = yml.version.get()
-        var main = yml.main.get()
-        var description = yml.description.orNull
-        var load = yml.load.orNull
-        var author = yml.author.orNull
-        var authors = yml.authors.nullIfEmpty()
-        var website = yml.website.orNull
-        var depend = yml.depend.nullIfEmpty()
-        var softDepend = yml.softDepend.nullIfEmpty()
-        var loadBefore = yml.loadBefore.nullIfEmpty()
-        var prefix = yml.prefix.orNull
-        var defaultPermission = yml.defaultPermission.orNull
-        var provides = yml.provides.nullIfEmpty()
-        var libraries = yml.libraries.nullIfEmpty()
+        val apiVersion = yml.apiVersion.orNull
+        val name = yml.name.get()
+        val version = yml.version.get()
+        val main = yml.main.get()
+        val description = yml.description.orNull
+        val load = yml.load.orNull
+        val author = yml.author.orNull
+        val authors = yml.authors.nullIfEmpty()
+        val website = yml.website.orNull
+        val depend = yml.depend.nullIfEmpty()
+        val softDepend = yml.softDepend.nullIfEmpty()
+        val loadBefore = yml.loadBefore.nullIfEmpty()
+        val prefix = yml.prefix.orNull
+        val defaultPermission = yml.defaultPermission.orNull
+        val provides = yml.provides.nullIfEmpty()
+        val libraries = yml.libraries.nullIfEmpty()
         val commands = yml.commands.asMap.toMap()
         val permissions = yml.permissions.asMap.toMap()
         val foliaSupported = yml.foliaSupported.orNull
