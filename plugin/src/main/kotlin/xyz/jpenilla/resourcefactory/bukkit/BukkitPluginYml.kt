@@ -12,6 +12,7 @@ import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.yaml.NodeStyle
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
@@ -154,6 +155,7 @@ class BukkitPluginYml(
                         }
                     }
                     .path(path)
+                    .nodeStyle(NodeStyle.BLOCK)
                     .build()
             }
         )
@@ -184,8 +186,8 @@ class BukkitPluginYml(
         val defaultPermission = yml.defaultPermission.orNull
         val provides = yml.provides.nullIfEmpty()
         val libraries = yml.libraries.nullIfEmpty()
-        val commands = yml.commands.asMap.toMap()
-        val permissions = yml.permissions.asMap.toMap()
+        val commands = yml.commands.nullIfEmpty()
+        val permissions = yml.permissions.nullIfEmpty()
         val foliaSupported = yml.foliaSupported.orNull
     }
 }

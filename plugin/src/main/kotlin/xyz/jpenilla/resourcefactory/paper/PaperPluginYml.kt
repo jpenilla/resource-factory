@@ -15,6 +15,7 @@ import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import org.spongepowered.configurate.yaml.NodeStyle
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
@@ -165,6 +166,7 @@ class PaperPluginYml constructor(
                             s.registerExact(Permission.Default::class.java, Permission.Default.Serializer)
                         }
                     }
+                    .nodeStyle(NodeStyle.BLOCK)
                     .path(path)
                     .build()
             }
@@ -194,7 +196,7 @@ class PaperPluginYml constructor(
         val defaultPermission = yml.defaultPermission.orNull
         val foliaSupported = yml.foliaSupported.orNull
         val dependencies = SerializableDependencies.from(yml.dependencies)
-        val permissions = yml.permissions.asMap.toMap()
+        val permissions = yml.permissions.nullIfEmpty()
     }
 
     @ConfigSerializable
@@ -206,14 +208,18 @@ class PaperPluginYml constructor(
 
     @ConfigSerializable
     data class SerializableDependencies(
-        val bootstrap: Map<String, SerializableDependency>,
-        val server: Map<String, SerializableDependency>
+        val bootstrap: Map<String, SerializableDependency>?,
+        val server: Map<String, SerializableDependency>?
     ) {
         companion object {
-            fun from(deps: Dependencies) = SerializableDependencies(
-                deps.bootstrap.asMap.mapValues { SerializableDependency.from(it.value) },
-                deps.server.asMap.mapValues { SerializableDependency.from(it.value) }
-            )
+            fun from(deps: Dependencies): SerializableDependencies? {
+                val bs = deps.bootstrap.nullIfEmpty()?.mapValues { SerializableDependency.from(it.value) }
+                val server = deps.server.nullIfEmpty()?.mapValues { SerializableDependency.from(it.value) }
+                if (bs == null && server == null) {
+                    return null
+                }
+                return SerializableDependencies(bs, server)
+            }
         }
     }
 }
