@@ -11,5 +11,6 @@ configurate = "4.1.2"
 
 [libraries]
 configurateYaml = { group = "org.spongepowered", name = "configurate-yaml", version.ref = "configurate" }
+configurateGson = { group = "org.spongepowered", name = "configurate-gson", version.ref = "configurate" }
 
 [bundles]

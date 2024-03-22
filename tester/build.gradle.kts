@@ -15,5 +15,8 @@ sourceSets.main {
         bukkitPluginYml {
             main = "test"
         }
+        velocityPluginJson {
+            main = "test"
+        }
     }
 }

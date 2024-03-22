@@ -24,18 +24,21 @@ Gradle plugin for generating resource files at build time.
       }
     }
     ```
-   
+
 ## Included factories
 
 - PaperPluginYml
 - BukkitPluginYml
+- VelocityPluginJson
 
-Bukkit and Paper plugin YMLs can be created in two ways:
+The included factories can be created in two ways.
+PaperPluginYml is used as an example, but the process is the same for the other included factories.
+
 1) Directly on the project instance, and then registered manually
     ```kotlin
-    import xyz.jpenilla.resourcefactory.(bukkit|paper).(bukkit|paper)PluginYml
+    import xyz.jpenilla.resourcefactory.paper.paperPluginYml
     
-    val yml = (bukkit|paper)PluginYml {
+    val yml = paperPluginYml {
       // Defaults for name, version, and description are inherited from the Gradle project
       main = "main.class.Name"
       authors.add("MyName")
@@ -52,7 +55,7 @@ Bukkit and Paper plugin YMLs can be created in two ways:
     ```kotlin
     sourceSets.main {
       resourceFactory {
-        (bukkit|paper)PluginYml {
+        paperPluginYml {
           // Defaults for name, version, and description are inherited from the Gradle project
           main = "main.class.Name"
           authors.add("MyName")
