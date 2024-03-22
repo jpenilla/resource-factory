@@ -233,22 +233,6 @@ open class FabricModJson constructor(
         }
     }
 
-    enum class Environment(private val serialized: String) {
-        CLIENT("client"),
-        SERVER("server"),
-        ANY("*");
-
-        object Serializer : TypeSerializer<Environment> {
-            override fun deserialize(type: Type?, node: ConfigurationNode?): Environment {
-                throw UnsupportedOperationException()
-            }
-
-            override fun serialize(type: Type, obj: Environment?, node: ConfigurationNode) {
-                node.set(obj?.serialized)
-            }
-        }
-    }
-
     abstract class Entrypoint {
         @get:Optional
         @get:Input
