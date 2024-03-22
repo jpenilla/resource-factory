@@ -1,3 +1,5 @@
+import xyz.jpenilla.resourcefactory.fabric.Environment
+
 plugins {
     java
     id("xyz.jpenilla.resource-factory")
@@ -17,6 +19,21 @@ sourceSets.main {
         }
         velocityPluginJson {
             main = "test"
+        }
+        fabricModJson {
+            environment = Environment.ANY
+            clientEntrypoint("client.Entry")
+            mixin("my-mixins.json") {
+                environment = Environment.ANY
+            }
+            author("MyName") {
+                contact.homepage = "https://linkedin.com/BobSmith"
+            }
+            contact {
+                homepage = "https://github.com/Me/MyProject"
+            }
+            icon("icon.png")
+            depends("some_other_mod", "*")
         }
     }
 }
