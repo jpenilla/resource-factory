@@ -33,10 +33,12 @@ Gradle plugin for generating resource files at build time.
 Bukkit and Paper plugin YMLs can be created in two ways:
 1) Directly on the project instance, and then registered manually
     ```kotlin
-    import xyz.jpenilla.resourcefactory.bukkit.(bukkit|paper)PluginYml
+    import xyz.jpenilla.resourcefactory.(bukkit|paper).(bukkit|paper)PluginYml
     
     val yml = (bukkit|paper)PluginYml {
-      // configure fields
+      main = "main.class.Name"
+      authors.add("MyName")
+      // configure fields...
     }
 
     sourceSets.main {
@@ -50,7 +52,9 @@ Bukkit and Paper plugin YMLs can be created in two ways:
     sourceSets.main {
       resourceFactory {
         (bukkit|paper)PluginYml {
-          // configure fields
+          main = "main.class.Name"
+          authors.add("MyName")
+          // configure fields...
         }
       }
     }
