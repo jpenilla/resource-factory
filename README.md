@@ -36,6 +36,7 @@ Bukkit and Paper plugin YMLs can be created in two ways:
     import xyz.jpenilla.resourcefactory.(bukkit|paper).(bukkit|paper)PluginYml
     
     val yml = (bukkit|paper)PluginYml {
+      // Defaults for name, version, and description are inherited from the Gradle project
       main = "main.class.Name"
       authors.add("MyName")
       // configure fields...
@@ -52,6 +53,7 @@ Bukkit and Paper plugin YMLs can be created in two ways:
     sourceSets.main {
       resourceFactory {
         (bukkit|paper)PluginYml {
+          // Defaults for name, version, and description are inherited from the Gradle project
           main = "main.class.Name"
           authors.add("MyName")
           // configure fields...
