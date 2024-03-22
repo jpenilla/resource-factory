@@ -6,6 +6,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.kotlin.dsl.newInstance
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYml
 import xyz.jpenilla.resourcefactory.bukkit.bukkitPluginYml
+import xyz.jpenilla.resourcefactory.fabric.FabricModJson
+import xyz.jpenilla.resourcefactory.fabric.fabricModJson
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYml
 import xyz.jpenilla.resourcefactory.paper.paperPluginYml
 import xyz.jpenilla.resourcefactory.velocity.VelocityPluginJson
@@ -33,6 +35,12 @@ abstract class ResourceFactoryExtension @Inject constructor(
 
     fun velocityPluginJson(op: VelocityPluginJson.() -> Unit): VelocityPluginJson {
         val config = project.velocityPluginJson(op)
+        factory(config.resourceFactory())
+        return config
+    }
+
+    fun fabricModJson(op: FabricModJson.() -> Unit): FabricModJson {
+        val config = project.fabricModJson(op)
         factory(config.resourceFactory())
         return config
     }

@@ -30,6 +30,7 @@ Gradle plugin for generating resource files at build time.
 - PaperPluginYml
 - BukkitPluginYml
 - VelocityPluginJson
+- FabricModJson
 
 The included factories can be created in two ways.
 PaperPluginYml is used as an example, but the process is the same for the other included factories.
