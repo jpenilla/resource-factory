@@ -31,7 +31,7 @@ Gradle plugin for generating resource files at build time.
 - BukkitPluginYml
 
 Bukkit and Paper plugin YMLs can be created in two ways:
-1) Directly on the root project instance, and then registered manually
+1) Directly on the project instance, and then registered manually
     ```kotlin
     import xyz.jpenilla.resourcefactory.bukkit.(bukkit|paper)PluginYml
     
