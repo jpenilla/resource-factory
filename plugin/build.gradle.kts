@@ -20,6 +20,7 @@ repositories {
 
 dependencies {
     implementation(libs.configurateYaml)
+    implementation(libs.configurateGson)
 }
 
 kotlin {

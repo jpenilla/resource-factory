@@ -8,6 +8,8 @@ import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYml
 import xyz.jpenilla.resourcefactory.bukkit.bukkitPluginYml
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYml
 import xyz.jpenilla.resourcefactory.paper.paperPluginYml
+import xyz.jpenilla.resourcefactory.velocity.VelocityPluginJson
+import xyz.jpenilla.resourcefactory.velocity.velocityPluginJson
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -25,6 +27,12 @@ abstract class ResourceFactoryExtension @Inject constructor(
 
     fun bukkitPluginYml(op: BukkitPluginYml.() -> Unit): BukkitPluginYml {
         val config = project.bukkitPluginYml(op)
+        factory(config.resourceFactory())
+        return config
+    }
+
+    fun velocityPluginJson(op: VelocityPluginJson.() -> Unit): VelocityPluginJson {
+        val config = project.velocityPluginJson(op)
         factory(config.resourceFactory())
         return config
     }
