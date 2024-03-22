@@ -36,7 +36,6 @@ class PaperPluginYml constructor(
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider {
 
     @get:Input
-    @get:Optional
     val apiVersion: Property<String> = objects.property()
 
     @get:Input
@@ -181,7 +180,7 @@ class PaperPluginYml constructor(
 
     @ConfigSerializable
     class Serializable(yml: PaperPluginYml) {
-        val apiVersion = yml.apiVersion.orNull
+        val apiVersion = yml.apiVersion.get()
         val name = yml.name.get()
         val version = yml.version.get()
         val main = yml.main.get()
