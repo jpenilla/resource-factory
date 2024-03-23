@@ -13,7 +13,7 @@ import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 abstract class ResourceFactoryConventionPlugin<E : ResourceFactory.Provider>(
     private val extensionName: String,
     private val extensionFactory: (Project) -> E,
-    private val sourceSetName: String
+    private val sourceSetName: String = "main"
 ) : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply(ResourceFactoryPlugin::class)

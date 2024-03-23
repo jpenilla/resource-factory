@@ -4,6 +4,5 @@ import xyz.jpenilla.resourcefactory.ResourceFactoryConventionPlugin
 
 abstract class BungeeConvention : ResourceFactoryConventionPlugin<BungeePluginYml>(
     "bungeePluginYml",
-    { project -> project.bungeePluginYml() },
-    "main"
+    { project -> project.bungeePluginYml() }
 )
