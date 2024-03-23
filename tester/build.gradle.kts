@@ -35,5 +35,8 @@ sourceSets.main {
             icon("icon.png")
             depends("some_other_mod", "*")
         }
+        bungeePluginYml {
+            main = "test"
+        }
     }
 }
