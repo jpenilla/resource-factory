@@ -301,7 +301,7 @@ open class FabricModJson constructor(
         val entrypoints = fmj.entrypoints.get().groupBy({ it.type.get() }) {
             SerializableEntrypoint(it.adapter.orNull, it.value.get())
         }
-        val languageAdapters = fmj.languageAdapters.get().toMap()
+        val languageAdapters = fmj.languageAdapters.nullIfEmpty()
         val mixins = fmj.mixins.nullIfEmpty()?.map { SerializableMixinConfig(it.config.get(), it.environment.orNull) }
         val accessWidener = fmj.accessWidener.orNull
         val depends = fmj.depends.nullIfEmpty()
