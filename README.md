@@ -12,7 +12,7 @@ Gradle plugin for generating resource files at build time.
     ```kotlin
     plugins {
       // Apply the plugin
-      id("xyz.jpenilla.resource-factory") version "0.0.1"
+      id("xyz.jpenilla.resource-factory") version "0.0.3"
     }
     ```
 2) Add resource factories to the desired source sets
