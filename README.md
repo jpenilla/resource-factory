@@ -48,15 +48,15 @@ This allows simplifying use to the following:
 
 ```kotlin
 plugins {
-    // Apply the convention plugin
-    id("xyz.jpenilla.resource-factory-paper-convention") version "VERSION"
+  // Apply the convention plugin
+  id("xyz.jpenilla.resource-factory-paper-convention") version "VERSION"
 }
 
 paperPluginYml {
-    // Defaults for name, version, and description are inherited from the Gradle project
-    main = "main.class.Name"
-    authors.add("MyName")
-    // configure fields...
+  // Defaults for name, version, and description are inherited from the Gradle project
+  main = "main.class.Name"
+  authors.add("MyName")
+  // configure fields...
 }
 ```
 
