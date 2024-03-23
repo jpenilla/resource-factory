@@ -89,7 +89,7 @@ class PaperPluginYml constructor(
     var dependencies: Dependencies = objects.newInstance(Dependencies::class)
 
     @get:Nested
-    val permissions: NamedDomainObjectContainer<Permission> = objects.domainObjectContainer(Permission::class) { Permission(it) }
+    val permissions: NamedDomainObjectContainer<Permission> = objects.domainObjectContainer(Permission::class) { Permission(objects, it) }
 
     fun dependencies(configure: Action<Dependencies>) {
         configure.execute(dependencies)
@@ -191,7 +191,7 @@ class PaperPluginYml constructor(
         val defaultPermission = yml.defaultPermission.orNull
         val foliaSupported = yml.foliaSupported.orNull
         val dependencies = SerializableDependencies.from(yml.dependencies)
-        val permissions = yml.permissions.nullIfEmpty()
+        val permissions = yml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
     }
 
     @ConfigSerializable

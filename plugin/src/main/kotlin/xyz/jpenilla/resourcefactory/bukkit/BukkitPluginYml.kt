@@ -97,7 +97,7 @@ class BukkitPluginYml(
     val commands: NamedDomainObjectContainer<Command> = objects.domainObjectContainer(Command::class.java) { Command(it) }
 
     @get:Nested
-    val permissions: NamedDomainObjectContainer<Permission> = objects.domainObjectContainer(Permission::class.java) { Permission(it) }
+    val permissions: NamedDomainObjectContainer<Permission> = objects.domainObjectContainer(Permission::class.java) { Permission(objects, it) }
 
     @get:Input
     @get:Optional
@@ -182,7 +182,7 @@ class BukkitPluginYml(
         val provides = yml.provides.nullIfEmpty()
         val libraries = yml.libraries.nullIfEmpty()
         val commands = yml.commands.nullIfEmpty()
-        val permissions = yml.permissions.nullIfEmpty()
+        val permissions = yml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
         val foliaSupported = yml.foliaSupported.orNull
     }
 }

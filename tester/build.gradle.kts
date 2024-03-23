@@ -1,5 +1,6 @@
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
+import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.fabric.Environment
 
 plugins {
@@ -21,6 +22,13 @@ paperPluginYml {
 
 bukkitPluginYml {
     main = "test"
+    permissions {
+        register("permission") {
+            description = "A permission"
+            default = Permission.Default.OP
+            children("permission.a", "permission.b")
+        }
+    }
 }
 
 velocityPluginJson {

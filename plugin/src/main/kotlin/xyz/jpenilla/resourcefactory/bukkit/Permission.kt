@@ -1,33 +1,35 @@
 package xyz.jpenilla.resourcefactory.bukkit
 
+import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.MapProperty
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
-import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Optional
+import org.gradle.kotlin.dsl.mapProperty
+import org.gradle.kotlin.dsl.property
 import org.spongepowered.configurate.ConfigurationNode
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
-import org.spongepowered.configurate.objectmapping.meta.Setting
 import org.spongepowered.configurate.serialize.TypeSerializer
+import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.lang.reflect.Type
 
-@ConfigSerializable
-data class Permission(@Input @Transient val name: String) {
-    @Input
-    @Optional
-    var description: String? = null
+class Permission(objects: ObjectFactory, @Input val name: String) {
+    @get:Input
+    @get:Optional
+    val description: Property<String> = objects.property()
 
-    @Input
-    @Optional
-    var default: Default? = null
-    var children: List<String>?
-        @Internal get() = childrenMap?.filterValues { it }?.keys?.toList()
-        set(value) {
-            childrenMap = value?.associateWith { true }
+    @get:Input
+    @get:Optional
+    val default: Property<Default> = objects.property()
+
+    @get:Input
+    val children: MapProperty<String, Boolean> = objects.mapProperty()
+
+    fun children(vararg nodes: String) {
+        for (node in nodes) {
+            children.put(node, true)
         }
-
-    @Input
-    @Optional
-    @Setting("children")
-    var childrenMap: Map<String, Boolean>? = null
+    }
 
     enum class Default(val serialized: String) {
         TRUE("true"),
@@ -44,5 +46,12 @@ data class Permission(@Input @Transient val name: String) {
                 node.set(obj?.serialized)
             }
         }
+    }
+
+    @ConfigSerializable
+    class Serializable(permission: Permission) {
+        val description = permission.description.orNull
+        val default = permission.default.orNull
+        val children = permission.children.nullIfEmpty()
     }
 }
