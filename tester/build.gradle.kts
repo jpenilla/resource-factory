@@ -1,3 +1,5 @@
+import org.spongepowered.configurate.objectmapping.ConfigSerializable
+import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.fabric.Environment
 
 plugins {
@@ -45,3 +47,21 @@ fabricModJson {
 bungeePluginYml {
     main = "test"
 }
+
+sourceSets.main {
+    resourceFactory {
+        factory(ConfigurateSingleFileResourceFactory.ObjectMapper::class) {
+            yaml()
+            path = "custom-data-dir/custom-data.yml"
+            value(CustomData("Steve", 123))
+        }
+    }
+}
+
+@ConfigSerializable
+class CustomData(
+    @get:Input
+    val name: String,
+    @get:Input
+    val number: Int
+)
