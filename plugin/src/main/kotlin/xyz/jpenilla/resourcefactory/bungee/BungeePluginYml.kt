@@ -17,6 +17,7 @@ import xyz.jpenilla.resourcefactory.ResourceFactory
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.validate
 
 fun Project.bungeePluginYml(configure: Action<BungeePluginYml> = nullAction()): BungeePluginYml {
     val yml = BungeePluginYml(objects)
@@ -74,7 +75,7 @@ class BungeePluginYml constructor(
 
     @ConfigSerializable
     class Serializable(yml: BungeePluginYml) {
-        val name = yml.name.get()
+        val name = yml.name.get().validate("Bungee plugin name", "^[A-Za-z0-9_\\.-]+$")
         val main = yml.main.get()
         val version = yml.version.orNull
         val author = yml.author.orNull

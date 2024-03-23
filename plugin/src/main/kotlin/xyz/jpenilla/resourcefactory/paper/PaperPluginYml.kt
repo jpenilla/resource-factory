@@ -23,6 +23,7 @@ import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.validate
 import javax.inject.Inject
 
 fun Project.paperPluginYml(configure: Action<PaperPluginYml> = nullAction()): PaperPluginYml {
@@ -177,12 +178,16 @@ class PaperPluginYml constructor(
 
     @ConfigSerializable
     class Serializable(yml: PaperPluginYml) {
+        companion object {
+            private const val PLUGIN_CLASS_PATTERN: String = "^(?!io\\.papermc\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$"
+        }
+
         val apiVersion = yml.apiVersion.get()
-        val name = yml.name.get()
+        val name = yml.name.get().validate("Paper plugin name", "^[A-Za-z0-9_\\.-]+$")
         val version = yml.version.get()
-        val main = yml.main.get()
-        val loader = yml.loader.orNull
-        val bootstrapper = yml.bootstrapper.orNull
+        val main = yml.main.get().validate("Paper plugin main class name", PLUGIN_CLASS_PATTERN)
+        val loader = yml.loader.orNull?.validate("Paper plugin loader class name", PLUGIN_CLASS_PATTERN)
+        val bootstrapper = yml.bootstrapper.orNull?.validate("Paper plugin bootstrapper class name", PLUGIN_CLASS_PATTERN)
         val description = yml.description.orNull
         val author = yml.author.orNull
         val authors = yml.authors.nullIfEmpty()
