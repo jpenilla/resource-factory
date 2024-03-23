@@ -12,7 +12,7 @@ Gradle plugin for generating resource files at build time.
     ```kotlin
     plugins {
       // Apply the plugin
-      id("xyz.jpenilla.resource-factory") version "0.0.3"
+      id("xyz.jpenilla.resource-factory") version "VERSION"
     }
     ```
 2) Add resource factories to the desired source sets
@@ -27,14 +27,42 @@ Gradle plugin for generating resource files at build time.
 
 ## Included factories
 
-- PaperPluginYml
-- BukkitPluginYml
-- VelocityPluginJson
-- FabricModJson
-- BungeePluginYml
+| Type               | Convention Plugin                                   |
+|--------------------|-----------------------------------------------------|
+| PaperPluginYml     | `xyz.jpenilla.resource-factory-paper-convention`    |
+| BukkitPluginYml    | `xyz.jpenilla.resource-factory-bukkit-convention`   |
+| VelocityPluginJson | `xyz.jpenilla.resource-factory-velocity-convention` |
+| FabricModJson      | `xyz.jpenilla.resource-factory-fabric-convention`   |
+| BungeePluginYml    | `xyz.jpenilla.resource-factory-bungee-convention`   |
 
-The included factories can be created in two ways.
+The included factories can be used in two ways.
 PaperPluginYml is used as an example, but the process is the same for the other included factories.
+
+### Convention Plugins
+
+The provided convention plugins can be applied in addition to or instead of the base `xyz.jpenilla.resource-factory`
+plugin.
+These conventions behave the same as the below manual examples, however they also register an extension for the resource
+object.
+This allows simplifying use to the following:
+
+```kotlin
+plugins {
+    // Apply the convention plugin
+    id("xyz.jpenilla.resource-factory-paper-convention") version "VERSION"
+}
+
+paperPluginYml {
+    // Defaults for name, version, and description are inherited from the Gradle project
+    main = "main.class.Name"
+    authors.add("MyName")
+    // configure fields...
+}
+```
+
+### Manually
+
+The included factories can be used manually in two ways.
 
 1) Directly on the project instance, and then registered manually
     ```kotlin
