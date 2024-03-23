@@ -14,7 +14,6 @@ import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.spongepowered.configurate.ConfigurationNode
-import org.spongepowered.configurate.gson.GsonConfigurationLoader
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.ObjectMapper
 import org.spongepowered.configurate.serialize.TypeSerializer
@@ -25,7 +24,6 @@ import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.lang.reflect.Type
-import java.nio.file.Path
 import javax.inject.Inject
 
 fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): FabricModJson {
@@ -265,25 +263,20 @@ open class FabricModJson constructor(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val gen = objects.newInstance(
-            ConfigurateSingleFileResourceFactory.ObjectMapper::class,
-            { path: Path ->
-                GsonConfigurationLoader.builder()
-                    .defaultOptions {
-                        it.serializers { s ->
-                            s.registerExact(Environment::class.java, Environment.Serializer)
-                                .registerAnnotatedObjects(
-                                    ObjectMapper.factoryBuilder()
-                                        .defaultNamingScheme(NamingSchemes.PASSTHROUGH)
-                                        .build()
-                                )
-                                .register(Icon::class.java, Icon.Serializer)
-                        }
-                    }
-                    .path(path)
-                    .build()
+        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        gen.json {
+            defaultOptions {
+                it.serializers { s ->
+                    s.registerExact(Environment::class.java, Environment.Serializer)
+                        .registerAnnotatedObjects(
+                            ObjectMapper.factoryBuilder()
+                                .defaultNamingScheme(NamingSchemes.PASSTHROUGH)
+                                .build()
+                        )
+                        .register(Icon::class.java, Icon.Serializer)
+                }
             }
-        )
+        }
         gen.path.set("fabric.mod.json")
         gen.value.set(this)
         return gen

@@ -17,14 +17,12 @@ import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.yaml.NodeStyle
-import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
-import java.nio.file.Path
 import javax.inject.Inject
 
 fun Project.paperPluginYml(configure: Action<PaperPluginYml> = nullAction()): PaperPluginYml {
@@ -160,20 +158,14 @@ class PaperPluginYml constructor(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val gen = objects.newInstance(
-            ConfigurateSingleFileResourceFactory.ObjectMapper::class,
-            { path: Path ->
-                YamlConfigurationLoader.builder()
-                    .defaultOptions {
-                        it.serializers { s ->
-                            s.registerExact(Permission.Default::class.java, Permission.Default.Serializer)
-                        }
-                    }
-                    .nodeStyle(NodeStyle.BLOCK)
-                    .path(path)
-                    .build()
-            }
-        )
+        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        gen.yaml {
+            defaultOptions {
+                it.serializers { s ->
+                    s.registerExact(Permission.Default::class.java, Permission.Default.Serializer)
+                }
+            }.nodeStyle(NodeStyle.BLOCK)
+        }
         gen.path.set("paper-plugin.yml")
         gen.value.set(this)
         return gen

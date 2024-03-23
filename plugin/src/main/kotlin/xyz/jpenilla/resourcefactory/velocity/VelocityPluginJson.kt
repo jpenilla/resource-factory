@@ -11,14 +11,12 @@ import org.gradle.api.tasks.Optional
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
-import org.spongepowered.configurate.gson.GsonConfigurationLoader
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
-import java.nio.file.Path
 
 fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullAction()): VelocityPluginJson {
     val yml = VelocityPluginJson(objects)
@@ -74,14 +72,8 @@ class VelocityPluginJson constructor(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val factory = objects.newInstance(
-            ConfigurateSingleFileResourceFactory.ObjectMapper::class,
-            { path: Path ->
-                GsonConfigurationLoader.builder()
-                    .path(path)
-                    .build()
-            }
-        )
+        val factory = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        factory.json()
         factory.path.set("velocity-plugin.json")
         factory.value.set(this)
         return factory
