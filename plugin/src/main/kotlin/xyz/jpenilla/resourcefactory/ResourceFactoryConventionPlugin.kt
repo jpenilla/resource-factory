@@ -8,6 +8,7 @@ import org.gradle.kotlin.dsl.apply
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
+import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 
 abstract class ResourceFactoryConventionPlugin<E : Any>(
     private val extensionName: String,
@@ -29,5 +30,10 @@ abstract class ResourceFactoryConventionPlugin<E : Any>(
         }
     }
 
-    abstract fun touchExtension(target: Project, ext: E)
+    open fun touchExtension(target: Project, ext: E) {
+        if (ext is ProjectMetaConventions) {
+            // we need to set the conventions again, since the object was created eagerly.
+            target.afterEvaluate { ext.setConventionsFromProjectMeta(this) }
+        }
+    }
 }

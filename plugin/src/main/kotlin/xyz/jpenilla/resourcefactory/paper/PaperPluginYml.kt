@@ -21,6 +21,7 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
 import xyz.jpenilla.resourcefactory.bukkit.Permission
+import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
@@ -28,7 +29,7 @@ import javax.inject.Inject
 
 fun Project.paperPluginYml(configure: Action<PaperPluginYml> = nullAction()): PaperPluginYml {
     val yml = PaperPluginYml(objects)
-    yml.copyProjectMeta(this)
+    yml.setConventionsFromProjectMeta(this)
     configure.execute(yml)
     return yml
 }
@@ -36,7 +37,7 @@ fun Project.paperPluginYml(configure: Action<PaperPluginYml> = nullAction()): Pa
 class PaperPluginYml constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider {
+) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions {
 
     @get:Input
     val apiVersion: Property<String> = objects.property()
@@ -101,7 +102,7 @@ class PaperPluginYml constructor(
      *
      * [project] project
      */
-    fun copyProjectMeta(project: Project) {
+    override fun setConventionsFromProjectMeta(project: Project) {
         name.convention(project.name)
         version.convention(project.version as String?)
         description.convention(project.description)

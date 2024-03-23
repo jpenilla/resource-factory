@@ -15,13 +15,14 @@ import org.spongepowered.configurate.yaml.NodeStyle
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 
 fun Project.bungeePluginYml(configure: Action<BungeePluginYml> = nullAction()): BungeePluginYml {
     val yml = BungeePluginYml(objects)
-    yml.copyProjectMeta(this)
+    yml.setConventionsFromProjectMeta(this)
     configure.execute(yml)
     return yml
 }
@@ -29,7 +30,7 @@ fun Project.bungeePluginYml(configure: Action<BungeePluginYml> = nullAction()): 
 class BungeePluginYml constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider {
+) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions {
 
     @get:Input
     val name: Property<String> = objects.property()
@@ -59,7 +60,7 @@ class BungeePluginYml constructor(
         return Serializable(this)
     }
 
-    fun copyProjectMeta(project: Project) {
+    override fun setConventionsFromProjectMeta(project: Project) {
         name.convention(project.name)
         description.convention(project.description)
         version.convention(project.version as String?)

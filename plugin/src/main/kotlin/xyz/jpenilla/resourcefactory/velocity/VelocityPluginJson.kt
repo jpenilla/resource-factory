@@ -15,13 +15,14 @@ import org.spongepowered.configurate.gson.GsonConfigurationLoader
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 
 fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullAction()): VelocityPluginJson {
     val yml = VelocityPluginJson(objects)
-    yml.copyProjectMeta(this)
+    yml.setConventionsFromProjectMeta(this)
     configure.execute(yml)
     return yml
 }
@@ -29,7 +30,7 @@ fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullActio
 class VelocityPluginJson constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider {
+) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions {
 
     @get:Input
     val id: Property<String> = objects.property()
@@ -65,7 +66,7 @@ class VelocityPluginJson constructor(
         return Serializable(this)
     }
 
-    fun copyProjectMeta(project: Project) {
+    override fun setConventionsFromProjectMeta(project: Project) {
         id.convention(project.name)
         name.convention(project.name)
         description.convention(project.description)
