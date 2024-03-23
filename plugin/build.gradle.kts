@@ -81,6 +81,8 @@ spotless {
     }
 }
 
+fun tags(vararg extra: String) = listOf("resource", "generator", "resource-generator") + extra
+
 indraPluginPublishing {
     website("https://github.com/jpenilla/resource-factory")
     plugin(
@@ -88,6 +90,41 @@ indraPluginPublishing {
         "xyz.jpenilla.resourcefactory.ResourceFactoryPlugin",
         "Resource Factory",
         "Gradle plugin for generating resources at build time",
-        listOf("resource", "generator", "resource-generator")
+        tags()
+    )
+    plugin(
+        "resource-factory-paper-convention",
+        "xyz.jpenilla.resourcefactory.paper.PaperConvention",
+        "Resource Factory Paper Convention",
+        "Convention for xyz.jpenilla.resource-factory, registers a PaperPluginYml to the main source set and adds it as the paperPluginYml extension",
+        tags("paper")
+    )
+    plugin(
+        "resource-factory-bukkit-convention",
+        "xyz.jpenilla.resourcefactory.bukkit.BukkitConvention",
+        "Resource Factory Bukkit Convention",
+        "Convention for xyz.jpenilla.resource-factory, registers a BukkitPluginYml to the main source set and adds it as the bukkitPluginYml extension",
+        tags("bukkit")
+    )
+    plugin(
+        "resource-factory-bungee-convention",
+        "xyz.jpenilla.resourcefactory.bungee.BungeeConvention",
+        "Resource Factory Bungee Convention",
+        "Convention for xyz.jpenilla.resource-factory, registers a BungeePluginYml to the main source set and adds it as the bungeePluginYml extension",
+        tags("bungee", "bungeecord")
+    )
+    plugin(
+        "resource-factory-velocity-convention",
+        "xyz.jpenilla.resourcefactory.velocity.VelocityConvention",
+        "Resource Factory Velocity Convention",
+        "Convention for xyz.jpenilla.resource-factory, registers a VelocityPluginJson to the main source set and adds it as the velocityPluginJson extension",
+        tags("velocity")
+    )
+    plugin(
+        "resource-factory-fabric-convention",
+        "xyz.jpenilla.resourcefactory.fabric.FabricConvention",
+        "Resource Factory Fabric Convention",
+        "Convention for xyz.jpenilla.resource-factory, registers a FabricModJson to the main source set and adds it as the fabricModJson extension",
+        tags("fabric")
     )
 }
