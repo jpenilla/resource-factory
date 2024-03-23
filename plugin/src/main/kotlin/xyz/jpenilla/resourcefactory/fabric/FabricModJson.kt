@@ -27,10 +27,10 @@ import java.lang.reflect.Type
 import java.nio.file.Path
 import javax.inject.Inject
 
-fun Project.fabricModJson(op: Action<FabricModJson> = nullAction()): FabricModJson {
+fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): FabricModJson {
     val yml = FabricModJson(objects)
     yml.copyProjectMeta(this)
-    op.execute(yml)
+    configure.execute(yml)
     return yml
 }
 
@@ -52,20 +52,20 @@ open class FabricModJson constructor(
     @get:Nested
     val entrypoints: ListProperty<Entrypoint> = objects.listProperty()
 
-    fun mainEntrypoint(value: String, op: Action<Entrypoint> = nullAction()) =
-        entrypoint("main", value, op)
+    fun mainEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) =
+        entrypoint("main", value, configure)
 
-    fun clientEntrypoint(value: String, op: Action<Entrypoint> = nullAction()) =
-        entrypoint("client", value, op)
+    fun clientEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) =
+        entrypoint("client", value, configure)
 
-    fun serverEntrypoint(value: String, op: Action<Entrypoint> = nullAction()) =
-        entrypoint("server", value, op)
+    fun serverEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) =
+        entrypoint("server", value, configure)
 
-    fun entrypoint(type: String, value: String, op: Action<Entrypoint> = nullAction()): Entrypoint {
+    fun entrypoint(type: String, value: String, configure: Action<Entrypoint> = nullAction()): Entrypoint {
         val ep = objects.newInstance(Entrypoint::class)
         ep.type.set(type)
         ep.value.set(value)
-        op.execute(ep)
+        configure.execute(ep)
         entrypoints.add(ep)
         return ep
     }
@@ -76,10 +76,10 @@ open class FabricModJson constructor(
     @get:Nested
     val mixins: ListProperty<MixinConfig> = objects.listProperty()
 
-    fun mixin(name: String, op: Action<MixinConfig> = nullAction()): MixinConfig {
+    fun mixin(name: String, configure: Action<MixinConfig> = nullAction()): MixinConfig {
         val mixin = objects.newInstance(MixinConfig::class)
         mixin.config.set(name)
-        op.execute(mixin)
+        configure.execute(mixin)
         mixins.add(mixin)
         return mixin
     }
@@ -124,17 +124,17 @@ open class FabricModJson constructor(
     @get:Nested
     val authors: ListProperty<Person> = objects.listProperty()
 
-    fun author(name: String, op: Action<Person> = nullAction()) = authors.add(person(name, op))
+    fun author(name: String, configure: Action<Person> = nullAction()) = authors.add(person(name, configure))
 
     @get:Nested
     val contributors: ListProperty<Person> = objects.listProperty()
 
-    fun contributor(name: String, op: Action<Person> = nullAction()) = contributors.add(person(name, op))
+    fun contributor(name: String, configure: Action<Person> = nullAction()) = contributors.add(person(name, configure))
 
     @get:Nested
     val contact: ContactInformation = objects.newInstance()
 
-    fun contact(op: Action<ContactInformation>) = contact.apply { op.execute(this) }
+    fun contact(configure: Action<ContactInformation>) = contact.apply { configure.execute(this) }
 
     @get:Input
     val license: ListProperty<String> = objects.listProperty()
@@ -191,9 +191,9 @@ open class FabricModJson constructor(
         val icons: Map<String, String>
     ) : Icon
 
-    fun person(name: String, op: Action<Person> = nullAction()): Person = objects.newInstance<Person>().apply {
+    fun person(name: String, configure: Action<Person> = nullAction()): Person = objects.newInstance<Person>().apply {
         this.name.set(name)
-        op.execute(this)
+        configure.execute(this)
     }
 
     abstract class Person @Inject constructor(objects: ObjectFactory) {
@@ -203,7 +203,7 @@ open class FabricModJson constructor(
         @get:Nested
         val contact: ContactInformation = objects.newInstance()
 
-        fun contact(op: Action<ContactInformation>) = contact.apply { op.execute(this) }
+        fun contact(configure: Action<ContactInformation>) = contact.apply { configure.execute(this) }
     }
 
     abstract class ContactInformation {

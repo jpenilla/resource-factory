@@ -19,10 +19,10 @@ import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 
-fun Project.bungeePluginYml(op: Action<BungeePluginYml> = nullAction()): BungeePluginYml {
+fun Project.bungeePluginYml(configure: Action<BungeePluginYml> = nullAction()): BungeePluginYml {
     val yml = BungeePluginYml(objects)
     yml.copyProjectMeta(this)
-    op.execute(yml)
+    configure.execute(yml)
     return yml
 }
 

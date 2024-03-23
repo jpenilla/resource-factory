@@ -26,10 +26,10 @@ import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 import javax.inject.Inject
 
-fun Project.paperPluginYml(op: Action<PaperPluginYml> = nullAction()): PaperPluginYml {
+fun Project.paperPluginYml(configure: Action<PaperPluginYml> = nullAction()): PaperPluginYml {
     val yml = PaperPluginYml(objects)
     yml.copyProjectMeta(this)
-    op.execute(yml)
+    configure.execute(yml)
     return yml
 }
 
@@ -92,8 +92,8 @@ class PaperPluginYml constructor(
     @get:Nested
     val permissions: NamedDomainObjectContainer<Permission> = objects.domainObjectContainer(Permission::class) { Permission(it) }
 
-    fun dependencies(op: Action<Dependencies>) {
-        op.execute(dependencies)
+    fun dependencies(configure: Action<Dependencies>) {
+        configure.execute(dependencies)
     }
 
     /**

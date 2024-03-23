@@ -24,32 +24,32 @@ abstract class ResourceFactoryExtension @Inject constructor(
 ) {
     abstract val factories: ListProperty<ResourceFactory>
 
-    fun paperPluginYml(op: Action<PaperPluginYml>): PaperPluginYml {
-        val config = project.paperPluginYml(op)
+    fun paperPluginYml(configure: Action<PaperPluginYml>): PaperPluginYml {
+        val config = project.paperPluginYml(configure)
         factory(config.resourceFactory())
         return config
     }
 
-    fun bukkitPluginYml(op: Action<BukkitPluginYml>): BukkitPluginYml {
-        val config = project.bukkitPluginYml(op)
+    fun bukkitPluginYml(configure: Action<BukkitPluginYml>): BukkitPluginYml {
+        val config = project.bukkitPluginYml(configure)
         factory(config.resourceFactory())
         return config
     }
 
-    fun velocityPluginJson(op: Action<VelocityPluginJson>): VelocityPluginJson {
-        val config = project.velocityPluginJson(op)
+    fun velocityPluginJson(configure: Action<VelocityPluginJson>): VelocityPluginJson {
+        val config = project.velocityPluginJson(configure)
         factory(config.resourceFactory())
         return config
     }
 
-    fun fabricModJson(op: Action<FabricModJson>): FabricModJson {
-        val config = project.fabricModJson(op)
+    fun fabricModJson(configure: Action<FabricModJson>): FabricModJson {
+        val config = project.fabricModJson(configure)
         factory(config.resourceFactory())
         return config
     }
 
-    fun bungeePluginYml(op: Action<BungeePluginYml>): BungeePluginYml {
-        val config = project.bungeePluginYml(op)
+    fun bungeePluginYml(configure: Action<BungeePluginYml>): BungeePluginYml {
+        val config = project.bungeePluginYml(configure)
         factory(config.resourceFactory())
         return config
     }
@@ -57,10 +57,10 @@ abstract class ResourceFactoryExtension @Inject constructor(
     fun <T : ResourceFactory> factory(
         generatorType: KClass<T>,
         vararg params: Any,
-        op: Action<T>
+        configure: Action<T>
     ): T {
         val o = objects.newInstance(generatorType, *params)
-        op.execute(o)
+        configure.execute(o)
         factory(o)
         return o
     }

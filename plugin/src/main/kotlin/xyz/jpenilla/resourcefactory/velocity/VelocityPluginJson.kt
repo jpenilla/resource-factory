@@ -19,10 +19,10 @@ import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 
-fun Project.velocityPluginJson(op: Action<VelocityPluginJson> = nullAction()): VelocityPluginJson {
+fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullAction()): VelocityPluginJson {
     val yml = VelocityPluginJson(objects)
     yml.copyProjectMeta(this)
-    op.execute(yml)
+    configure.execute(yml)
     return yml
 }
 

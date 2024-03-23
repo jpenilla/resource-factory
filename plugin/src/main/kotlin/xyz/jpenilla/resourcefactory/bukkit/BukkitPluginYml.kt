@@ -21,10 +21,10 @@ import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 
-fun Project.bukkitPluginYml(op: Action<BukkitPluginYml> = nullAction()): BukkitPluginYml {
+fun Project.bukkitPluginYml(configure: Action<BukkitPluginYml> = nullAction()): BukkitPluginYml {
     val yml = BukkitPluginYml(objects)
     yml.copyProjectMeta(this)
-    op.execute(yml)
+    configure.execute(yml)
     return yml
 }
 
