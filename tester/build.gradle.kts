@@ -28,6 +28,7 @@ bukkitPluginYml {
             default = Permission.Default.OP
             children("permission.a", "permission.b")
         }
+        register("another_permission")
     }
 }
 
