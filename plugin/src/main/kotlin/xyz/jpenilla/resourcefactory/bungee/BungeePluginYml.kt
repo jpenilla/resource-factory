@@ -30,7 +30,7 @@ fun Project.bungeePluginYml(configure: Action<BungeePluginYml> = nullAction()): 
 class BungeePluginYml constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions {
+) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     @get:Input
     val name: Property<String> = objects.property()
@@ -66,7 +66,7 @@ class BungeePluginYml constructor(
         version.convention(project.version as String?)
     }
 
-    fun resourceFactory(): ResourceFactory {
+    override fun resourceFactory(): ResourceFactory {
         val factory = objects.newInstance(
             ConfigurateSingleFileResourceFactory.ObjectMapper::class,
             { path: Path ->

@@ -5,6 +5,5 @@ import xyz.jpenilla.resourcefactory.ResourceFactoryConventionPlugin
 abstract class FabricConvention : ResourceFactoryConventionPlugin<FabricModJson>(
     "fabricModJson",
     { project -> project.fabricModJson() },
-    "main",
-    { factoryExt, ext -> factoryExt.factory(ext.resourceFactory()) }
+    "main"
 )

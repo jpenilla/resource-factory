@@ -37,7 +37,7 @@ fun Project.paperPluginYml(configure: Action<PaperPluginYml> = nullAction()): Pa
 class PaperPluginYml constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions {
+) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     @get:Input
     val apiVersion: Property<String> = objects.property()
@@ -159,7 +159,7 @@ class PaperPluginYml constructor(
         val joinClasspath: Property<Boolean> = objects.property<Boolean>().convention(true)
     }
 
-    fun resourceFactory(): ResourceFactory {
+    override fun resourceFactory(): ResourceFactory {
         val gen = objects.newInstance(
             ConfigurateSingleFileResourceFactory.ObjectMapper::class,
             { path: Path ->

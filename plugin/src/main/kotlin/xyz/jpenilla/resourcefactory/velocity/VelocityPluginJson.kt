@@ -30,7 +30,7 @@ fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullActio
 class VelocityPluginJson constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions {
+) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     @get:Input
     val id: Property<String> = objects.property()
@@ -73,7 +73,7 @@ class VelocityPluginJson constructor(
         version.convention(project.version as String?)
     }
 
-    fun resourceFactory(): ResourceFactory {
+    override fun resourceFactory(): ResourceFactory {
         val factory = objects.newInstance(
             ConfigurateSingleFileResourceFactory.ObjectMapper::class,
             { path: Path ->

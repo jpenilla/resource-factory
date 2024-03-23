@@ -5,6 +5,5 @@ import xyz.jpenilla.resourcefactory.ResourceFactoryConventionPlugin
 abstract class BukkitConvention : ResourceFactoryConventionPlugin<BukkitPluginYml>(
     "bukkitPluginYml",
     { project -> project.bukkitPluginYml() },
-    "main",
-    { factoryExt, ext -> factoryExt.factory(ext.resourceFactory()) }
+    "main"
 )

@@ -32,7 +32,7 @@ fun Project.bukkitPluginYml(configure: Action<BukkitPluginYml> = nullAction()): 
 class BukkitPluginYml(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions {
+) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     @get:Input
     @get:Optional
@@ -147,7 +147,7 @@ class BukkitPluginYml(
         var usage: String? = null
     }
 
-    fun resourceFactory(): ResourceFactory {
+    override fun resourceFactory(): ResourceFactory {
         val gen = objects.newInstance(
             ConfigurateSingleFileResourceFactory.ObjectMapper::class,
             { path: Path ->

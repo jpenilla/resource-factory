@@ -10,11 +10,10 @@ import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 
-abstract class ResourceFactoryConventionPlugin<E : Any>(
+abstract class ResourceFactoryConventionPlugin<E : ResourceFactory.Provider>(
     private val extensionName: String,
     private val extensionFactory: (Project) -> E,
-    private val sourceSetName: String,
-    private val configureSourceSetFactories: (ResourceFactoryExtension, E) -> Unit
+    private val sourceSetName: String
 ) : Plugin<Project> {
     override fun apply(target: Project) {
         target.plugins.apply(ResourceFactoryPlugin::class)
@@ -24,7 +23,7 @@ abstract class ResourceFactoryConventionPlugin<E : Any>(
             target.extensions.add(extensionName, ext)
             target.extensions.getByType(SourceSetContainer::class).named(sourceSetName) {
                 extensions.configure(ResourceFactoryExtension::class) {
-                    configureSourceSetFactories(this, ext)
+                    factory(ext.resourceFactory())
                 }
             }
         }

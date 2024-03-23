@@ -5,6 +5,5 @@ import xyz.jpenilla.resourcefactory.ResourceFactoryConventionPlugin
 abstract class PaperConvention : ResourceFactoryConventionPlugin<PaperPluginYml>(
     "paperPluginYml",
     { project -> project.paperPluginYml() },
-    "main",
-    { factoryExt, ext -> factoryExt.factory(ext.resourceFactory()) }
+    "main"
 )

@@ -38,7 +38,7 @@ fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): Fabr
 open class FabricModJson constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions {
+) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     @get:Input
     val id: Property<String> = objects.property()
@@ -264,7 +264,7 @@ open class FabricModJson constructor(
         abstract val environment: Property<Environment>
     }
 
-    fun resourceFactory(): ResourceFactory {
+    override fun resourceFactory(): ResourceFactory {
         val gen = objects.newInstance(
             ConfigurateSingleFileResourceFactory.ObjectMapper::class,
             { path: Path ->
