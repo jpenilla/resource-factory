@@ -1,5 +1,6 @@
 package xyz.jpenilla.resourcefactory.bungee
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -14,13 +15,14 @@ import org.spongepowered.configurate.yaml.NodeStyle
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
-import xyz.jpenilla.resourcefactory.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.nullAction
+import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 
-fun Project.bungeePluginYml(op: BungeePluginYml.() -> Unit = {}): BungeePluginYml {
+fun Project.bungeePluginYml(op: Action<BungeePluginYml> = nullAction()): BungeePluginYml {
     val yml = BungeePluginYml(objects)
     yml.copyProjectMeta(this)
-    yml.op()
+    op.execute(yml)
     return yml
 }
 

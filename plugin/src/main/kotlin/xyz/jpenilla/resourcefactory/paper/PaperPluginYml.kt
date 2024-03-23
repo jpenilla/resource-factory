@@ -1,5 +1,6 @@
 package xyz.jpenilla.resourcefactory.paper
 
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
@@ -20,14 +21,15 @@ import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
 import xyz.jpenilla.resourcefactory.bukkit.Permission
-import xyz.jpenilla.resourcefactory.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.nullAction
+import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 import javax.inject.Inject
 
-fun Project.paperPluginYml(op: PaperPluginYml.() -> Unit = {}): PaperPluginYml {
+fun Project.paperPluginYml(op: Action<PaperPluginYml> = nullAction()): PaperPluginYml {
     val yml = PaperPluginYml(objects)
     yml.copyProjectMeta(this)
-    yml.op()
+    op.execute(yml)
     return yml
 }
 
@@ -90,8 +92,8 @@ class PaperPluginYml constructor(
     @get:Nested
     val permissions: NamedDomainObjectContainer<Permission> = objects.domainObjectContainer(Permission::class) { Permission(it) }
 
-    fun dependencies(op: Dependencies.() -> Unit) {
-        dependencies.op()
+    fun dependencies(op: Action<Dependencies>) {
+        op.execute(dependencies)
     }
 
     /**

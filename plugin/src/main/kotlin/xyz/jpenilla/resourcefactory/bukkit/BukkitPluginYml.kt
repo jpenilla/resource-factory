@@ -1,5 +1,6 @@
 package xyz.jpenilla.resourcefactory.bukkit
 
+import org.gradle.api.Action
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
@@ -16,13 +17,14 @@ import org.spongepowered.configurate.yaml.NodeStyle
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
-import xyz.jpenilla.resourcefactory.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.nullAction
+import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 
-fun Project.bukkitPluginYml(op: BukkitPluginYml.() -> Unit = {}): BukkitPluginYml {
+fun Project.bukkitPluginYml(op: Action<BukkitPluginYml> = nullAction()): BukkitPluginYml {
     val yml = BukkitPluginYml(objects)
     yml.copyProjectMeta(this)
-    yml.op()
+    op.execute(yml)
     return yml
 }
 

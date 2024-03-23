@@ -1,5 +1,6 @@
 package xyz.jpenilla.resourcefactory.fabric
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -20,15 +21,16 @@ import org.spongepowered.configurate.serialize.TypeSerializer
 import org.spongepowered.configurate.util.NamingSchemes
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
-import xyz.jpenilla.resourcefactory.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.nullAction
+import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.lang.reflect.Type
 import java.nio.file.Path
 import javax.inject.Inject
 
-fun Project.fabricModJson(op: FabricModJson.() -> Unit = {}): FabricModJson {
+fun Project.fabricModJson(op: Action<FabricModJson> = nullAction()): FabricModJson {
     val yml = FabricModJson(objects)
     yml.copyProjectMeta(this)
-    yml.op()
+    op.execute(yml)
     return yml
 }
 
@@ -50,20 +52,20 @@ open class FabricModJson constructor(
     @get:Nested
     val entrypoints: ListProperty<Entrypoint> = objects.listProperty()
 
-    fun mainEntrypoint(value: String, op: Entrypoint.() -> Unit = {}) =
+    fun mainEntrypoint(value: String, op: Action<Entrypoint> = nullAction()) =
         entrypoint("main", value, op)
 
-    fun clientEntrypoint(value: String, op: Entrypoint.() -> Unit = {}) =
+    fun clientEntrypoint(value: String, op: Action<Entrypoint> = nullAction()) =
         entrypoint("client", value, op)
 
-    fun serverEntrypoint(value: String, op: Entrypoint.() -> Unit = {}) =
+    fun serverEntrypoint(value: String, op: Action<Entrypoint> = nullAction()) =
         entrypoint("server", value, op)
 
-    fun entrypoint(type: String, value: String, op: Entrypoint.() -> Unit = {}): Entrypoint {
+    fun entrypoint(type: String, value: String, op: Action<Entrypoint> = nullAction()): Entrypoint {
         val ep = objects.newInstance(Entrypoint::class)
         ep.type.set(type)
         ep.value.set(value)
-        ep.op()
+        op.execute(ep)
         entrypoints.add(ep)
         return ep
     }
@@ -74,10 +76,10 @@ open class FabricModJson constructor(
     @get:Nested
     val mixins: ListProperty<MixinConfig> = objects.listProperty()
 
-    fun mixin(name: String, op: MixinConfig.() -> Unit = {}): MixinConfig {
+    fun mixin(name: String, op: Action<MixinConfig> = nullAction()): MixinConfig {
         val mixin = objects.newInstance(MixinConfig::class)
         mixin.config.set(name)
-        mixin.op()
+        op.execute(mixin)
         mixins.add(mixin)
         return mixin
     }
@@ -122,17 +124,17 @@ open class FabricModJson constructor(
     @get:Nested
     val authors: ListProperty<Person> = objects.listProperty()
 
-    fun author(name: String, op: Person.() -> Unit = {}) = authors.add(person(name, op))
+    fun author(name: String, op: Action<Person> = nullAction()) = authors.add(person(name, op))
 
     @get:Nested
     val contributors: ListProperty<Person> = objects.listProperty()
 
-    fun contributor(name: String, op: Person.() -> Unit = {}) = contributors.add(person(name, op))
+    fun contributor(name: String, op: Action<Person> = nullAction()) = contributors.add(person(name, op))
 
     @get:Nested
     val contact: ContactInformation = objects.newInstance()
 
-    fun contact(op: ContactInformation.() -> Unit) = contact.apply(op)
+    fun contact(op: Action<ContactInformation>) = contact.apply { op.execute(this) }
 
     @get:Input
     val license: ListProperty<String> = objects.listProperty()
@@ -189,9 +191,10 @@ open class FabricModJson constructor(
         val icons: Map<String, String>
     ) : Icon
 
-    fun person(name: String, op: Person.() -> Unit = {}): Person = objects.newInstance<Person>()
-        .apply { this.name.set(name) }
-        .apply(op)
+    fun person(name: String, op: Action<Person> = nullAction()): Person = objects.newInstance<Person>().apply {
+        this.name.set(name)
+        op.execute(this)
+    }
 
     abstract class Person @Inject constructor(objects: ObjectFactory) {
         @get:Input
@@ -200,7 +203,7 @@ open class FabricModJson constructor(
         @get:Nested
         val contact: ContactInformation = objects.newInstance()
 
-        fun contact(op: ContactInformation.() -> Unit) = contact.apply(op)
+        fun contact(op: Action<ContactInformation>) = contact.apply { op.execute(this) }
     }
 
     abstract class ContactInformation {

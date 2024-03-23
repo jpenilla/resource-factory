@@ -1,5 +1,6 @@
 package xyz.jpenilla.resourcefactory.velocity
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -14,13 +15,14 @@ import org.spongepowered.configurate.gson.GsonConfigurationLoader
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
-import xyz.jpenilla.resourcefactory.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.nullAction
+import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 
-fun Project.velocityPluginJson(op: VelocityPluginJson.() -> Unit = {}): VelocityPluginJson {
+fun Project.velocityPluginJson(op: Action<VelocityPluginJson> = nullAction()): VelocityPluginJson {
     val yml = VelocityPluginJson(objects)
     yml.copyProjectMeta(this)
-    yml.op()
+    op.execute(yml)
     return yml
 }
 

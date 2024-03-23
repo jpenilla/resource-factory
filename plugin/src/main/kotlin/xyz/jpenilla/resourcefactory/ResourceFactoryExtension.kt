@@ -1,5 +1,6 @@
 package xyz.jpenilla.resourcefactory
 
+import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
@@ -23,31 +24,31 @@ abstract class ResourceFactoryExtension @Inject constructor(
 ) {
     abstract val factories: ListProperty<ResourceFactory>
 
-    fun paperPluginYml(op: PaperPluginYml.() -> Unit): PaperPluginYml {
+    fun paperPluginYml(op: Action<PaperPluginYml>): PaperPluginYml {
         val config = project.paperPluginYml(op)
         factory(config.resourceFactory())
         return config
     }
 
-    fun bukkitPluginYml(op: BukkitPluginYml.() -> Unit): BukkitPluginYml {
+    fun bukkitPluginYml(op: Action<BukkitPluginYml>): BukkitPluginYml {
         val config = project.bukkitPluginYml(op)
         factory(config.resourceFactory())
         return config
     }
 
-    fun velocityPluginJson(op: VelocityPluginJson.() -> Unit): VelocityPluginJson {
+    fun velocityPluginJson(op: Action<VelocityPluginJson>): VelocityPluginJson {
         val config = project.velocityPluginJson(op)
         factory(config.resourceFactory())
         return config
     }
 
-    fun fabricModJson(op: FabricModJson.() -> Unit): FabricModJson {
+    fun fabricModJson(op: Action<FabricModJson>): FabricModJson {
         val config = project.fabricModJson(op)
         factory(config.resourceFactory())
         return config
     }
 
-    fun bungeePluginYml(op: BungeePluginYml.() -> Unit): BungeePluginYml {
+    fun bungeePluginYml(op: Action<BungeePluginYml>): BungeePluginYml {
         val config = project.bungeePluginYml(op)
         factory(config.resourceFactory())
         return config
@@ -56,10 +57,10 @@ abstract class ResourceFactoryExtension @Inject constructor(
     fun <T : ResourceFactory> factory(
         generatorType: KClass<T>,
         vararg params: Any,
-        op: T.() -> Unit
+        op: Action<T>
     ): T {
         val o = objects.newInstance(generatorType, *params)
-        o.op()
+        op.execute(o)
         factory(o)
         return o
     }

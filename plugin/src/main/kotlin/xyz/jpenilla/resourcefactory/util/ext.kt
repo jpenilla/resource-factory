@@ -1,4 +1,4 @@
-package xyz.jpenilla.resourcefactory
+package xyz.jpenilla.resourcefactory.util
 
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.ListProperty

@@ -34,6 +34,7 @@ sourceSets.main {
             }
             icon("icon.png")
             depends("some_other_mod", "*")
+            apache2License()
         }
         bungeePluginYml {
             main = "test"
