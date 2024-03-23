@@ -137,6 +137,12 @@ open class FabricModJson constructor(
     @get:Input
     val license: ListProperty<String> = objects.listProperty()
 
+    fun license(vararg licenses: String) = license.addAll(*licenses)
+
+    fun apache2License() = license("Apache-2.0")
+
+    fun mitLicense() = license("MIT")
+
     @get:Nested
     @get:Optional
     val icon: Property<Icon> = objects.property()
