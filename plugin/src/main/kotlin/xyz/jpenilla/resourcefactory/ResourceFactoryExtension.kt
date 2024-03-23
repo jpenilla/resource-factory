@@ -6,6 +6,8 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.kotlin.dsl.newInstance
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYml
 import xyz.jpenilla.resourcefactory.bukkit.bukkitPluginYml
+import xyz.jpenilla.resourcefactory.bungee.BungeePluginYml
+import xyz.jpenilla.resourcefactory.bungee.bungeePluginYml
 import xyz.jpenilla.resourcefactory.fabric.FabricModJson
 import xyz.jpenilla.resourcefactory.fabric.fabricModJson
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYml
@@ -41,6 +43,12 @@ abstract class ResourceFactoryExtension @Inject constructor(
 
     fun fabricModJson(op: FabricModJson.() -> Unit): FabricModJson {
         val config = project.fabricModJson(op)
+        factory(config.resourceFactory())
+        return config
+    }
+
+    fun bungeePluginYml(op: BungeePluginYml.() -> Unit): BungeePluginYml {
+        val config = project.bungeePluginYml(op)
         factory(config.resourceFactory())
         return config
     }
