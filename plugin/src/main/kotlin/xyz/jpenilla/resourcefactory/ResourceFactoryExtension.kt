@@ -54,6 +54,11 @@ abstract class ResourceFactoryExtension @Inject constructor(
         return config
     }
 
+    inline fun <reified T : ResourceFactory> factory(
+        vararg params: Any,
+        configure: Action<T>
+    ): T = factory(T::class, params = params, configure = configure)
+
     fun <T : ResourceFactory> factory(
         generatorType: KClass<T>,
         vararg params: Any,

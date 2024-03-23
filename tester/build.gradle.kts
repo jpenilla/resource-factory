@@ -50,7 +50,7 @@ bungeePluginYml {
 
 sourceSets.main {
     resourceFactory {
-        factory(ConfigurateSingleFileResourceFactory.ObjectMapper::class) {
+        factory<ConfigurateSingleFileResourceFactory.ObjectMapper> {
             yaml()
             path = "custom-data-dir/custom-data.yml"
             value(CustomData("Steve", 123))
