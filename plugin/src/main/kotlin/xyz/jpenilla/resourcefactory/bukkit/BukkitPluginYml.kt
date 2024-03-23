@@ -17,13 +17,14 @@ import org.spongepowered.configurate.yaml.NodeStyle
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.nio.file.Path
 
 fun Project.bukkitPluginYml(configure: Action<BukkitPluginYml> = nullAction()): BukkitPluginYml {
     val yml = BukkitPluginYml(objects)
-    yml.copyProjectMeta(this)
+    yml.setConventionsFromProjectMeta(this)
     configure.execute(yml)
     return yml
 }
@@ -31,7 +32,7 @@ fun Project.bukkitPluginYml(configure: Action<BukkitPluginYml> = nullAction()): 
 class BukkitPluginYml(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider {
+) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     @get:Input
     @get:Optional
@@ -114,7 +115,7 @@ class BukkitPluginYml(
      *
      * [project] project
      */
-    fun copyProjectMeta(project: Project) {
+    override fun setConventionsFromProjectMeta(project: Project) {
         name.convention(project.name)
         version.convention(project.version as String?)
         description.convention(project.description)
@@ -146,7 +147,7 @@ class BukkitPluginYml(
         var usage: String? = null
     }
 
-    fun resourceFactory(): ResourceFactory {
+    override fun resourceFactory(): ResourceFactory {
         val gen = objects.newInstance(
             ConfigurateSingleFileResourceFactory.ObjectMapper::class,
             { path: Path ->

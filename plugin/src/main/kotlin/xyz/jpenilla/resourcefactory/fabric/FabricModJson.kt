@@ -21,6 +21,7 @@ import org.spongepowered.configurate.serialize.TypeSerializer
 import org.spongepowered.configurate.util.NamingSchemes
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import java.lang.reflect.Type
@@ -29,7 +30,7 @@ import javax.inject.Inject
 
 fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): FabricModJson {
     val yml = FabricModJson(objects)
-    yml.copyProjectMeta(this)
+    yml.setConventionsFromProjectMeta(this)
     configure.execute(yml)
     return yml
 }
@@ -37,7 +38,7 @@ fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): Fabr
 open class FabricModJson constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider {
+) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     @get:Input
     val id: Property<String> = objects.property()
@@ -154,7 +155,7 @@ open class FabricModJson constructor(
      *
      * [project] project
      */
-    fun copyProjectMeta(project: Project) {
+    override fun setConventionsFromProjectMeta(project: Project) {
         id.convention(project.name)
         name.convention(project.name)
         version.convention(project.version as String?)
@@ -263,7 +264,7 @@ open class FabricModJson constructor(
         abstract val environment: Property<Environment>
     }
 
-    fun resourceFactory(): ResourceFactory {
+    override fun resourceFactory(): ResourceFactory {
         val gen = objects.newInstance(
             ConfigurateSingleFileResourceFactory.ObjectMapper::class,
             { path: Path ->
