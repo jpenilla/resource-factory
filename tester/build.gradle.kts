@@ -18,6 +18,9 @@ description = "Resource Factory tester"
 paperPluginYml {
     main = "test"
     apiVersion = "1.20"
+    dependencies {
+        server("squaremap")
+    }
 }
 
 bukkitPluginYml {

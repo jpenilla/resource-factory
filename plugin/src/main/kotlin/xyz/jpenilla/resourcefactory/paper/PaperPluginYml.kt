@@ -26,6 +26,7 @@ import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.orNullValidating
+import xyz.jpenilla.resourcefactory.util.validateAll
 import javax.inject.Inject
 
 fun Project.paperPluginYml(configure: Action<PaperPluginYml> = nullAction()): PaperPluginYml {
@@ -40,13 +41,14 @@ class PaperPluginYml constructor(
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
     companion object {
+        private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
         private const val PLUGIN_CLASS_PATTERN: String = "^(?!io\\.papermc\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$"
     }
 
     @get:Input
     val apiVersion: Property<String> = objects.property()
 
-    @Pattern("^[A-Za-z0-9_\\.-]+$", "Paper plugin name")
+    @Pattern(PLUGIN_NAME_PATTERN, "Paper plugin name")
     @get:Input
     val name: Property<String> = objects.property()
 
@@ -154,7 +156,7 @@ class PaperPluginYml constructor(
 
     class Dependency(
         objects: ObjectFactory,
-        @get:Internal
+        @get:Input
         val name: String
     ) {
         @get:Input
@@ -219,7 +221,9 @@ class PaperPluginYml constructor(
         companion object {
             fun from(deps: Dependencies): SerializableDependencies? {
                 val bs = deps.bootstrap.nullIfEmpty()?.mapValues { SerializableDependency.from(it.value) }
+                    .also { it?.keys?.validateAll(PLUGIN_NAME_PATTERN, "Paper plugin name (of bootstrap dependency)") }
                 val server = deps.server.nullIfEmpty()?.mapValues { SerializableDependency.from(it.value) }
+                    .also { it?.keys?.validateAll(PLUGIN_NAME_PATTERN, "Paper plugin name (of server dependency)") }
                 if (bs == null && server == null) {
                     return null
                 }

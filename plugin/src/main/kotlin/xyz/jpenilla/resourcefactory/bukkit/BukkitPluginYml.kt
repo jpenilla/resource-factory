@@ -21,6 +21,7 @@ import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.validateAll
 
 fun Project.bukkitPluginYml(configure: Action<BukkitPluginYml> = nullAction()): BukkitPluginYml {
     val yml = BukkitPluginYml(objects)
@@ -34,11 +35,15 @@ class BukkitPluginYml(
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
+    companion object {
+        private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
+    }
+
     @get:Input
     @get:Optional
     val apiVersion: Property<String> = objects.property()
 
-    @Pattern("^[A-Za-z0-9_\\.-]+$", "Bukkit plugin name")
+    @Pattern(PLUGIN_NAME_PATTERN, "Bukkit plugin name")
     @get:Input
     val name: Property<String> = objects.property()
 
@@ -178,9 +183,9 @@ class BukkitPluginYml(
         val author = yml.author.orNull
         val authors = yml.authors.nullIfEmpty()
         val website = yml.website.orNull
-        val depend = yml.depend.nullIfEmpty()
-        val softDepend = yml.softDepend.nullIfEmpty()
-        val loadBefore = yml.loadBefore.nullIfEmpty()
+        val depend = yml.depend.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of depend)")
+        val softDepend = yml.softDepend.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of softDepend)")
+        val loadBefore = yml.loadBefore.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of loadBefore)")
         val prefix = yml.prefix.orNull
         val defaultPermission = yml.defaultPermission.orNull
         val provides = yml.provides.nullIfEmpty()

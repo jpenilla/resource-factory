@@ -19,6 +19,7 @@ import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.validateAll
 
 fun Project.bungeePluginYml(configure: Action<BungeePluginYml> = nullAction()): BungeePluginYml {
     val yml = BungeePluginYml(objects)
@@ -32,7 +33,11 @@ class BungeePluginYml constructor(
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
-    @Pattern("^[A-Za-z0-9_\\.-]+$", "Bungee plugin name")
+    companion object {
+        private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
+    }
+
+    @Pattern(PLUGIN_NAME_PATTERN, "Bungee plugin name")
     @get:Input
     val name: Property<String> = objects.property()
 
@@ -81,8 +86,8 @@ class BungeePluginYml constructor(
         val main = yml.main.get()
         val version = yml.version.orNull
         val author = yml.author.orNull
-        val depends = yml.depends.nullIfEmpty()
-        val softDepends = yml.softDepends.nullIfEmpty()
+        val depends = yml.depends.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bungee plugin name (of dependency)")
+        val softDepends = yml.softDepends.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bungee plugin name (of soft dependency)")
         val description = yml.description.orNull
     }
 }

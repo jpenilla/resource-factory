@@ -45,6 +45,13 @@ fun <T : Any?> KProperty<T>.orNullValidating(
     )
 }
 
+fun Collection<String>.validateAll(@Language("RegExp") pattern: String, description: String): Collection<String> {
+    for (string in this) {
+        string.validate(pattern, description)
+    }
+    return this
+}
+
 fun String.validate(@Language("RegExp") pattern: String, description: String): String {
     val regex = Pattern.compile(pattern)
     if (!regex.matcher(this).matches()) {
