@@ -20,10 +20,12 @@ import org.spongepowered.configurate.yaml.NodeStyle
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
 import xyz.jpenilla.resourcefactory.bukkit.Permission
+import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
+import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
-import xyz.jpenilla.resourcefactory.util.validate
+import xyz.jpenilla.resourcefactory.util.orNullValidating
 import javax.inject.Inject
 
 fun Project.paperPluginYml(configure: Action<PaperPluginYml> = nullAction()): PaperPluginYml {
@@ -37,23 +39,30 @@ class PaperPluginYml constructor(
     @Transient
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+    companion object {
+        private const val PLUGIN_CLASS_PATTERN: String = "^(?!io\\.papermc\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$"
+    }
 
     @get:Input
     val apiVersion: Property<String> = objects.property()
 
+    @Pattern("^[A-Za-z0-9_\\.-]+$", "Paper plugin name")
     @get:Input
     val name: Property<String> = objects.property()
 
     @get:Input
     val version: Property<String> = objects.property()
 
+    @Pattern(PLUGIN_CLASS_PATTERN, "Paper plugin main class name")
     @get:Input
     val main: Property<String> = objects.property()
 
+    @Pattern(PLUGIN_CLASS_PATTERN, "Paper plugin loader class name")
     @get:Input
     @get:Optional
     val loader: Property<String> = objects.property()
 
+    @Pattern(PLUGIN_CLASS_PATTERN, "Paper plugin bootstrapper class name")
     @get:Input
     @get:Optional
     val bootstrapper: Property<String> = objects.property()
@@ -178,16 +187,12 @@ class PaperPluginYml constructor(
 
     @ConfigSerializable
     class Serializable(yml: PaperPluginYml) {
-        companion object {
-            private const val PLUGIN_CLASS_PATTERN: String = "^(?!io\\.papermc\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$"
-        }
-
         val apiVersion = yml.apiVersion.get()
-        val name = yml.name.get().validate("Paper plugin name", "^[A-Za-z0-9_\\.-]+$")
+        val name = yml::name.getValidating()
         val version = yml.version.get()
-        val main = yml.main.get().validate("Paper plugin main class name", PLUGIN_CLASS_PATTERN)
-        val loader = yml.loader.orNull?.validate("Paper plugin loader class name", PLUGIN_CLASS_PATTERN)
-        val bootstrapper = yml.bootstrapper.orNull?.validate("Paper plugin bootstrapper class name", PLUGIN_CLASS_PATTERN)
+        val main = yml::main.getValidating()
+        val loader = yml::loader.orNullValidating()
+        val bootstrapper = yml::bootstrapper.orNullValidating()
         val description = yml.description.orNull
         val author = yml.author.orNull
         val authors = yml.authors.nullIfEmpty()
