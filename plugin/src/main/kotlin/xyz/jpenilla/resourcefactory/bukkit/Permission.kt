@@ -23,6 +23,7 @@ class Permission(objects: ObjectFactory, @Input val name: String) {
     val default: Property<Default> = objects.property()
 
     @get:Input
+    @get:Optional
     val children: MapProperty<String, Boolean> = objects.mapProperty()
 
     fun children(vararg nodes: String) {
