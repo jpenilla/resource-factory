@@ -34,6 +34,7 @@ bukkitPluginYml {
 
 velocityPluginJson {
     main = "test"
+    dependency("luckperms")
 }
 
 fabricModJson {

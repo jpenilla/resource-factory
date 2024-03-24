@@ -63,7 +63,7 @@ class VelocityPluginJson constructor(
     @get:Nested
     val dependencies: ListProperty<Dependency> = objects.listProperty()
 
-    fun dependency(id: String, optional: Boolean) = dependencies.add(Dependency(id, optional))
+    fun dependency(id: String, optional: Boolean = false) = dependencies.add(Dependency(id, optional))
 
     @get:Input
     val main: Property<String> = objects.property()
@@ -93,7 +93,7 @@ class VelocityPluginJson constructor(
         @get:Input
         val id: String,
         @get:Input
-        val optional: Boolean
+        val optional: Boolean = false
     )
 
     @ConfigSerializable
