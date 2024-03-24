@@ -25,7 +25,7 @@ import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
-import xyz.jpenilla.resourcefactory.util.validate
+import xyz.jpenilla.resourcefactory.util.validateAll
 import java.lang.reflect.Type
 import javax.inject.Inject
 
@@ -315,9 +315,7 @@ open class FabricModJson constructor(
         val license = fmj.license.nullIfEmpty()
         val icon = fmj.icon.orNull?.also {
             if (it is IconMap) {
-                for (key in it.icons.keys) {
-                    key.validate("^[1-9][0-9]*$", "Icon key")
-                }
+                it.icons.keys.validateAll("^[1-9][0-9]*$", "Icon key")
             }
         }
     }
