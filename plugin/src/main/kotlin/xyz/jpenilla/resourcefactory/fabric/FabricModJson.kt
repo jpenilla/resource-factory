@@ -41,7 +41,11 @@ open class FabricModJson constructor(
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
-    @Pattern("^[a-z][a-z0-9-_]{1,63}$", "Fabric mod id")
+    companion object {
+        private const val MOD_ID_PATTERN: String = "^[a-z][a-z0-9-_]{1,63}$"
+    }
+
+    @Pattern(MOD_ID_PATTERN, "Fabric mod id")
     @get:Input
     val id: Property<String> = objects.property()
 
@@ -302,11 +306,11 @@ open class FabricModJson constructor(
         val languageAdapters = fmj.languageAdapters.nullIfEmpty()
         val mixins = fmj.mixins.nullIfEmpty()?.map { SerializableMixinConfig(it.config.get(), it.environment.orNull) }
         val accessWidener = fmj.accessWidener.orNull
-        val depends = fmj.depends.nullIfEmpty()
-        val recommends = fmj.recommends.nullIfEmpty()
-        val suggests = fmj.suggests.nullIfEmpty()
-        val conflicts = fmj.conflicts.nullIfEmpty()
-        val breaks = fmj.breaks.nullIfEmpty()
+        val depends = fmj.depends.nullIfEmpty()?.also { it.keys.validateAll(MOD_ID_PATTERN, "Fabric mod id (of depends)") }
+        val recommends = fmj.recommends.nullIfEmpty()?.also { it.keys.validateAll(MOD_ID_PATTERN, "Fabric mod id (of recommends)") }
+        val suggests = fmj.suggests.nullIfEmpty()?.also { it.keys.validateAll(MOD_ID_PATTERN, "Fabric mod id (of suggests)") }
+        val conflicts = fmj.conflicts.nullIfEmpty()?.also { it.keys.validateAll(MOD_ID_PATTERN, "Fabric mod id (of conflicts)") }
+        val breaks = fmj.breaks.nullIfEmpty()?.also { it.keys.validateAll(MOD_ID_PATTERN, "Fabric mod id (of breaks)") }
         val name = fmj.name.orNull
         val description = fmj.description.orNull
         val authors = fmj.authors.nullIfEmpty()?.map { SerializablePerson(it.name.get(), it.contact.asMap()) }
