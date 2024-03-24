@@ -14,7 +14,9 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.yaml.NodeStyle
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
+import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 
@@ -30,6 +32,7 @@ class BungeePluginYml constructor(
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
+    @Pattern("^[A-Za-z0-9_\\.-]+$", "Bungee plugin name")
     @get:Input
     val name: Property<String> = objects.property()
 
@@ -74,7 +77,7 @@ class BungeePluginYml constructor(
 
     @ConfigSerializable
     class Serializable(yml: BungeePluginYml) {
-        val name = yml.name.get()
+        val name = yml::name.getValidating()
         val main = yml.main.get()
         val version = yml.version.orNull
         val author = yml.author.orNull

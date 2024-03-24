@@ -14,9 +14,12 @@ import org.gradle.kotlin.dsl.property
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
+import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.validate
 
 fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullAction()): VelocityPluginJson {
     val yml = VelocityPluginJson(objects)
@@ -30,6 +33,11 @@ class VelocityPluginJson constructor(
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
+    companion object {
+        private const val PLUGIN_ID_PATTERN: String = "[a-z][a-z0-9-_]{0,63}"
+    }
+
+    @Pattern(PLUGIN_ID_PATTERN, "Velocity plugin id")
     @get:Input
     val id: Property<String> = objects.property()
 
@@ -81,6 +89,7 @@ class VelocityPluginJson constructor(
 
     @ConfigSerializable
     class Dependency(
+        @Pattern(PLUGIN_ID_PATTERN, "Velocity plugin id (of dependency)")
         @get:Input
         val id: String,
         @get:Input
@@ -89,12 +98,12 @@ class VelocityPluginJson constructor(
 
     @ConfigSerializable
     class Serializable(json: VelocityPluginJson) {
-        val id = json.id.get()
+        val id = json::id.getValidating()
         val name = json.name.orNull
         val version = json.version.orNull
         val description = json.description.orNull
         val url = json.url.orNull
-        val dependencies = json.dependencies.nullIfEmpty()
+        val dependencies = json.dependencies.nullIfEmpty()?.onEach { it::id.validate() }
         val main = json.main.get()
     }
 }

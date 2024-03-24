@@ -16,7 +16,9 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.yaml.NodeStyle
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
+import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 
@@ -36,12 +38,14 @@ class BukkitPluginYml(
     @get:Optional
     val apiVersion: Property<String> = objects.property()
 
+    @Pattern("^[A-Za-z0-9_\\.-]+$", "Bukkit plugin name")
     @get:Input
     val name: Property<String> = objects.property()
 
     @get:Input
     val version: Property<String> = objects.property()
 
+    @Pattern("^(?!org\\.bukkit\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$", "Bukkit plugin main class name")
     @get:Input
     val main: Property<String> = objects.property()
 
@@ -166,9 +170,9 @@ class BukkitPluginYml(
     @ConfigSerializable
     class Serializable(yml: BukkitPluginYml) {
         val apiVersion = yml.apiVersion.orNull
-        val name = yml.name.get()
+        val name = yml::name.getValidating()
         val version = yml.version.get()
-        val main = yml.main.get()
+        val main = yml::main.getValidating()
         val description = yml.description.orNull
         val load = yml.load.orNull
         val author = yml.author.orNull

@@ -20,9 +20,12 @@ import org.spongepowered.configurate.serialize.TypeSerializer
 import org.spongepowered.configurate.util.NamingSchemes
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
+import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.validate
 import java.lang.reflect.Type
 import javax.inject.Inject
 
@@ -38,6 +41,7 @@ open class FabricModJson constructor(
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
+    @Pattern("^[a-z][a-z0-9-_]{1,63}$", "Fabric mod id")
     @get:Input
     val id: Property<String> = objects.property()
 
@@ -289,7 +293,7 @@ open class FabricModJson constructor(
     @ConfigSerializable
     open class Serializable(fmj: FabricModJson) {
         val schemaVersion = 1
-        val id = fmj.id.get()
+        val id = fmj::id.getValidating()
         val version = fmj.version.get()
         val environment = fmj.environment.orNull
         val entrypoints = fmj.entrypoints.get().groupBy({ it.type.get() }) {
@@ -309,7 +313,13 @@ open class FabricModJson constructor(
         val contributors = fmj.contributors.nullIfEmpty()?.map { SerializablePerson(it.name.get(), it.contact.asMap()) }
         val contact = fmj.contact.asMap()
         val license = fmj.license.nullIfEmpty()
-        val icon = fmj.icon.orNull
+        val icon = fmj.icon.orNull?.also {
+            if (it is IconMap) {
+                for (key in it.icons.keys) {
+                    key.validate("^[1-9][0-9]*$", "Icon key")
+                }
+            }
+        }
     }
 
     @ConfigSerializable
