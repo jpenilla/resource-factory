@@ -22,17 +22,17 @@ fun <A, B> MapProperty<A, B>.nullIfEmpty(): Map<A, B>? = if (get().isEmpty()) nu
 fun <A> NamedDomainObjectContainer<A>.nullIfEmpty(): Map<String, A>? = if (isEmpty()) null else asMap.toMap()
 
 fun KProperty<String>.validate(): String =
-    orNullValidating({ it }) ?: throw NullPointerException()
+    orNullValidating { it } ?: throw NullPointerException()
 
 fun KProperty<Property<String>>.getValidating(): String =
-    orNullValidating({ it.get() }) ?: throw NullPointerException()
+    orNullValidating { it.get() } ?: throw NullPointerException()
 
-fun KProperty<Property<String>>.orNullValidating(): String? = orNullValidating({ it.orNull })
+fun KProperty<Property<String>>.orNullValidating(): String? = orNullValidating { it.orNull }
 
 fun <T : Any?> KProperty<T>.orNullValidating(
     stringGetter: (T) -> String?,
-    value: String? = stringGetter(getter.call())
 ): String? {
+    val value = stringGetter(getter.call())
     val declrCls = javaField?.declaringClass?.simpleName
         ?: javaGetter?.declaringClass?.simpleName
         ?: throw IllegalArgumentException("Cannot find owning class for property $this")
