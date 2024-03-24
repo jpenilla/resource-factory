@@ -45,11 +45,10 @@ fun <T : Any?> KProperty<T>.orNullValidating(
     )
 }
 
-fun Collection<String>.validateAll(@Language("RegExp") pattern: String, description: String): Collection<String> {
+fun <C : Collection<String>> C.validateAll(@Language("RegExp") pattern: String, description: String): C = apply {
     for (string in this) {
         string.validate(pattern, description)
     }
-    return this
 }
 
 fun String.validate(@Language("RegExp") pattern: String, description: String): String {
