@@ -22,7 +22,7 @@ fun <A, B> MapProperty<A, B>.nullIfEmpty(): Map<A, B>? = if (get().isEmpty()) nu
 fun <A> NamedDomainObjectContainer<A>.nullIfEmpty(): Map<String, A>? = if (isEmpty()) null else asMap.toMap()
 
 fun KProperty<Property<String>>.getValidating(): String =
-    this.orNullValidating(getter.call().get()) ?: throw IllegalStateException()
+    orNullValidating(getter.call().get()) ?: throw IllegalStateException()
 
 fun KProperty<Property<String>>.orNullValidating(
     value: String? = getter.call().orNull
@@ -32,7 +32,7 @@ fun KProperty<Property<String>>.orNullValidating(
         ?: throw IllegalArgumentException("Cannot find owning class for property $this")
     val fallbackDesc = "$declrCls.$name"
     val annotation = findAnnotation<xyz.jpenilla.resourcefactory.util.Pattern>()
-        ?: throw GradleException("Property $fallbackDesc is not annotated with @PatternConstraint.")
+        ?: throw GradleException("Property $fallbackDesc is not annotated with @Pattern.")
     return value?.validate(
         annotation.pattern,
         annotation.description.takeIf { it.isNotBlank() } ?: fallbackDesc
