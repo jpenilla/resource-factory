@@ -62,6 +62,10 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
                 override fun asConfigSerializable(): Any {
                     return this.value
                 }
+
+                override fun toString(): String {
+                    return "ConstantValue[value='$value']"
+                }
             })
         }
 
@@ -73,6 +77,10 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
 
         fun interface ValueProvider {
             fun asConfigSerializable(): Any
+        }
+
+        override fun toString(): String {
+            return ObjectMapper::class.java.name + "[path='${path.orNull}', value='${value.orNull}']"
         }
     }
 }
