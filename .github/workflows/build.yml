@@ -27,8 +27,10 @@ jobs:
           java-version: "${{ matrix.java }}"
       - name: "setup gradle"
         uses: gradle/actions/setup-gradle@v3
-      - name: "build"
+      - name: "build plugin"
         run: "./gradlew :plugin:build"
+      - name: "build tester"
+        run: "./gradlew :tester:build"
       - name: "determine status"
         run: |
           if [ "$(./gradlew :plugin:properties | awk '/^version:/ { print $2; }' | grep '\-SNAPSHOT')" ]; then
