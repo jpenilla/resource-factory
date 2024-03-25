@@ -27,16 +27,16 @@ Gradle plugin for generating resource files at build time.
 
 ## Included factories
 
-| Type               | Convention Plugin                                   |
-|--------------------|-----------------------------------------------------|
-| PaperPluginYml     | `xyz.jpenilla.resource-factory-paper-convention`    |
-| BukkitPluginYml    | `xyz.jpenilla.resource-factory-bukkit-convention`   |
-| VelocityPluginJson | `xyz.jpenilla.resource-factory-velocity-convention` |
-| FabricModJson      | `xyz.jpenilla.resource-factory-fabric-convention`   |
-| BungeePluginYml    | `xyz.jpenilla.resource-factory-bungee-convention`   |
+| Type                 | Convention Plugin                                   |
+|----------------------|-----------------------------------------------------|
+| PaperPluginYaml      | `xyz.jpenilla.resource-factory-paper-convention`    |
+| BukkitPluginYaml     | `xyz.jpenilla.resource-factory-bukkit-convention`   |
+| VelocityPluginJson   | `xyz.jpenilla.resource-factory-velocity-convention` |
+| FabricModJson        | `xyz.jpenilla.resource-factory-fabric-convention`   |
+| BungeeCordPluginYaml | `xyz.jpenilla.resource-factory-bungee-convention`   |
 
 The included factories can be used in two ways.
-PaperPluginYml is used as an example, but the process is the same for the other included factories.
+PaperPluginYaml is used as an example, but the process is the same for the other included factories.
 
 ### Convention Plugins
 
@@ -52,7 +52,7 @@ plugins {
   id("xyz.jpenilla.resource-factory-paper-convention") version "VERSION"
 }
 
-paperPluginYml {
+paperPluginYaml {
   // Defaults for name, version, and description are inherited from the Gradle project
   main = "main.class.Name"
   authors.add("MyName")
@@ -66,9 +66,9 @@ The included factories can be used manually in two ways.
 
 1) Directly on the project instance, and then registered manually
     ```kotlin
-    import xyz.jpenilla.resourcefactory.paper.paperPluginYml
+    import xyz.jpenilla.resourcefactory.paper.paperPluginYaml
     
-    val yml = paperPluginYml {
+    val yaml = paperPluginYaml {
       // Defaults for name, version, and description are inherited from the Gradle project
       main = "main.class.Name"
       authors.add("MyName")
@@ -77,7 +77,7 @@ The included factories can be used manually in two ways.
 
     sourceSets.main {
       resourceFactory {
-        factory(yml.resourceFactory())
+        factory(yaml.resourceFactory())
       }
     }
     ```
@@ -85,7 +85,7 @@ The included factories can be used manually in two ways.
     ```kotlin
     sourceSets.main {
       resourceFactory {
-        paperPluginYml {
+        paperPluginYaml {
           // Defaults for name, version, and description are inherited from the Gradle project
           main = "main.class.Name"
           authors.add("MyName")

@@ -23,20 +23,21 @@ import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.validateAll
 
-fun Project.bukkitPluginYml(configure: Action<BukkitPluginYml> = nullAction()): BukkitPluginYml {
-    val yml = BukkitPluginYml(objects)
-    yml.setConventionsFromProjectMeta(this)
-    configure.execute(yml)
-    return yml
+fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction()): BukkitPluginYaml {
+    val yaml = BukkitPluginYaml(objects)
+    yaml.setConventionsFromProjectMeta(this)
+    configure.execute(yaml)
+    return yaml
 }
 
-class BukkitPluginYml(
+class BukkitPluginYaml(
     @Transient
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
+        private const val FILE_NAME: String = "plugin.yml"
     }
 
     @get:Input
@@ -163,7 +164,7 @@ class BukkitPluginYml(
                 }
             }.nodeStyle(NodeStyle.BLOCK)
         }
-        gen.path.set("plugin.yml")
+        gen.path.set(FILE_NAME)
         gen.value.set(this)
         return gen
     }
@@ -173,25 +174,25 @@ class BukkitPluginYml(
     }
 
     @ConfigSerializable
-    class Serializable(yml: BukkitPluginYml) {
-        val apiVersion = yml.apiVersion.orNull
-        val name = yml::name.getValidating()
-        val version = yml.version.get()
-        val main = yml::main.getValidating()
-        val description = yml.description.orNull
-        val load = yml.load.orNull
-        val author = yml.author.orNull
-        val authors = yml.authors.nullIfEmpty()
-        val website = yml.website.orNull
-        val depend = yml.depend.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of depend)")
-        val softDepend = yml.softDepend.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of softDepend)")
-        val loadBefore = yml.loadBefore.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of loadBefore)")
-        val prefix = yml.prefix.orNull
-        val defaultPermission = yml.defaultPermission.orNull
-        val provides = yml.provides.nullIfEmpty()
-        val libraries = yml.libraries.nullIfEmpty()
-        val commands = yml.commands.nullIfEmpty()
-        val permissions = yml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
-        val foliaSupported = yml.foliaSupported.orNull
+    class Serializable(yaml: BukkitPluginYaml) {
+        val apiVersion = yaml.apiVersion.orNull
+        val name = yaml::name.getValidating()
+        val version = yaml.version.get()
+        val main = yaml::main.getValidating()
+        val description = yaml.description.orNull
+        val load = yaml.load.orNull
+        val author = yaml.author.orNull
+        val authors = yaml.authors.nullIfEmpty()
+        val website = yaml.website.orNull
+        val depend = yaml.depend.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of depend)")
+        val softDepend = yaml.softDepend.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of softDepend)")
+        val loadBefore = yaml.loadBefore.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of loadBefore)")
+        val prefix = yaml.prefix.orNull
+        val defaultPermission = yaml.defaultPermission.orNull
+        val provides = yaml.provides.nullIfEmpty()
+        val libraries = yaml.libraries.nullIfEmpty()
+        val commands = yaml.commands.nullIfEmpty()
+        val permissions = yaml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
+        val foliaSupported = yaml.foliaSupported.orNull
     }
 }

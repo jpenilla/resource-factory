@@ -1,4 +1,4 @@
-package xyz.jpenilla.resourcefactory.bungee
+package xyz.jpenilla.resourcefactory.bungeecord
 
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -21,23 +21,24 @@ import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.validateAll
 
-fun Project.bungeePluginYml(configure: Action<BungeePluginYml> = nullAction()): BungeePluginYml {
-    val yml = BungeePluginYml(objects)
-    yml.setConventionsFromProjectMeta(this)
-    configure.execute(yml)
-    return yml
+fun Project.bungeePluginYaml(configure: Action<BungeeCordPluginYaml> = nullAction()): BungeeCordPluginYaml {
+    val yaml = BungeeCordPluginYaml(objects)
+    yaml.setConventionsFromProjectMeta(this)
+    configure.execute(yaml)
+    return yaml
 }
 
-class BungeePluginYml constructor(
+class BungeeCordPluginYaml constructor(
     @Transient
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
+        private const val FILE_NAME: String = "bungee.yml"
     }
 
-    @Pattern(PLUGIN_NAME_PATTERN, "Bungee plugin name")
+    @Pattern(PLUGIN_NAME_PATTERN, "BungeeCord plugin name")
     @get:Input
     val name: Property<String> = objects.property()
 
@@ -75,19 +76,19 @@ class BungeePluginYml constructor(
     override fun resourceFactory(): ResourceFactory {
         val factory = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
         factory.yaml { nodeStyle(NodeStyle.BLOCK) }
-        factory.path.set("bungee.yml")
+        factory.path.set(FILE_NAME)
         factory.value.set(this)
         return factory
     }
 
     @ConfigSerializable
-    class Serializable(yml: BungeePluginYml) {
-        val name = yml::name.getValidating()
-        val main = yml.main.get()
-        val version = yml.version.orNull
-        val author = yml.author.orNull
-        val depends = yml.depends.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bungee plugin name (of dependency)")
-        val softDepends = yml.softDepends.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bungee plugin name (of soft dependency)")
-        val description = yml.description.orNull
+    class Serializable(yaml: BungeeCordPluginYaml) {
+        val name = yaml::name.getValidating()
+        val main = yaml.main.get()
+        val version = yaml.version.orNull
+        val author = yaml.author.orNull
+        val depends = yaml.depends.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "BungeeCord plugin name (of dependency)")
+        val softDepends = yaml.softDepends.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "BungeeCord plugin name (of soft dependency)")
+        val description = yaml.description.orNull
     }
 }

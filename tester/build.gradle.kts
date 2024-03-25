@@ -15,7 +15,7 @@ plugins {
 version = "0.0.1-test"
 description = "Resource Factory tester"
 
-paperPluginYml {
+paperPluginYaml {
     main = "test"
     apiVersion = "1.20"
     dependencies {
@@ -23,7 +23,7 @@ paperPluginYml {
     }
 }
 
-bukkitPluginYml {
+bukkitPluginYaml {
     main = "test"
     permissions {
         register("permission") {
@@ -57,7 +57,7 @@ fabricModJson {
     apache2License()
 }
 
-bungeePluginYml {
+bungeePluginYaml {
     main = "test"
 }
 
@@ -65,7 +65,7 @@ sourceSets.main {
     resourceFactory {
         factory<ConfigurateSingleFileResourceFactory.ObjectMapper> {
             yaml()
-            path = "custom-data-dir/custom-data.yml"
+            path = "custom-data-dir/custom-data.yaml"
             value(CustomData("Steve", 123))
         }
     }

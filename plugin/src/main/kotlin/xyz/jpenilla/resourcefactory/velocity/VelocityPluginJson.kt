@@ -22,10 +22,10 @@ import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.validate
 
 fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullAction()): VelocityPluginJson {
-    val yml = VelocityPluginJson(objects)
-    yml.setConventionsFromProjectMeta(this)
-    configure.execute(yml)
-    return yml
+    val json = VelocityPluginJson(objects)
+    json.setConventionsFromProjectMeta(this)
+    configure.execute(json)
+    return json
 }
 
 class VelocityPluginJson constructor(
@@ -35,6 +35,7 @@ class VelocityPluginJson constructor(
 
     companion object {
         private const val PLUGIN_ID_PATTERN: String = "[a-z][a-z0-9-_]{0,63}"
+        private const val FILE_NAME: String = "velocity-plugin.json"
     }
 
     @Pattern(PLUGIN_ID_PATTERN, "Velocity plugin id")
@@ -82,7 +83,7 @@ class VelocityPluginJson constructor(
     override fun resourceFactory(): ResourceFactory {
         val factory = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
         factory.json()
-        factory.path.set("velocity-plugin.json")
+        factory.path.set(FILE_NAME)
         factory.value.set(this)
         return factory
     }

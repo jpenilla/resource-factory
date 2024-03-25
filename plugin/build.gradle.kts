@@ -96,21 +96,21 @@ indraPluginPublishing {
         "resource-factory-paper-convention",
         "xyz.jpenilla.resourcefactory.paper.PaperConvention",
         "Resource Factory Paper Convention",
-        "Convention for xyz.jpenilla.resource-factory, registers a PaperPluginYml to the main source set and adds it as the paperPluginYml extension",
+        "Convention for xyz.jpenilla.resource-factory, registers a PaperPluginYaml to the main source set and adds it as the paperPluginYaml extension",
         tags("paper")
     )
     plugin(
         "resource-factory-bukkit-convention",
         "xyz.jpenilla.resourcefactory.bukkit.BukkitConvention",
         "Resource Factory Bukkit Convention",
-        "Convention for xyz.jpenilla.resource-factory, registers a BukkitPluginYml to the main source set and adds it as the bukkitPluginYml extension",
+        "Convention for xyz.jpenilla.resource-factory, registers a BukkitPluginYaml to the main source set and adds it as the bukkitPluginYaml extension",
         tags("bukkit")
     )
     plugin(
         "resource-factory-bungee-convention",
-        "xyz.jpenilla.resourcefactory.bungee.BungeeConvention",
-        "Resource Factory Bungee Convention",
-        "Convention for xyz.jpenilla.resource-factory, registers a BungeePluginYml to the main source set and adds it as the bungeePluginYml extension",
+        "xyz.jpenilla.resourcefactory.bungeecord.BungeeCordConvention",
+        "Resource Factory BungeeCord Convention",
+        "Convention for xyz.jpenilla.resource-factory, registers a BungeeCordPluginYaml to the main source set and adds it as the bungeePluginYaml extension",
         tags("bungee", "bungeecord")
     )
     plugin(

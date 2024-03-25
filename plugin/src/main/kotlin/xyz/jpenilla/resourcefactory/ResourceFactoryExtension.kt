@@ -5,14 +5,14 @@ import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.kotlin.dsl.newInstance
-import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYml
-import xyz.jpenilla.resourcefactory.bukkit.bukkitPluginYml
-import xyz.jpenilla.resourcefactory.bungee.BungeePluginYml
-import xyz.jpenilla.resourcefactory.bungee.bungeePluginYml
+import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
+import xyz.jpenilla.resourcefactory.bukkit.bukkitPluginYaml
+import xyz.jpenilla.resourcefactory.bungeecord.BungeeCordPluginYaml
+import xyz.jpenilla.resourcefactory.bungeecord.bungeePluginYaml
 import xyz.jpenilla.resourcefactory.fabric.FabricModJson
 import xyz.jpenilla.resourcefactory.fabric.fabricModJson
-import xyz.jpenilla.resourcefactory.paper.PaperPluginYml
-import xyz.jpenilla.resourcefactory.paper.paperPluginYml
+import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
+import xyz.jpenilla.resourcefactory.paper.paperPluginYaml
 import xyz.jpenilla.resourcefactory.velocity.VelocityPluginJson
 import xyz.jpenilla.resourcefactory.velocity.velocityPluginJson
 import javax.inject.Inject
@@ -24,14 +24,14 @@ abstract class ResourceFactoryExtension @Inject constructor(
 ) {
     abstract val factories: ListProperty<ResourceFactory>
 
-    fun paperPluginYml(configure: Action<PaperPluginYml>): PaperPluginYml {
-        val config = project.paperPluginYml(configure)
+    fun paperPluginYaml(configure: Action<PaperPluginYaml>): PaperPluginYaml {
+        val config = project.paperPluginYaml(configure)
         factory(config.resourceFactory())
         return config
     }
 
-    fun bukkitPluginYml(configure: Action<BukkitPluginYml>): BukkitPluginYml {
-        val config = project.bukkitPluginYml(configure)
+    fun bukkitPluginYaml(configure: Action<BukkitPluginYaml>): BukkitPluginYaml {
+        val config = project.bukkitPluginYaml(configure)
         factory(config.resourceFactory())
         return config
     }
@@ -48,8 +48,8 @@ abstract class ResourceFactoryExtension @Inject constructor(
         return config
     }
 
-    fun bungeePluginYml(configure: Action<BungeePluginYml>): BungeePluginYml {
-        val config = project.bungeePluginYml(configure)
+    fun bungeePluginYaml(configure: Action<BungeeCordPluginYaml>): BungeeCordPluginYaml {
+        val config = project.bungeePluginYaml(configure)
         factory(config.resourceFactory())
         return config
     }

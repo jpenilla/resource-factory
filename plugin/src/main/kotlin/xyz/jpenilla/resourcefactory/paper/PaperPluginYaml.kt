@@ -28,20 +28,21 @@ import xyz.jpenilla.resourcefactory.util.orNullValidating
 import xyz.jpenilla.resourcefactory.util.validateAll
 import javax.inject.Inject
 
-fun Project.paperPluginYml(configure: Action<PaperPluginYml> = nullAction()): PaperPluginYml {
-    val yml = PaperPluginYml(objects)
-    yml.setConventionsFromProjectMeta(this)
-    configure.execute(yml)
-    return yml
+fun Project.paperPluginYaml(configure: Action<PaperPluginYaml> = nullAction()): PaperPluginYaml {
+    val yaml = PaperPluginYaml(objects)
+    yaml.setConventionsFromProjectMeta(this)
+    configure.execute(yaml)
+    return yaml
 }
 
-class PaperPluginYml constructor(
+class PaperPluginYaml constructor(
     @Transient
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
         private const val PLUGIN_CLASS_PATTERN: String = "^(?!io\\.papermc\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$"
+        private const val FILE_NAME: String = "paper-plugin.yml"
     }
 
     @get:Input
@@ -177,7 +178,7 @@ class PaperPluginYml constructor(
                 }
             }.nodeStyle(NodeStyle.BLOCK)
         }
-        gen.path.set("paper-plugin.yml")
+        gen.path.set(FILE_NAME)
         gen.value.set(this)
         return gen
     }
@@ -187,22 +188,22 @@ class PaperPluginYml constructor(
     }
 
     @ConfigSerializable
-    class Serializable(yml: PaperPluginYml) {
-        val apiVersion = yml.apiVersion.get()
-        val name = yml::name.getValidating()
-        val version = yml.version.get()
-        val main = yml::main.getValidating()
-        val loader = yml::loader.orNullValidating()
-        val bootstrapper = yml::bootstrapper.orNullValidating()
-        val description = yml.description.orNull
-        val author = yml.author.orNull
-        val authors = yml.authors.nullIfEmpty()
-        val website = yml.website.orNull
-        val prefix = yml.prefix.orNull
-        val defaultPermission = yml.defaultPermission.orNull
-        val foliaSupported = yml.foliaSupported.orNull
-        val dependencies = SerializableDependencies.from(yml.dependencies)
-        val permissions = yml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
+    class Serializable(yaml: PaperPluginYaml) {
+        val apiVersion = yaml.apiVersion.get()
+        val name = yaml::name.getValidating()
+        val version = yaml.version.get()
+        val main = yaml::main.getValidating()
+        val loader = yaml::loader.orNullValidating()
+        val bootstrapper = yaml::bootstrapper.orNullValidating()
+        val description = yaml.description.orNull
+        val author = yaml.author.orNull
+        val authors = yaml.authors.nullIfEmpty()
+        val website = yaml.website.orNull
+        val prefix = yaml.prefix.orNull
+        val defaultPermission = yaml.defaultPermission.orNull
+        val foliaSupported = yaml.foliaSupported.orNull
+        val dependencies = SerializableDependencies.from(yaml.dependencies)
+        val permissions = yaml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
     }
 
     @ConfigSerializable
