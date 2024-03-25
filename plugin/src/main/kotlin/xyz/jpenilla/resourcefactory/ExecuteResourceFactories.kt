@@ -43,6 +43,11 @@ abstract class ExecuteResourceFactories : DefaultTask() {
         }
     }
 
-    private fun printFactories(resourceFactories: List<ResourceFactory>): String =
-        resourceFactories.joinToString("\n") { " - $it" }
+    private fun printFactories(resourceFactories: List<ResourceFactory>): String {
+        val sb = StringBuilder()
+        for ((index, resourceFactory) in resourceFactories.withIndex()) {
+            sb.append(" $index. $resourceFactory\n")
+        }
+        return sb.toString()
+    }
 }
