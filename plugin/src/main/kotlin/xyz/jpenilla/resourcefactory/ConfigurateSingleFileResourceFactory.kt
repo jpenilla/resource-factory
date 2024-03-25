@@ -41,18 +41,7 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
         abstract val value: Property<ValueProvider>
 
         fun value(value: Any) {
-            this.value.set(object : ValueProvider {
-                @get:Nested
-                val value = value
-
-                override fun asConfigSerializable(): Any {
-                    return this.value
-                }
-
-                override fun toString(): String {
-                    return "ConstantValue[value='${this.value}']"
-                }
-            })
+            this.value.set(ConstantValueProvider(value))
         }
 
         override fun <N : ConfigurationNode> generateRootNode(loader: ConfigurationLoader<N>): N {
@@ -65,8 +54,15 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
             fun asConfigSerializable(): Any
         }
 
+        data class ConstantValueProvider(
+            @get:Nested
+            val value: Any
+        ): ValueProvider {
+            override fun asConfigSerializable(): Any = value
+        }
+
         override fun toString(): String {
-            return ObjectMapper::class.java.name + "[path='${path.orNull}', value='${value.orNull}']"
+            return ObjectMapper::class.java.name + "(path=${path.orNull}, value=${value.orNull})"
         }
     }
 
