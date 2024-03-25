@@ -57,7 +57,7 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
         data class ConstantValueProvider(
             @get:Nested
             val value: Any
-        ): ValueProvider {
+        ) : ValueProvider {
             override fun asConfigSerializable(): Any = value
         }
 
