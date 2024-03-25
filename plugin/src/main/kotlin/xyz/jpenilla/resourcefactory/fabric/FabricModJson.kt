@@ -30,10 +30,10 @@ import java.lang.reflect.Type
 import javax.inject.Inject
 
 fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): FabricModJson {
-    val yml = FabricModJson(objects)
-    yml.setConventionsFromProjectMeta(this)
-    configure.execute(yml)
-    return yml
+    val json = FabricModJson(objects)
+    json.setConventionsFromProjectMeta(this)
+    configure.execute(json)
+    return json
 }
 
 open class FabricModJson constructor(
@@ -43,6 +43,7 @@ open class FabricModJson constructor(
 
     companion object {
         private const val MOD_ID_PATTERN: String = "^[a-z][a-z0-9-_]{1,63}$"
+        private const val FILE_NAME: String = "fabric.mod.json"
     }
 
     @Pattern(MOD_ID_PATTERN, "Fabric mod id")
@@ -285,7 +286,7 @@ open class FabricModJson constructor(
                 }
             }
         }
-        gen.path.set("fabric.mod.json")
+        gen.path.set(FILE_NAME)
         gen.value.set(this)
         return gen
     }
