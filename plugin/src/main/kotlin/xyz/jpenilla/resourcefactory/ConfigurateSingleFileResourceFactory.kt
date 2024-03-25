@@ -50,7 +50,7 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
                 }
 
                 override fun toString(): String {
-                    return "ConstantValue[value='$value']"
+                    return "ConstantValue[value='${this.value}']"
                 }
             })
         }
