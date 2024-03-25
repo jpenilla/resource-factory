@@ -5,6 +5,7 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
 import org.spongepowered.configurate.ConfigurationNode
 import org.spongepowered.configurate.gson.GsonConfigurationLoader
+import org.spongepowered.configurate.loader.AbstractConfigurationLoader
 import org.spongepowered.configurate.loader.ConfigurationLoader
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
 import xyz.jpenilla.resourcefactory.util.nullAction
@@ -14,33 +15,18 @@ import javax.inject.Inject
 
 abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory() {
     @get:Nested
-    abstract val loaderFactory: Property<Function<Path, ConfigurationLoader<*>>>
-
-    // These helper methods look overcomplicated at first, but this is necessary to
-    // have the value/configuration (implementation and nested properties) provided by the user count as task inputs.
+    abstract val loaderFactory: Property<Function<Path, out ConfigurationLoader<*>>>
 
     fun yaml(configure: Action<YamlConfigurationLoader.Builder> = nullAction()) {
-        loaderFactory.set(object : Function<Path, ConfigurationLoader<*>> {
-            @get:Nested
-            val configure: Action<YamlConfigurationLoader.Builder> = configure
-
-            override fun apply(path: Path): ConfigurationLoader<*> = YamlConfigurationLoader.builder()
-                .also { this.configure.execute(it) }
-                .path(path)
-                .build()
-        })
+        loaderFactory.set(
+            BuilderConfiguringLoaderFactory({ YamlConfigurationLoader.builder() }, configure)
+        )
     }
 
     fun json(configure: Action<GsonConfigurationLoader.Builder> = nullAction()) {
-        loaderFactory.set(object : Function<Path, ConfigurationLoader<*>> {
-            @get:Nested
-            val configure: Action<GsonConfigurationLoader.Builder> = configure
-
-            override fun apply(path: Path): ConfigurationLoader<*> = GsonConfigurationLoader.builder()
-                .also { this.configure.execute(it) }
-                .path(path)
-                .build()
-        })
+        loaderFactory.set(
+            BuilderConfiguringLoaderFactory({ GsonConfigurationLoader.builder() }, configure)
+        )
     }
 
     override fun generateSingleFile(outputFile: Path) {
@@ -82,5 +68,17 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
         override fun toString(): String {
             return ObjectMapper::class.java.name + "[path='${path.orNull}', value='${value.orNull}']"
         }
+    }
+
+    private class BuilderConfiguringLoaderFactory<L : AbstractConfigurationLoader<*>, B : AbstractConfigurationLoader.Builder<B, L>>(
+        @get:Nested
+        val builderFactory: () -> B,
+        @get:Nested
+        val configure: Action<B>
+    ) : Function<Path, L> {
+        override fun apply(path: Path): L = builderFactory()
+            .also { configure.execute(it) }
+            .path(path)
+            .build()
     }
 }
