@@ -18,6 +18,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.yaml.NodeStyle
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
@@ -43,6 +44,14 @@ fun Project.paperPluginYaml(configure: Action<PaperPluginYaml> = nullAction()): 
     return yaml
 }
 
+/**
+ * A `paper-plugin.yml` configuration.
+ *
+ * See [the Paper docs](https://docs.papermc.io/paper/dev/getting-started/paper-plugins) for more information.
+ *
+ * @see [paperPluginYaml]
+ * @see [ResourceFactoryExtension.paperPluginYaml]
+ */
 class PaperPluginYaml constructor(
     @Transient
     private val objects: ObjectFactory

@@ -14,6 +14,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.yaml.NodeStyle
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
@@ -35,6 +36,15 @@ fun Project.bungeePluginYaml(configure: Action<BungeeCordPluginYaml> = nullActio
     return yaml
 }
 
+/**
+ * A BungeeCord `plugin.yml`/`bungee.yml` configuration.
+ *
+ * Spigot does not provide official documentation for the BungeeCord plugin configuration format.
+ * However, there is [this wiki page.](https://www.spigotmc.org/wiki/create-your-first-bungeecord-plugin-proxy-spigotmc/#making-it-load)
+ *
+ * @see [bungeePluginYaml]
+ * @see [ResourceFactoryExtension.bungeePluginYaml]
+ */
 class BungeeCordPluginYaml constructor(
     @Transient
     private val objects: ObjectFactory

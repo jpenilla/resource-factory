@@ -20,6 +20,7 @@ import org.spongepowered.configurate.serialize.TypeSerializer
 import org.spongepowered.configurate.util.NamingSchemes
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
@@ -44,6 +45,14 @@ fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): Fabr
     return json
 }
 
+/**
+ * A `fabric.mod.json` configuration.
+ *
+ * See [the official spec](https://fabricmc.net/wiki/documentation:fabric_mod_json_spec) for more information.
+ *
+ * @see [fabricModJson]
+ * @see [ResourceFactoryExtension.fabricModJson]
+ */
 open class FabricModJson constructor(
     @Transient
     private val objects: ObjectFactory

@@ -16,6 +16,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.yaml.NodeStyle
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
@@ -39,6 +40,14 @@ fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction())
     return yaml
 }
 
+/**
+ * A Bukkit `plugin.yml` configuration.
+ *
+ * See [Paper's plugin.yml documentation](https://docs.papermc.io/paper/dev/plugin-yml) for more information.
+ *
+ * @see [bukkitPluginYaml]
+ * @see [ResourceFactoryExtension.bukkitPluginYaml]
+ */
 class BukkitPluginYaml(
     @Transient
     private val objects: ObjectFactory
