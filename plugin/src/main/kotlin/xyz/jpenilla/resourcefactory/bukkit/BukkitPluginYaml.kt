@@ -24,6 +24,14 @@ import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.nullIfEmptyValidating
 import javax.inject.Inject
 
+/**
+ * Create a [BukkitPluginYaml] and configure it with the given [configure] block.
+ *
+ * The created [BukkitPluginYaml] will inherit the project's name, version, and description.
+ *
+ * @param configure the block to configure the [BukkitPluginYaml] with
+ * @return the created and configured [BukkitPluginYaml]
+ */
 fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction()): BukkitPluginYaml {
     val yaml = BukkitPluginYaml(objects)
     yaml.setConventionsFromProjectMeta(this)
@@ -123,11 +131,6 @@ class BukkitPluginYaml(
         POSTWORLD
     }
 
-    /**
-     * Copy the name, version, and description from the provided project.
-     *
-     * [project] project
-     */
     override fun setConventionsFromProjectMeta(project: Project) {
         name.convention(project.name)
         version.convention(project.version as String?)

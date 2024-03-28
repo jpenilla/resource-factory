@@ -20,6 +20,14 @@ import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmptyValidating
 
+/**
+ * Create a [BungeeCordPluginYaml] and configure it with the given [configure] block.
+ *
+ * The created [BungeeCordPluginYaml] will inherit the project's name, version, and description.
+ *
+ * @param configure the block to configure the [BungeeCordPluginYaml] with
+ * @return the created and configured [BungeeCordPluginYaml]
+ */
 fun Project.bungeePluginYaml(configure: Action<BungeeCordPluginYaml> = nullAction()): BungeeCordPluginYaml {
     val yaml = BungeeCordPluginYaml(objects)
     yaml.setConventionsFromProjectMeta(this)

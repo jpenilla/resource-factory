@@ -28,6 +28,14 @@ import xyz.jpenilla.resourcefactory.util.orNullValidating
 import xyz.jpenilla.resourcefactory.util.validateAll
 import javax.inject.Inject
 
+/**
+ * Create a [PaperPluginYaml] and configure it with the given [configure] block.
+ *
+ * The created [PaperPluginYaml] will inherit the project's name, version, and description.
+ *
+ * @param configure the block to configure the [PaperPluginYaml] with
+ * @return the created and configured [PaperPluginYaml]
+ */
 fun Project.paperPluginYaml(configure: Action<PaperPluginYaml> = nullAction()): PaperPluginYaml {
     val yaml = PaperPluginYaml(objects)
     yaml.setConventionsFromProjectMeta(this)
@@ -107,11 +115,6 @@ class PaperPluginYaml constructor(
         configure.execute(dependencies)
     }
 
-    /**
-     * Copy the name, version, and description from the provided project.
-     *
-     * [project] project
-     */
     override fun setConventionsFromProjectMeta(project: Project) {
         name.convention(project.name)
         version.convention(project.version as String?)

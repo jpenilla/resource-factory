@@ -21,6 +21,14 @@ import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.validate
 
+/**
+ * Create a [VelocityPluginJson] and configure it with the given [configure] block.
+ *
+ * The created [VelocityPluginJson] will inherit the project's name (as [VelocityPluginJson.id] and [VelocityPluginJson.name]), version, and description.
+ *
+ * @param configure the block to configure the [VelocityPluginJson] with
+ * @return the created and configured [VelocityPluginJson]
+ */
 fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullAction()): VelocityPluginJson {
     val json = VelocityPluginJson(objects)
     json.setConventionsFromProjectMeta(this)

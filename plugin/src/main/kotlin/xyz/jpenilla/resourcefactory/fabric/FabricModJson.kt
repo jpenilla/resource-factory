@@ -29,6 +29,14 @@ import xyz.jpenilla.resourcefactory.util.validateAll
 import java.lang.reflect.Type
 import javax.inject.Inject
 
+/**
+ * Create a [FabricModJson] and configure it with the given [configure] block.
+ *
+ * The created [FabricModJson] will inherit the project's name (as [FabricModJson.id] and [FabricModJson.name]), version, and description.
+ *
+ * @param configure the block to configure the [FabricModJson] with
+ * @return the created and configured [FabricModJson]
+ */
 fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): FabricModJson {
     val json = FabricModJson(objects)
     json.setConventionsFromProjectMeta(this)
@@ -157,11 +165,6 @@ open class FabricModJson constructor(
     @get:Optional
     val icon: Property<Icon> = objects.property()
 
-    /**
-     * Copy the name, version, and description from the provided project.
-     *
-     * [project] project
-     */
     override fun setConventionsFromProjectMeta(project: Project) {
         id.convention(project.name)
         name.convention(project.name)

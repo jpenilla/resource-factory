@@ -13,16 +13,32 @@ import java.nio.file.Path
 import java.util.function.Function
 import javax.inject.Inject
 
+/**
+ * A factory that generates a single file using Configurate.
+ */
 abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory() {
+    /**
+     * The [ConfigurationLoader] factory to use.
+     */
     @get:Nested
     abstract val loaderFactory: Property<Function<Path, out ConfigurationLoader<*>>>
 
+    /**
+     * Use a YAML loader.
+     *
+     * @param configure the configuration of the loader
+     */
     fun yaml(configure: Action<YamlConfigurationLoader.Builder> = nullAction()) {
         loaderFactory.set(
             BuilderConfiguringLoaderFactory({ YamlConfigurationLoader.builder() }, configure)
         )
     }
 
+    /**
+     * Use a JSON loader.
+     *
+     * @param configure the configuration of the loader
+     */
     fun json(configure: Action<GsonConfigurationLoader.Builder> = nullAction()) {
         loaderFactory.set(
             BuilderConfiguringLoaderFactory({ GsonConfigurationLoader.builder() }, configure)
@@ -34,6 +50,12 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
         loader.save(generateRootNode(loader))
     }
 
+    /**
+     * Generate the root node of the configuration.
+     *
+     * @param loader the loader to use
+     * @return the root node
+     */
     abstract fun <N : ConfigurationNode> generateRootNode(loader: ConfigurationLoader<N>): N
 
     abstract class ObjectMapper @Inject constructor() : ConfigurateSingleFileResourceFactory() {
