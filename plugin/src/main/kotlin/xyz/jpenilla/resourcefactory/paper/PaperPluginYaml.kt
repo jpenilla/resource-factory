@@ -55,7 +55,7 @@ fun Project.paperPluginYaml(configure: Action<PaperPluginYaml> = nullAction()): 
 class PaperPluginYaml constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
         private const val PLUGIN_CLASS_PATTERN: String = "^(?!io\\.papermc\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$"
@@ -182,7 +182,7 @@ class PaperPluginYaml constructor(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.Simple::class)
         gen.yaml {
             defaultOptions {
                 it.serializers { s ->

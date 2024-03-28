@@ -58,7 +58,10 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
      */
     abstract fun <N : ConfigurationNode> generateRootNode(loader: ConfigurationLoader<N>): N
 
-    abstract class ObjectMapper @Inject constructor() : ConfigurateSingleFileResourceFactory() {
+    /**
+     * An extension of [ConfigurateSingleFileResourceFactory] for the simple case of serializing a single value.
+     */
+    abstract class Simple @Inject constructor() : ConfigurateSingleFileResourceFactory() {
         @get:Nested
         abstract val value: Property<ValueProvider>
 
@@ -84,7 +87,7 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
         }
 
         override fun toString(): String {
-            return ObjectMapper::class.java.name + "(path=${path.orNull}, value=${value.orNull})"
+            return Simple::class.java.name + "(path=${path.orNull}, value=${value.orNull})"
         }
     }
 

@@ -51,7 +51,7 @@ fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction())
 class BukkitPluginYaml(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
@@ -181,7 +181,7 @@ class BukkitPluginYaml(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.Simple::class)
         gen.yaml {
             defaultOptions {
                 it.serializers { s ->

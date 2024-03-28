@@ -56,7 +56,7 @@ fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): Fabr
 open class FabricModJson constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     companion object {
         private const val MOD_ID_PATTERN: String = "^[a-z][a-z0-9-_]{1,63}$"
@@ -284,7 +284,7 @@ open class FabricModJson constructor(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.Simple::class)
         gen.json {
             defaultOptions {
                 it.serializers { s ->

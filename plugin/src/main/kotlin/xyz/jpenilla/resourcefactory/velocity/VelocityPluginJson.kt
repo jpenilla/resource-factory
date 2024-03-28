@@ -49,7 +49,7 @@ fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullActio
 class VelocityPluginJson constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     companion object {
         private const val PLUGIN_ID_PATTERN: String = "[a-z][a-z0-9-_]{0,63}"
@@ -99,7 +99,7 @@ class VelocityPluginJson constructor(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val factory = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        val factory = objects.newInstance(ConfigurateSingleFileResourceFactory.Simple::class)
         factory.json()
         factory.path.set(FILE_NAME)
         factory.value.set(this)

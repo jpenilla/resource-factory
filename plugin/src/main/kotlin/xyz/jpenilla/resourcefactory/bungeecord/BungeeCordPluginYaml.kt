@@ -48,7 +48,7 @@ fun Project.bungeePluginYaml(configure: Action<BungeeCordPluginYaml> = nullActio
 class BungeeCordPluginYaml constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
@@ -93,7 +93,7 @@ class BungeeCordPluginYaml constructor(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val factory = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        val factory = objects.newInstance(ConfigurateSingleFileResourceFactory.Simple::class)
         factory.yaml { nodeStyle(NodeStyle.BLOCK) }
         factory.path.set(FILE_NAME)
         factory.value.set(this)
