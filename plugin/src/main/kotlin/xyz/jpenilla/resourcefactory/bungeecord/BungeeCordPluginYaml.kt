@@ -18,8 +18,7 @@ import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
-import xyz.jpenilla.resourcefactory.util.nullIfEmpty
-import xyz.jpenilla.resourcefactory.util.validateAll
+import xyz.jpenilla.resourcefactory.util.nullIfEmptyValidating
 
 fun Project.bungeePluginYaml(configure: Action<BungeeCordPluginYaml> = nullAction()): BungeeCordPluginYaml {
     val yaml = BungeeCordPluginYaml(objects)
@@ -58,9 +57,11 @@ class BungeeCordPluginYaml constructor(
     val author: Property<String> = objects.property()
 
     @get:Input
+    @Pattern(PLUGIN_NAME_PATTERN, "BungeeCord plugin name (of dependency)")
     val depends: SetProperty<String> = objects.setProperty()
 
     @get:Input
+    @Pattern(PLUGIN_NAME_PATTERN, "BungeeCord plugin name (of soft dependency)")
     val softDepends: SetProperty<String> = objects.setProperty()
 
     override fun asConfigSerializable(): Any {
@@ -87,8 +88,8 @@ class BungeeCordPluginYaml constructor(
         val main = yaml.main.get()
         val version = yaml.version.orNull
         val author = yaml.author.orNull
-        val depends = yaml.depends.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "BungeeCord plugin name (of dependency)")
-        val softDepends = yaml.softDepends.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "BungeeCord plugin name (of soft dependency)")
+        val depends = yaml::depends.nullIfEmptyValidating()
+        val softDepends = yaml::softDepends.nullIfEmptyValidating()
         val description = yaml.description.orNull
     }
 }

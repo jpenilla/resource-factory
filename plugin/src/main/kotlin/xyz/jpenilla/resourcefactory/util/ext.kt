@@ -2,10 +2,9 @@ package xyz.jpenilla.resourcefactory.util
 
 import org.gradle.api.GradleException
 import org.gradle.api.NamedDomainObjectContainer
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
-import org.gradle.api.provider.SetProperty
+import org.gradle.api.provider.Provider
 import org.intellij.lang.annotations.Language
 import java.util.regex.Pattern
 import kotlin.reflect.KProperty
@@ -13,9 +12,16 @@ import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.jvm.javaField
 import kotlin.reflect.jvm.javaGetter
 
-fun <T> ListProperty<T>.nullIfEmpty(): List<T>? = if (get().isEmpty()) null else get().toList()
+@Suppress("UNCHECKED_CAST")
+fun <T, C : Collection<T>> Provider<C>.nullIfEmpty(): C? = get().let {
+    if (it.isEmpty()) return@let null
 
-fun <T> SetProperty<T>.nullIfEmpty(): Set<T>? = if (get().isEmpty()) null else get().toSet()
+    return@let when (it) {
+        is List<*> -> it.toList()
+        is Set<*> -> it.toSet()
+        else -> return@let it
+    }
+} as C?
 
 fun <A, B> MapProperty<A, B>.nullIfEmpty(): Map<A, B>? = if (get().isEmpty()) null else get().toMap()
 
@@ -33,15 +39,10 @@ fun <T : Any?> KProperty<T>.orNullValidating(
     stringGetter: (T) -> String?,
 ): String? {
     val value = stringGetter(getter.call())
-    val declrCls = javaField?.declaringClass?.simpleName
-        ?: javaGetter?.declaringClass?.simpleName
-        ?: throw IllegalArgumentException("Cannot find owning class for property $this")
-    val fallbackDesc = "$declrCls.$name"
-    val annotation = findAnnotation<xyz.jpenilla.resourcefactory.util.Pattern>()
-        ?: throw GradleException("Property $fallbackDesc is not annotated with @Pattern.")
+    val annotation = patternAnnotation()
     return value?.validate(
         annotation.pattern,
-        annotation.description.takeIf { it.isNotBlank() } ?: fallbackDesc
+        annotation.description.takeIf { it.isNotBlank() } ?: fallbackDesc()
     )
 }
 
@@ -57,4 +58,27 @@ fun String.validate(@Language("RegExp") pattern: String, description: String): S
         throw GradleException("Invalid $description '$this', must match pattern '$pattern'.")
     }
     return this
+}
+
+fun <C : Collection<String>> xyz.jpenilla.resourcefactory.util.Pattern.validateAll(value: C): C =
+    value.validateAll(pattern, description)
+
+fun <T : Collection<String>> KProperty<Provider<T>>.nullIfEmptyValidating(): T? {
+    val value = getter.call().nullIfEmpty()
+    if (value != null) {
+        return patternAnnotation().validateAll(value)
+    }
+    return null
+}
+
+fun KProperty<*>.patternAnnotation(): xyz.jpenilla.resourcefactory.util.Pattern {
+    return findAnnotation<xyz.jpenilla.resourcefactory.util.Pattern>()
+        ?: throw GradleException("Property ${fallbackDesc()} is not annotated with @Pattern.")
+}
+
+private fun KProperty<*>.fallbackDesc(): String {
+    val declrCls = javaField?.declaringClass?.simpleName
+        ?: javaGetter?.declaringClass?.simpleName
+        ?: throw IllegalArgumentException("Cannot find owning class for property $this")
+    return "$declrCls.$name"
 }

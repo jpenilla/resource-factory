@@ -21,7 +21,7 @@ import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
-import xyz.jpenilla.resourcefactory.util.validateAll
+import xyz.jpenilla.resourcefactory.util.nullIfEmptyValidating
 import javax.inject.Inject
 
 fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction()): BukkitPluginYaml {
@@ -78,14 +78,17 @@ class BukkitPluginYaml(
 
     @get:Input
     @get:Optional
+    @Pattern(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of depend)")
     val depend: ListProperty<String> = objects.listProperty()
 
     @get:Input
     @get:Optional
+    @Pattern(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of softDepend)")
     val softDepend: ListProperty<String> = objects.listProperty()
 
     @get:Input
     @get:Optional
+    @Pattern(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of loadBefore)")
     val loadBefore: ListProperty<String> = objects.listProperty()
 
     @get:Input
@@ -102,6 +105,7 @@ class BukkitPluginYaml(
 
     @get:Input
     @get:Optional
+    @Pattern("([^: ]+):([^: ]+)(:([^: ]*)(:([^: ]+))?)?:([^: ]+)", "Bukkit plugin library")
     val libraries: ListProperty<String> = objects.listProperty()
 
     @get:Nested
@@ -193,13 +197,13 @@ class BukkitPluginYaml(
         val author = yaml.author.orNull
         val authors = yaml.authors.nullIfEmpty()
         val website = yaml.website.orNull
-        val depend = yaml.depend.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of depend)")
-        val softDepend = yaml.softDepend.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of softDepend)")
-        val loadBefore = yaml.loadBefore.nullIfEmpty()?.validateAll(PLUGIN_NAME_PATTERN, "Bukkit plugin name (of loadBefore)")
+        val depend = yaml::depend.nullIfEmptyValidating()
+        val softDepend = yaml::softDepend.nullIfEmptyValidating()
+        val loadBefore = yaml::loadBefore.nullIfEmptyValidating()
         val prefix = yaml.prefix.orNull
         val defaultPermission = yaml.defaultPermission.orNull
         val provides = yaml.provides.nullIfEmpty()
-        val libraries = yaml.libraries.nullIfEmpty()
+        val libraries = yaml::libraries.nullIfEmptyValidating()
         val commands = yaml.commands.nullIfEmpty()?.mapValues { (_, v) -> Command.Serializable(v) }
         val permissions = yaml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
         val foliaSupported = yaml.foliaSupported.orNull
