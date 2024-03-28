@@ -16,6 +16,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.yaml.NodeStyle
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
@@ -24,6 +25,14 @@ import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.nullIfEmptyValidating
 import javax.inject.Inject
 
+/**
+ * Create a [BukkitPluginYaml] and configure it with the given [configure] block.
+ *
+ * The created [BukkitPluginYaml] will inherit the project's name, version, and description.
+ *
+ * @param configure the block to configure the [BukkitPluginYaml] with
+ * @return the created and configured [BukkitPluginYaml]
+ */
 fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction()): BukkitPluginYaml {
     val yaml = BukkitPluginYaml(objects)
     yaml.setConventionsFromProjectMeta(this)
@@ -31,10 +40,18 @@ fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction())
     return yaml
 }
 
+/**
+ * A Bukkit `plugin.yml` configuration.
+ *
+ * See [Paper's plugin.yml documentation](https://docs.papermc.io/paper/dev/plugin-yml) for more information.
+ *
+ * @see [bukkitPluginYaml]
+ * @see [ResourceFactoryExtension.bukkitPluginYaml]
+ */
 class BukkitPluginYaml(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
@@ -123,11 +140,6 @@ class BukkitPluginYaml(
         POSTWORLD
     }
 
-    /**
-     * Copy the name, version, and description from the provided project.
-     *
-     * [project] project
-     */
     override fun setConventionsFromProjectMeta(project: Project) {
         name.convention(project.name)
         version.convention(project.version as String?)
@@ -169,7 +181,7 @@ class BukkitPluginYaml(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.Simple::class)
         gen.yaml {
             defaultOptions {
                 it.serializers { s ->

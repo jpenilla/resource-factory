@@ -20,6 +20,7 @@ import org.spongepowered.configurate.serialize.TypeSerializer
 import org.spongepowered.configurate.util.NamingSchemes
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
@@ -29,6 +30,14 @@ import xyz.jpenilla.resourcefactory.util.validateAll
 import java.lang.reflect.Type
 import javax.inject.Inject
 
+/**
+ * Create a [FabricModJson] and configure it with the given [configure] block.
+ *
+ * The created [FabricModJson] will inherit the project's name (as [FabricModJson.id] and [FabricModJson.name]), version, and description.
+ *
+ * @param configure the block to configure the [FabricModJson] with
+ * @return the created and configured [FabricModJson]
+ */
 fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): FabricModJson {
     val json = FabricModJson(objects)
     json.setConventionsFromProjectMeta(this)
@@ -36,10 +45,18 @@ fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): Fabr
     return json
 }
 
+/**
+ * A `fabric.mod.json` configuration.
+ *
+ * See [the official spec](https://fabricmc.net/wiki/documentation:fabric_mod_json_spec) for more information.
+ *
+ * @see [fabricModJson]
+ * @see [ResourceFactoryExtension.fabricModJson]
+ */
 open class FabricModJson constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     companion object {
         private const val MOD_ID_PATTERN: String = "^[a-z][a-z0-9-_]{1,63}$"
@@ -157,11 +174,6 @@ open class FabricModJson constructor(
     @get:Optional
     val icon: Property<Icon> = objects.property()
 
-    /**
-     * Copy the name, version, and description from the provided project.
-     *
-     * [project] project
-     */
     override fun setConventionsFromProjectMeta(project: Project) {
         id.convention(project.name)
         name.convention(project.name)
@@ -272,7 +284,7 @@ open class FabricModJson constructor(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.Simple::class)
         gen.json {
             defaultOptions {
                 it.serializers { s ->

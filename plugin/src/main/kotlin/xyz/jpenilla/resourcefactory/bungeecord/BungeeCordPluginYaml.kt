@@ -14,12 +14,21 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.yaml.NodeStyle
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmptyValidating
 
+/**
+ * Create a [BungeeCordPluginYaml] and configure it with the given [configure] block.
+ *
+ * The created [BungeeCordPluginYaml] will inherit the project's name, version, and description.
+ *
+ * @param configure the block to configure the [BungeeCordPluginYaml] with
+ * @return the created and configured [BungeeCordPluginYaml]
+ */
 fun Project.bungeePluginYaml(configure: Action<BungeeCordPluginYaml> = nullAction()): BungeeCordPluginYaml {
     val yaml = BungeeCordPluginYaml(objects)
     yaml.setConventionsFromProjectMeta(this)
@@ -27,10 +36,19 @@ fun Project.bungeePluginYaml(configure: Action<BungeeCordPluginYaml> = nullActio
     return yaml
 }
 
+/**
+ * A BungeeCord `plugin.yml`/`bungee.yml` configuration.
+ *
+ * Spigot does not provide official documentation for the BungeeCord plugin configuration format.
+ * However, there is [this wiki page.](https://www.spigotmc.org/wiki/create-your-first-bungeecord-plugin-proxy-spigotmc/#making-it-load)
+ *
+ * @see [bungeePluginYaml]
+ * @see [ResourceFactoryExtension.bungeePluginYaml]
+ */
 class BungeeCordPluginYaml constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
 
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
@@ -75,7 +93,7 @@ class BungeeCordPluginYaml constructor(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val factory = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        val factory = objects.newInstance(ConfigurateSingleFileResourceFactory.Simple::class)
         factory.yaml { nodeStyle(NodeStyle.BLOCK) }
         factory.path.set(FILE_NAME)
         factory.value.set(this)

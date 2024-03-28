@@ -12,9 +12,15 @@ import javax.inject.Inject
 import kotlin.io.path.createDirectories
 
 abstract class ExecuteResourceFactories : DefaultTask() {
+    /**
+     * The [ResourceFactory]s to execute.
+     */
     @get:Nested
     abstract val factories: ListProperty<ResourceFactory>
 
+    /**
+     * The directory to output generated resources to.
+     */
     @get:OutputDirectory
     abstract val outputDir: DirectoryProperty
 

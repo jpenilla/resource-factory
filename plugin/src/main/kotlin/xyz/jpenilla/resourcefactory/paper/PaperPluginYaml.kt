@@ -18,6 +18,7 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.yaml.NodeStyle
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
+import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
@@ -28,6 +29,14 @@ import xyz.jpenilla.resourcefactory.util.orNullValidating
 import xyz.jpenilla.resourcefactory.util.validateAll
 import javax.inject.Inject
 
+/**
+ * Create a [PaperPluginYaml] and configure it with the given [configure] block.
+ *
+ * The created [PaperPluginYaml] will inherit the project's name, version, and description.
+ *
+ * @param configure the block to configure the [PaperPluginYaml] with
+ * @return the created and configured [PaperPluginYaml]
+ */
 fun Project.paperPluginYaml(configure: Action<PaperPluginYaml> = nullAction()): PaperPluginYaml {
     val yaml = PaperPluginYaml(objects)
     yaml.setConventionsFromProjectMeta(this)
@@ -35,10 +44,18 @@ fun Project.paperPluginYaml(configure: Action<PaperPluginYaml> = nullAction()): 
     return yaml
 }
 
+/**
+ * A `paper-plugin.yml` configuration.
+ *
+ * See [the Paper docs](https://docs.papermc.io/paper/dev/getting-started/paper-plugins) for more information.
+ *
+ * @see [paperPluginYaml]
+ * @see [ResourceFactoryExtension.paperPluginYaml]
+ */
 class PaperPluginYaml constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.ObjectMapper.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
         private const val PLUGIN_CLASS_PATTERN: String = "^(?!io\\.papermc\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$"
@@ -107,11 +124,6 @@ class PaperPluginYaml constructor(
         configure.execute(dependencies)
     }
 
-    /**
-     * Copy the name, version, and description from the provided project.
-     *
-     * [project] project
-     */
     override fun setConventionsFromProjectMeta(project: Project) {
         name.convention(project.name)
         version.convention(project.version as String?)
@@ -170,7 +182,7 @@ class PaperPluginYaml constructor(
     }
 
     override fun resourceFactory(): ResourceFactory {
-        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.ObjectMapper::class)
+        val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.Simple::class)
         gen.yaml {
             defaultOptions {
                 it.serializers { s ->

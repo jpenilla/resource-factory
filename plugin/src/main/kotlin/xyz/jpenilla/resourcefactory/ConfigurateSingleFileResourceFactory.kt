@@ -1,6 +1,7 @@
 package xyz.jpenilla.resourcefactory
 
 import org.gradle.api.Action
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
 import org.spongepowered.configurate.ConfigurationNode
@@ -13,16 +14,32 @@ import java.nio.file.Path
 import java.util.function.Function
 import javax.inject.Inject
 
+/**
+ * A factory that generates a single file using Configurate.
+ */
 abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory() {
+    /**
+     * The [ConfigurationLoader] factory to use.
+     */
     @get:Nested
     abstract val loaderFactory: Property<Function<Path, out ConfigurationLoader<*>>>
 
+    /**
+     * Use a YAML loader.
+     *
+     * @param configure the configuration of the loader
+     */
     fun yaml(configure: Action<YamlConfigurationLoader.Builder> = nullAction()) {
         loaderFactory.set(
             BuilderConfiguringLoaderFactory({ YamlConfigurationLoader.builder() }, configure)
         )
     }
 
+    /**
+     * Use a JSON loader.
+     *
+     * @param configure the configuration of the loader
+     */
     fun json(configure: Action<GsonConfigurationLoader.Builder> = nullAction()) {
         loaderFactory.set(
             BuilderConfiguringLoaderFactory({ GsonConfigurationLoader.builder() }, configure)
@@ -34,12 +51,32 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
         loader.save(generateRootNode(loader))
     }
 
+    /**
+     * Generate the root node of the configuration.
+     *
+     * @param loader the loader to use
+     * @return the root node
+     */
     abstract fun <N : ConfigurationNode> generateRootNode(loader: ConfigurationLoader<N>): N
 
-    abstract class ObjectMapper @Inject constructor() : ConfigurateSingleFileResourceFactory() {
+    /**
+     * An extension of [ConfigurateSingleFileResourceFactory] for the simple case of serializing a single value.
+     */
+    abstract class Simple @Inject constructor() : ConfigurateSingleFileResourceFactory() {
+        /**
+         * Provides the value to serialize.
+         *
+         * @see ValueProvider
+         */
         @get:Nested
         abstract val value: Property<ValueProvider>
 
+        /**
+         * Sets a constant value, where the object satisfies both Gradle and Configurate's expectations.
+         *
+         * @see ValueProvider
+         * @see ConstantValueProvider
+         */
         fun value(value: Any) {
             this.value.set(ConstantValueProvider(value))
         }
@@ -50,7 +87,19 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
             return node
         }
 
+        /**
+         * Provides a serializable value. When using Gradle's [ObjectFactory] API, or lazy configuration system (i.e. [Property] APIs
+         * and task input annotations), it's not uncommon to end up with types that are not easily passed to serialization frameworks.
+         *
+         * [ValueProvider] avoids this problem by separating the Gradle and serialization models. The [ValueProvider] implementation
+         * satisfies the Gradle model, while the result of the [ValueProvider.asConfigSerializable] method satisfies the serialization model.
+         */
         fun interface ValueProvider {
+            /**
+             * Returns the serializable value.
+             *
+             * @return the serializable value
+             */
             fun asConfigSerializable(): Any
         }
 
@@ -62,7 +111,7 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
         }
 
         override fun toString(): String {
-            return ObjectMapper::class.java.name + "(path=${path.orNull}, value=${value.orNull})"
+            return Simple::class.java.name + "(path=${path.orNull}, value=${value.orNull})"
         }
     }
 
