@@ -22,6 +22,7 @@ import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.validateAll
+import javax.inject.Inject
 
 fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction()): BukkitPluginYaml {
     val yaml = BukkitPluginYaml(objects)
@@ -104,7 +105,7 @@ class BukkitPluginYaml(
     val libraries: ListProperty<String> = objects.listProperty()
 
     @get:Nested
-    val commands: NamedDomainObjectContainer<Command> = objects.domainObjectContainer(Command::class.java) { Command(it) }
+    val commands: NamedDomainObjectContainer<Command> = objects.domainObjectContainer(Command::class.java) { objects.newInstance<Command>(it) }
 
     @get:Nested
     val permissions: NamedDomainObjectContainer<Permission> = objects.domainObjectContainer(Permission::class.java) { Permission(objects, it) }
@@ -129,30 +130,38 @@ class BukkitPluginYaml(
         description.convention(project.description)
     }
 
-    @ConfigSerializable
-    data class Command(
-        @Transient
-        @Input val name: String
+    abstract class Command @Inject constructor(
+        @Input
+        val name: String
     ) {
-        @Input
-        @Optional
-        var description: String? = null
+        @get:Input
+        @get:Optional
+        abstract val description: Property<String>
 
-        @Input
-        @Optional
-        var aliases: List<String>? = null
+        @get:Input
+        @get:Optional
+        abstract val aliases: ListProperty<String>
 
-        @Input
-        @Optional
-        var permission: String? = null
+        @get:Input
+        @get:Optional
+        abstract val permission: Property<String>
 
-        @Input
-        @Optional
-        var permissionMessage: String? = null
+        @get:Input
+        @get:Optional
+        abstract val permissionMessage: Property<String>
 
-        @Input
-        @Optional
-        var usage: String? = null
+        @get:Input
+        @get:Optional
+        abstract val usage: Property<String>
+
+        @ConfigSerializable
+        class Serializable(command: Command) {
+            val description = command.description.orNull
+            val aliases = command.aliases.nullIfEmpty()
+            val permission = command.permission.orNull
+            val permissionMessage = command.permissionMessage.orNull
+            val usage = command.usage.orNull
+        }
     }
 
     override fun resourceFactory(): ResourceFactory {
@@ -191,7 +200,7 @@ class BukkitPluginYaml(
         val defaultPermission = yaml.defaultPermission.orNull
         val provides = yaml.provides.nullIfEmpty()
         val libraries = yaml.libraries.nullIfEmpty()
-        val commands = yaml.commands.nullIfEmpty()
+        val commands = yaml.commands.nullIfEmpty()?.mapValues { (_, v) -> Command.Serializable(v) }
         val permissions = yaml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
         val foliaSupported = yaml.foliaSupported.orNull
     }

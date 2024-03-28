@@ -33,6 +33,13 @@ bukkitPluginYaml {
         }
         register("another_permission")
     }
+    commands {
+        register("test-command") {
+            description = "A test command"
+            aliases = listOf("test-command-alias")
+            permission = "test-command-permission"
+        }
+    }
 }
 
 velocityPluginJson {
