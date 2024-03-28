@@ -1,9 +1,9 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
     `kotlin-dsl`
     alias(libs.plugins.gradle.plugin.publish)
-    alias(libs.plugins.indra)
+    alias(libs.plugins.indra) apply false
     alias(libs.plugins.indra.publishing.gradle.plugin)
     alias(libs.plugins.indra.licenser.spotless)
 }
@@ -24,24 +24,25 @@ dependencies {
 }
 
 kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
+    jvmToolchain(17)
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_1_8
+        freeCompilerArgs = listOf(
+            "-opt-in=kotlin.io.path.ExperimentalPathApi",
+            "-Xjvm-default=all",
+            "-Xjdk-release=1.8"
+        )
     }
 }
 
 tasks {
-    withType<KotlinCompile> {
-        kotlinOptions {
-            apiVersion = "1.4"
-            jvmTarget = "1.8"
-            freeCompilerArgs = listOf("-opt-in=kotlin.io.path.ExperimentalPathApi")
-        }
-    }
-
     register("format") {
         group = "formatting"
         description = "Formats source code according to project style."
         dependsOn(spotlessApply)
+    }
+    withType<JavaCompile>().configureEach {
+        options.release = 8
     }
 }
 
