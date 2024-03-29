@@ -100,6 +100,10 @@ class PaperPluginYaml constructor(
 
     @get:Input
     @get:Optional
+    val contributors: ListProperty<String> = objects.listProperty()
+
+    @get:Input
+    @get:Optional
     val website: Property<String> = objects.property()
 
     @get:Input
@@ -116,6 +120,11 @@ class PaperPluginYaml constructor(
 
     @get:Nested
     var dependencies: Dependencies = objects.newInstance(Dependencies::class)
+
+    @get:Input
+    @get:Optional
+    @Pattern(PLUGIN_NAME_PATTERN, "Paper plugin name (of provides)")
+    val provides: ListProperty<String> = objects.listProperty()
 
     @get:Nested
     val permissions: NamedDomainObjectContainer<Permission> = objects.domainObjectContainer(Permission::class) { Permission(objects, it) }
@@ -210,11 +219,13 @@ class PaperPluginYaml constructor(
         val description = yaml.description.orNull
         val author = yaml.author.orNull
         val authors = yaml.authors.nullIfEmpty()
+        val contributors = yaml.contributors.nullIfEmpty()
         val website = yaml.website.orNull
         val prefix = yaml.prefix.orNull
         val defaultPermission = yaml.defaultPermission.orNull
         val foliaSupported = yaml.foliaSupported.orNull
         val dependencies = SerializableDependencies.from(yaml.dependencies)
+        val provides = yaml.provides.nullIfEmpty()
         val permissions = yaml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
     }
 
