@@ -35,15 +35,18 @@ fun KProperty<Property<String>>.getValidating(): String =
 
 fun KProperty<Property<String>>.orNullValidating(): String? = orNullValidating { it.orNull }
 
-fun <T : Any?> KProperty<T>.orNullValidating(
+private fun <T : Any?> KProperty<T>.orNullValidating(
     stringGetter: (T) -> String?,
 ): String? {
     val value = stringGetter(getter.call())
     val annotation = patternAnnotation()
-    return value?.validate(
-        annotation.pattern,
-        annotation.description.takeIf { it.isNotBlank() } ?: fallbackDesc()
-    )
+    return value?.validate(annotation.pattern, annotation.description.takeIf { it.isNotBlank() } ?: fallbackDescription())
+}
+
+fun <T : Collection<String>> KProperty<Provider<T>>.nullIfEmptyValidating(): T? {
+    val value = getter.call().nullIfEmpty()
+    val annotation = patternAnnotation()
+    return value?.validateAll(annotation.pattern, annotation.description.takeIf { it.isNotBlank() } ?: fallbackDescription())
 }
 
 fun <C : Collection<String>> C.validateAll(@Language("RegExp") pattern: String, description: String): C = apply {
@@ -60,23 +63,11 @@ fun String.validate(@Language("RegExp") pattern: String, description: String): S
     return this
 }
 
-fun <C : Collection<String>> xyz.jpenilla.resourcefactory.util.Pattern.validateAll(value: C): C =
-    value.validateAll(pattern, description)
+private fun KProperty<*>.patternAnnotation(): xyz.jpenilla.resourcefactory.util.Pattern =
+    findAnnotation<xyz.jpenilla.resourcefactory.util.Pattern>()
+        ?: throw GradleException("Property ${fallbackDescription()} is not annotated with @Pattern.")
 
-fun <T : Collection<String>> KProperty<Provider<T>>.nullIfEmptyValidating(): T? {
-    val value = getter.call().nullIfEmpty()
-    if (value != null) {
-        return patternAnnotation().validateAll(value)
-    }
-    return null
-}
-
-fun KProperty<*>.patternAnnotation(): xyz.jpenilla.resourcefactory.util.Pattern {
-    return findAnnotation<xyz.jpenilla.resourcefactory.util.Pattern>()
-        ?: throw GradleException("Property ${fallbackDesc()} is not annotated with @Pattern.")
-}
-
-private fun KProperty<*>.fallbackDesc(): String {
+private fun KProperty<*>.fallbackDescription(): String {
     val declrCls = javaField?.declaringClass?.simpleName
         ?: javaGetter?.declaringClass?.simpleName
         ?: throw IllegalArgumentException("Cannot find owning class for property $this")
