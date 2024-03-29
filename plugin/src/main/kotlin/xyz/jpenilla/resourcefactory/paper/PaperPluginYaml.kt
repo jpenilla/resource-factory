@@ -25,6 +25,7 @@ import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.nullIfEmptyValidating
 import xyz.jpenilla.resourcefactory.util.orNullValidating
 import xyz.jpenilla.resourcefactory.util.validateAll
 import javax.inject.Inject
@@ -225,7 +226,7 @@ class PaperPluginYaml constructor(
         val defaultPermission = yaml.defaultPermission.orNull
         val foliaSupported = yaml.foliaSupported.orNull
         val dependencies = SerializableDependencies.from(yaml.dependencies)
-        val provides = yaml.provides.nullIfEmpty()
+        val provides = yaml::provides.nullIfEmptyValidating()
         val permissions = yaml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
     }
 
