@@ -12,6 +12,8 @@ object NullAction : Action<Any> {
 
 /**
  * Returns an action that does nothing.
+ *
+ * @return an action that does nothing
  */
 @Suppress("UNCHECKED_CAST")
 fun <T> nullAction(): Action<T> = NullAction as Action<T>
