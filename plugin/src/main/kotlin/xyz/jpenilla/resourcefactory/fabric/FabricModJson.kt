@@ -250,7 +250,7 @@ open class FabricModJson constructor(
         @get:Input
         abstract val extra: MapProperty<String, String>
 
-        fun asMap(): HashMap<String, String>? {
+        fun asMap(): Map<String, String>? {
             val map = hashMapOf<String, String>()
             email.takeIf { it.isPresent }?.let { map["email"] = it.get() }
             irc.takeIf { it.isPresent }?.let { map["irc"] = it.get() }
