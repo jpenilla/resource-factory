@@ -2,6 +2,8 @@ import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.fabric.Environment
+import kotlin.reflect.jvm.javaType
+import kotlin.reflect.typeOf
 
 plugins {
     java
@@ -63,11 +65,23 @@ fabricModJson {
     depends("some_other_mod", "*")
     apache2License()
 
-    custom("test_list", listOf("test1", "test2"))
-    custom("test_map", mapOf("key" to "value"))
-    custom("person", CustomData("Steve", 123))
-    custom("person_list", listOf(CustomData("Steve", 123), CustomData("Bob", 456)))
-    custom("person_map", mapOf("steve" to CustomData("Steve", 123), "bob" to CustomData("Bob", 456)))
+    custom("test_list", simpleCustomValueList(listOf("test1", "test2")))
+    custom("test_map", simpleCustomValueMap(mapOf("key" to "value")))
+    custom("person", complexCustomValue(CustomData("Steve", 123)))
+    custom(
+        "person_list",
+        typedComplexCustomValue(
+            typeOf<List<CustomData>>().javaType,
+            listOf(CustomData("Steve", 123), CustomData("Bob", 456))
+        )
+    )
+    custom(
+        "person_map",
+        typedComplexCustomValue(
+            typeOf<Map<String, CustomData>>().javaType,
+            mapOf("steve" to CustomData("Steve", 123), "bob" to CustomData("Bob", 456))
+        )
+    )
 }
 
 bungeePluginYaml {

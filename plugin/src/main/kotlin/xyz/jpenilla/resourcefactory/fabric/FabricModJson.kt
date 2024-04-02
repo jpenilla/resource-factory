@@ -1,5 +1,6 @@
 package xyz.jpenilla.resourcefactory.fabric
 
+import io.leangen.geantyref.TypeFactory
 import io.leangen.geantyref.TypeToken
 import org.gradle.api.Action
 import org.gradle.api.Project
@@ -18,7 +19,6 @@ import org.gradle.kotlin.dsl.property
 import org.spongepowered.configurate.ConfigurationNode
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.ObjectMapper
-import org.spongepowered.configurate.serialize.SerializationException
 import org.spongepowered.configurate.serialize.TypeSerializer
 import org.spongepowered.configurate.util.NamingSchemes
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
@@ -31,6 +31,7 @@ import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.validateAll
 import java.lang.reflect.Type
+import java.util.function.Function
 import javax.inject.Inject
 
 /**
@@ -178,20 +179,20 @@ open class FabricModJson constructor(
     val icon: Property<Icon> = objects.property()
 
     /**
-     * Allows configuring the `custom` field of the [FabricModJson].
+     * Configures the `custom` section of the [FabricModJson].
      *
-     * Supported types include lists, sets, string-keyed maps, and plain objects.
-     *
-     * For objects with generic type information, a [TypedCustomValue] must be used
-     * for the proper serializer to be located.
-     *
-     * [TypedCustomValue] may also be used as values in maps, lists, and sets.
+     * @see [simpleCustomValue]
+     * @see [typedSimpleCustomValue]
+     * @see [complexCustomValue]
+     * @see [typedComplexCustomValue]
+     * @see [simpleCustomValueMap]
+     * @see [simpleCustomValueList]
      */
     @get:Nested
     @get:Optional
-    val custom: MapProperty<String, Any> = objects.mapProperty()
+    val custom: MapProperty<String, CustomValueProvider<*>> = objects.mapProperty()
 
-    fun custom(key: String, value: Any) = custom.put(key, value)
+    fun <T : Any> custom(name: String, value: CustomValueProvider<T>) = custom.put(name, value)
 
     override fun setConventionsFromProjectMeta(project: Project) {
         id.convention(project.name)
@@ -313,7 +314,7 @@ open class FabricModJson constructor(
                                 .defaultNamingScheme(NamingSchemes.PASSTHROUGH)
                                 .build()
                         )
-                        .register(object : TypeToken<Map<String, Any>>() {}, CustomSerializer)
+                        .register(object : TypeToken<CustomValueProvider<*>>() {}, CustomValueProviderSerializer)
                         .register(Icon::class.java, Icon.Serializer)
                 }
             }
@@ -376,60 +377,140 @@ open class FabricModJson constructor(
         val contact: Map<String, String>?
     )
 
-    abstract class TypedCustomValue<T>(
+    abstract class CustomValueProvider<T : Any>(
         @get:Internal
-        val type: TypeToken<T>
+        val type: Type?
     ) {
         abstract fun value(): T
     }
 
-    class ConstantTypedCustomValue<T>(
-        type: TypeToken<T>,
-        @get:Nested
-        val value: T
-    ) : TypedCustomValue<T>(type) {
-        override fun value(): T = value
-    }
+    /**
+     * Creates a value provider for a complex value. The value is exposed to Gradle as a nested property,
+     * and the mapper function is used to extract the serializable value.
+     *
+     * @param V the type of the complex value
+     * @param S the type of the serializable value
+     * @param value complex value
+     * @param mapper mapper from complex value to serializable value
+     * @return the created value provider
+     */
+    fun <V : Any, S : Any> complexCustomValue(value: V, mapper: Function<V, S>): CustomValueProvider<S> =
+        typedComplexCustomValue(null, value, mapper)
 
-    object CustomSerializer : TypeSerializer<Map<String, Any>> {
-        override fun deserialize(type: Type?, node: ConfigurationNode?): Map<String, Any> {
+    /**
+     * Creates a value provider for a complex value that satisfies Configurate and Gradle's task input model.
+     * The value is exposed to Gradle as a nested property.
+     *
+     * @param V the type of the complex value
+     * @param value complex value
+     * @return the created value provider
+     */
+    fun <V : Any> complexCustomValue(value: V): CustomValueProvider<V> =
+        typedComplexCustomValue(null, value) { it }
+
+    /**
+     * Creates a value provider for a complex value. The value is exposed to Gradle as a nested property,
+     * and the mapper function is used to extract the serializable value.
+     *
+     * This 'typed' variant is useful when the serialized type has a generic parameter.
+     *
+     * @param V the type of the complex value
+     * @param S the type of the serializable value
+     * @param value complex value
+     * @param mapper mapper from complex value to serializable value
+     * @return the created value provider
+     */
+    fun <V : Any, S : Any> typedComplexCustomValue(type: Type?, value: V, mapper: Function<V, S>): CustomValueProvider<S> =
+        object : CustomValueProvider<S>(type) {
+            @get:Nested
+            val value = value
+
+            @get:Nested
+            val mapper = mapper
+
+            override fun value(): S = this.mapper.apply(this.value)
+        }
+
+    /**
+     * Creates a value provider for a complex value that satisfies Configurate and Gradle's task input model.
+     * The value is exposed to Gradle as a nested property.
+     *
+     * This 'typed' variant is useful when the serialized type has a generic parameter.
+     *
+     * @param V the type of the complex value
+     * @param value complex value
+     * @return the created value provider
+     */
+    fun <V : Any> typedComplexCustomValue(type: Type?, value: V): CustomValueProvider<V> =
+        typedComplexCustomValue(type, value) { it }
+
+    /**
+     * Creates a value provider for a simple value. The value is exposed to Gradle as an input property.
+     *
+     * @param T the type of the value
+     * @param value the simple value
+     * @return the created value provider
+     */
+    fun <T : Any> simpleCustomValue(value: T): CustomValueProvider<T> =
+        typedSimpleCustomValue(null, value)
+
+    /**
+     * Creates a value provider for a simple value. The value is exposed to Gradle as an input property.
+     *
+     * This 'typed' variant is useful when the serialized type has a generic parameter.
+     *
+     * @param T the type of the value
+     * @param value the simple value
+     * @return the created value provider
+     */
+    fun <T : Any> typedSimpleCustomValue(type: Type?, value: T): CustomValueProvider<T> =
+        object : CustomValueProvider<T>(type) {
+            @get:Input
+            val value = value
+
+            override fun value(): T {
+                return this.value
+            }
+        }
+
+    /**
+     * Creates a value provider for a simple map value.
+     *
+     * @param K the type of the map key
+     * @param V the type of the map value
+     * @param value the simple map
+     * @return the created value provider
+     * @see [typedSimpleCustomValue]
+     */
+    inline fun <reified K : Any, reified V : Any> simpleCustomValueMap(value: Map<K, V>): CustomValueProvider<Map<K, V>> =
+        typedSimpleCustomValue(TypeFactory.parameterizedClass(Map::class.java, K::class.java, V::class.java), value)
+
+    /**
+     * Creates a value provider for a simple list value.
+     *
+     * @param V the type of the list value
+     * @param value the simple list
+     * @return the created value provider
+     * @see [typedSimpleCustomValue]
+     */
+    inline fun <reified V : Any> simpleCustomValueList(value: List<V>): CustomValueProvider<List<V>> =
+        typedSimpleCustomValue(TypeFactory.parameterizedClass(List::class.java, V::class.java), value)
+
+    object CustomValueProviderSerializer : TypeSerializer<CustomValueProvider<*>> {
+        override fun deserialize(type: Type?, node: ConfigurationNode?): CustomValueProvider<*> {
             throw UnsupportedOperationException()
         }
 
-        @Suppress("UNCHECKED_CAST")
-        override fun serialize(type: Type, obj: Map<String, Any>?, node: ConfigurationNode) {
-            obj?.forEach { (k, v) ->
-                val n = node.node(k)
-                when (v) {
-                    is TypedCustomValue<*> -> n.set(v.type.type, v.value())
-                    is Collection<*> -> {
-                        if (v.isEmpty()) {
-                            n.setList(String::class.java, emptyList<String>())
-                        } else {
-                            v.forEach {
-                                if (it is TypedCustomValue<*>) {
-                                    n.appendListNode().set(it.type.type, it.value())
-                                } else {
-                                    n.appendListNode().set(it)
-                                }
-                            }
-                        }
-                    }
-
-                    is Map<*, *> -> {
-                        if (v.isEmpty()) {
-                            n.set(object : TypeToken<Map<String, String>>() {}, emptyMap())
-                        } else {
-                            val first = v.entries.first()
-                            if (first.key!!::class.java != String::class.java) {
-                                throw SerializationException("Must use TypedCustomValue for non-String map keys ($v)")
-                            }
-                            serialize(type, v as Map<String, Any>?, n)
-                        }
-                    }
-
-                    else -> n.set(v)
+        override fun serialize(type: Type, obj: CustomValueProvider<*>?, node: ConfigurationNode) {
+            if (obj != null) {
+                if (obj.type == null) {
+                    val value = obj.value()
+                    node.set(value::class.java, value)
+                } else {
+                    node.set(obj.type, obj.value())
                 }
+            } else {
+                node.set(null)
             }
         }
     }
