@@ -1,5 +1,6 @@
 package xyz.jpenilla.resourcefactory.fabric
 
+import io.leangen.geantyref.TypeToken
 import org.gradle.api.Action
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
@@ -7,6 +8,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.kotlin.dsl.listProperty
@@ -16,6 +18,7 @@ import org.gradle.kotlin.dsl.property
 import org.spongepowered.configurate.ConfigurationNode
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.ObjectMapper
+import org.spongepowered.configurate.serialize.SerializationException
 import org.spongepowered.configurate.serialize.TypeSerializer
 import org.spongepowered.configurate.util.NamingSchemes
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
@@ -174,6 +177,22 @@ open class FabricModJson constructor(
     @get:Optional
     val icon: Property<Icon> = objects.property()
 
+    /**
+     * Allows configuring the `custom` field of the [FabricModJson].
+     *
+     * Supported types include lists, sets, string-keyed maps, and plain objects.
+     *
+     * For objects with generic type information, a [TypedCustomValue] must be used
+     * for the proper serializer to be located.
+     *
+     * [TypedCustomValue] may also be used as values in maps, lists, and sets.
+     */
+    @get:Nested
+    @get:Optional
+    val custom: MapProperty<String, Any> = objects.mapProperty()
+
+    fun custom(key: String, value: Any) = custom.put(key, value)
+
     override fun setConventionsFromProjectMeta(project: Project) {
         id.convention(project.name)
         name.convention(project.name)
@@ -294,6 +313,7 @@ open class FabricModJson constructor(
                                 .defaultNamingScheme(NamingSchemes.PASSTHROUGH)
                                 .build()
                         )
+                        .register(object : TypeToken<Map<String, Any>>() {}, CustomSerializer)
                         .register(Icon::class.java, Icon.Serializer)
                 }
             }
@@ -335,6 +355,7 @@ open class FabricModJson constructor(
                 it.icons.keys.validateAll("^[1-9][0-9]*$", "Icon key")
             }
         }
+        val custom = fmj.custom.nullIfEmpty()
     }
 
     @ConfigSerializable
@@ -354,4 +375,62 @@ open class FabricModJson constructor(
         val name: String,
         val contact: Map<String, String>?
     )
+
+    abstract class TypedCustomValue<T>(
+        @get:Internal
+        val type: TypeToken<T>
+    ) {
+        abstract fun value(): T
+    }
+
+    class ConstantTypedCustomValue<T>(
+        type: TypeToken<T>,
+        @get:Nested
+        val value: T
+    ) : TypedCustomValue<T>(type) {
+        override fun value(): T = value
+    }
+
+    object CustomSerializer : TypeSerializer<Map<String, Any>> {
+        override fun deserialize(type: Type?, node: ConfigurationNode?): Map<String, Any> {
+            throw UnsupportedOperationException()
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        override fun serialize(type: Type, obj: Map<String, Any>?, node: ConfigurationNode) {
+            obj?.forEach { (k, v) ->
+                val n = node.node(k)
+                when (v) {
+                    is TypedCustomValue<*> -> n.set(v.type.type, v.value())
+                    is Collection<*> -> {
+                        if (v.isEmpty()) {
+                            n.setList(String::class.java, emptyList<String>())
+                        } else {
+                            v.forEach {
+                                if (it is TypedCustomValue<*>) {
+                                    n.appendListNode().set(it.type.type, it.value())
+                                } else {
+                                    n.appendListNode().set(it)
+                                }
+                            }
+                        }
+                    }
+
+                    is Map<*, *> -> {
+                        if (v.isEmpty()) {
+                            n.set(object : TypeToken<Map<String, String>>() {}, emptyMap())
+                        } else {
+                            val first = v.entries.first()
+                            if (first.key!!::class.java != String::class.java) {
+                                throw SerializationException("Must use TypedCustomValue for non-String map keys ($v)")
+                            }
+                            serialize(type, v as Map<String, Any>?, n)
+                        }
+                    }
+
+                    else -> n.set(v)
+                }
+            }
+        }
+    }
 }

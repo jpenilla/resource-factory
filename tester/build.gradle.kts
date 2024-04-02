@@ -62,6 +62,12 @@ fabricModJson {
     icon("icon.png")
     depends("some_other_mod", "*")
     apache2License()
+
+    custom("test_list", listOf("test1", "test2"))
+    custom("test_map", mapOf("key" to "value"))
+    custom("person", CustomData("Steve", 123))
+    custom("person_list", listOf(CustomData("Steve", 123), CustomData("Bob", 456)))
+    custom("person_map", mapOf("steve" to CustomData("Steve", 123), "bob" to CustomData("Bob", 456)))
 }
 
 bungeePluginYaml {
