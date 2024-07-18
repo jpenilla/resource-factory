@@ -122,6 +122,7 @@ class VelocityPluginJson constructor(
         val version = json.version.orNull
         val description = json.description.orNull
         val url = json.url.orNull
+        val authors = json.authors.nullIfEmpty()
         val dependencies = json.dependencies.nullIfEmpty()?.onEach { it::id.validate() }
         val main = json.main.get()
     }
