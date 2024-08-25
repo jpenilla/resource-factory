@@ -23,6 +23,7 @@ import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.nullIfEmptyValidating
+import xyz.jpenilla.resourcefactory.util.orNullValidating
 import javax.inject.Inject
 
 /**
@@ -55,6 +56,7 @@ class BukkitPluginYaml(
 
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
+        private const val PLUGIN_CLASS_PATTERN: String = "^(?!org\\.bukkit\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$"
         private const val FILE_NAME: String = "plugin.yml"
     }
 
@@ -69,7 +71,7 @@ class BukkitPluginYaml(
     @get:Input
     val version: Property<String> = objects.property()
 
-    @Pattern("^(?!org\\.bukkit\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$", "Bukkit plugin main class name")
+    @Pattern(PLUGIN_CLASS_PATTERN, "Bukkit plugin main class name")
     @get:Input
     val main: Property<String> = objects.property()
 
@@ -134,6 +136,15 @@ class BukkitPluginYaml(
     @get:Input
     @get:Optional
     val foliaSupported: Property<Boolean> = objects.property()
+
+    @get:Input
+    @get:Optional
+    @Pattern(PLUGIN_CLASS_PATTERN, "Paper plugin loader class name")
+    val paperPluginLoader: Property<String> = objects.property()
+
+    @get:Input
+    @get:Optional
+    val paperSkipLibraries: Property<Boolean> = objects.property()
 
     enum class PluginLoadOrder {
         STARTUP,
@@ -219,5 +230,7 @@ class BukkitPluginYaml(
         val commands = yaml.commands.nullIfEmpty()?.mapValues { (_, v) -> Command.Serializable(v) }
         val permissions = yaml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
         val foliaSupported = yaml.foliaSupported.orNull
+        val paperPluginLoader = yaml::paperPluginLoader.orNullValidating()
+        val paperSkipLibraries = yaml.paperSkipLibraries.orNull
     }
 }
