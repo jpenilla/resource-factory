@@ -210,8 +210,8 @@ class BukkitPluginYaml(
         val authors = yaml.authors.nullIfEmpty()
         val website = yaml.website.orNull
         val depend = yaml::depend.nullIfEmptyValidating()
-        val softDepend = yaml::softDepend.nullIfEmptyValidating()
-        val loadBefore = yaml::loadBefore.nullIfEmptyValidating()
+        val softdepend = yaml::softDepend.nullIfEmptyValidating()
+        val loadbefore = yaml::loadBefore.nullIfEmptyValidating()
         val prefix = yaml.prefix.orNull
         val defaultPermission = yaml.defaultPermission.orNull
         val provides = yaml.provides.nullIfEmpty()
