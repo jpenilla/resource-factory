@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "xyz.jpenilla"
-version = "1.2.1-SNAPSHOT"
+version = "1.2.1"
 description = "Gradle plugin for generating resources at build time"
 
 repositories {
