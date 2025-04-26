@@ -88,8 +88,8 @@ class BungeeCordPluginYaml constructor(
 
     override fun setConventionsFromProjectMeta(project: Project) {
         name.convention(project.name)
+        version.convention(project.version.toString())
         description.convention(project.description)
-        version.convention(project.version as String?)
     }
 
     override fun resourceFactory(): ResourceFactory {

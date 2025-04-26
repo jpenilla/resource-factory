@@ -136,7 +136,7 @@ class PaperPluginYaml constructor(
 
     override fun setConventionsFromProjectMeta(project: Project) {
         name.convention(project.name)
-        version.convention(project.version as String?)
+        version.convention(project.version.toString())
         description.convention(project.description)
     }
 

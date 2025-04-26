@@ -197,7 +197,7 @@ open class FabricModJson constructor(
     override fun setConventionsFromProjectMeta(project: Project) {
         id.convention(project.name)
         name.convention(project.name)
-        version.convention(project.version as String?)
+        version.convention(project.version.toString())
         description.convention(project.description)
     }
 
