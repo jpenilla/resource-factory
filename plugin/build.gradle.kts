@@ -21,6 +21,9 @@ repositories {
 dependencies {
     implementation(libs.configurateYaml)
     implementation(libs.configurateGson)
+    implementation(libs.jtoml)
+    implementation(libs.jtomlGson)
+    implementation(libs.gson)
 }
 
 kotlin {
@@ -127,5 +130,12 @@ indraPluginPublishing {
         "Resource Factory Fabric Convention",
         "Convention for xyz.jpenilla.resource-factory, registers a FabricModJson to the main source set and adds it as the fabricModJson extension",
         tags("fabric")
+    )
+    plugin(
+        "resource-factory-neoforge-convention",
+        "xyz.jpenilla.resourcefactory.neoforge.NeoForgeConvention",
+        "Resource Factory NeoForge Convention",
+        "Convention for xyz.jpenilla.resource-factory, registers a NeoForgeModsToml to the main source set and adds it as the neoForgeModsToml extension",
+        tags("neoforge")
     )
 }

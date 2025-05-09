@@ -4,25 +4,40 @@ import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Nested
+import org.jetbrains.annotations.ApiStatus
 import org.spongepowered.configurate.ConfigurationNode
 import org.spongepowered.configurate.gson.GsonConfigurationLoader
 import org.spongepowered.configurate.loader.AbstractConfigurationLoader
 import org.spongepowered.configurate.loader.ConfigurationLoader
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
+import xyz.jpenilla.resourcefactory.util.TomlConfigurationWriter
 import xyz.jpenilla.resourcefactory.util.nullAction
 import java.nio.file.Path
-import java.util.function.Function
 import javax.inject.Inject
 
 /**
  * A factory that generates a single file using Configurate.
  */
 abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory() {
+
     /**
-     * The [ConfigurationLoader] factory to use.
+     * Creates a [ConfigurationLoader] for any given path.
+     */
+    interface LoaderFactory {
+
+        /**
+         * Creates a [ConfigurationLoader] for the given path.
+         *
+         * @param path the path to create the loader for
+         */
+        fun createLoader(path: Path): ConfigurationLoader<*>
+    }
+
+    /**
+     * The [LoaderFactory] to use.
      */
     @get:Nested
-    abstract val loaderFactory: Property<Function<Path, out ConfigurationLoader<*>>>
+    abstract val loaderFactory: Property<LoaderFactory>
 
     /**
      * Use a YAML loader.
@@ -46,8 +61,18 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
         )
     }
 
+    /**
+     * Use a TOML loader.
+     *
+     * @param configure the configuration of the loader
+     */
+    @ApiStatus.Experimental
+    fun toml(configure: Action<GsonConfigurationLoader.Builder> = nullAction()) {
+        loaderFactory.set(TomlConfigurationWriter.Factory(configure))
+    }
+
     override fun generateSingleFile(outputFile: Path) {
-        val loader = loaderFactory.get().apply(outputFile)
+        val loader = loaderFactory.get().createLoader(outputFile)
         loader.save(generateRootNode(loader))
     }
 
@@ -119,10 +144,10 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
         @get:Nested
         val builderFactory: () -> B,
         @get:Nested
-        val configure: Action<B>
-    ) : Function<Path, L> {
-        override fun apply(path: Path): L = builderFactory()
-            .also { configure.execute(it) }
+        val userConfigure: Action<B>,
+    ) : LoaderFactory {
+        override fun createLoader(path: Path): ConfigurationLoader<*> = builderFactory()
+            .also { userConfigure.execute(it) }
             .path(path)
             .build()
     }

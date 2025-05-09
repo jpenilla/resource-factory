@@ -12,6 +12,7 @@ plugins {
     id("xyz.jpenilla.resource-factory-bungee-convention")
     id("xyz.jpenilla.resource-factory-velocity-convention")
     id("xyz.jpenilla.resource-factory-fabric-convention")
+    id("xyz.jpenilla.resource-factory-neoforge-convention")
 }
 
 version = "0.0.1-test"
@@ -82,6 +83,23 @@ fabricModJson {
             mapOf("steve" to CustomData("Steve", 123), "bob" to CustomData("Bob", 456))
         )
     )
+}
+
+neoForgeModsToml {
+    loaderVersion = "*"
+    apache2License()
+    mod("tester") {
+        setConventionsFromProjectMeta(project)
+        dependencies {
+            required("minecraft", "1.21.5") {
+                reason = "Minecraft"
+                after()
+            }
+            optional("moonrise")
+        }
+    }
+    accessTransformers("a.cfg", "b.cfg")
+    mixin("tester.mixins.json")
 }
 
 bungeePluginYaml {
