@@ -9,15 +9,37 @@ import org.spongepowered.configurate.serialize.TypeSerializer
 import java.lang.reflect.Type
 import java.util.function.Function
 
+/**
+ * A [CustomValueProvider] satisfies the Gradle task input model while also providing a
+ * serializable [value], optionally with a [type] (for generic values).
+ *
+ * @param T serialized value type
+ * @see CustomValueFactory
+ * @see ConfigurateCustomValueProviderSerializer
+ */
 abstract class CustomValueProvider<T : Any>(
     @get:Internal
     val type: Type?
 ) {
+    /**
+     * Returns the serializable value.
+     *
+     * @return the serializable value
+     */
     abstract fun value(): T
 }
 
+/**
+ * Singleton [CustomValueFactory].
+ */
 object CustomValues : CustomValueFactory()
 
+/**
+ * Factory for creating common types of [CustomValueProvider]s. Build script objects may inherit from this class
+ * to provide its methods in the build script DSL.
+ *
+ * @see CustomValues
+ */
 abstract class CustomValueFactory {
     protected constructor()
 
@@ -163,7 +185,10 @@ abstract class CustomValueFactory {
         simpleCustomValueList(V::class.java, value)
 }
 
-object CustomValueProviderSerializer : TypeSerializer<CustomValueProvider<*>> {
+/**
+ * Configurate serializer for [CustomValueProvider]s.
+ */
+object ConfigurateCustomValueProviderSerializer : TypeSerializer<CustomValueProvider<*>> {
     override fun deserialize(type: Type?, node: ConfigurationNode?): CustomValueProvider<*> {
         throw UnsupportedOperationException()
     }

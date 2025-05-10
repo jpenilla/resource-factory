@@ -26,9 +26,9 @@ import org.spongepowered.configurate.util.NamingSchemes
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
+import xyz.jpenilla.resourcefactory.util.ConfigurateCustomValueProviderSerializer
 import xyz.jpenilla.resourcefactory.util.CustomValueFactory
 import xyz.jpenilla.resourcefactory.util.CustomValueProvider
-import xyz.jpenilla.resourcefactory.util.CustomValueProviderSerializer
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
@@ -412,7 +412,7 @@ abstract class NeoForgeModsToml @Inject constructor(
                             .defaultNamingScheme(NamingSchemes.PASSTHROUGH)
                             .build()
                     )
-                        .register(object : TypeToken<CustomValueProvider<*>>() {}, CustomValueProviderSerializer)
+                        .register(object : TypeToken<CustomValueProvider<*>>() {}, ConfigurateCustomValueProviderSerializer)
                 }
             }
         }
