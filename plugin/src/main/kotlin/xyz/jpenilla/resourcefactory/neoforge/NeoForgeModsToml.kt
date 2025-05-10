@@ -283,8 +283,6 @@ open class NeoForgeModsToml constructor(
         val referralUrl: Property<String> = objects.property()
     }
 
-    // TODO: Serialize names lowercase
-
     enum class DependencyType {
         REQUIRED,
         OPTIONAL,
@@ -423,7 +421,7 @@ open class NeoForgeModsToml constructor(
     @ConfigSerializable
     open class SerializableDependency(dep: Dependency) {
         val modId: String = dep.modId.get()
-        val type: DependencyType? = dep.type.orNull
+        val type: String? = dep.type.orNull?.name?.lowercase()
         val reason: String? = dep.reason.orNull
         val versionRange: String? = dep.versionRange.orNull
         val ordering: DependencyOrdering? = dep.ordering.orNull
