@@ -35,7 +35,7 @@ import javax.inject.Inject
  * @return the created and configured [BukkitPluginYaml]
  */
 fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction()): BukkitPluginYaml {
-    val yaml = BukkitPluginYaml(objects)
+    val yaml = objects.newInstance<BukkitPluginYaml>()
     yaml.setConventionsFromProjectMeta(this)
     configure.execute(yaml)
     return yaml
@@ -49,7 +49,7 @@ fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction())
  * @see [bukkitPluginYaml]
  * @see [ResourceFactoryExtension.bukkitPluginYaml]
  */
-class BukkitPluginYaml(
+abstract class BukkitPluginYaml @Inject constructor(
     @Transient
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {

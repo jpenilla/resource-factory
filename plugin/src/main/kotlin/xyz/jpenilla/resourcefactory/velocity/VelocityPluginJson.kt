@@ -21,6 +21,7 @@ import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
 import xyz.jpenilla.resourcefactory.util.validate
+import javax.inject.Inject
 
 /**
  * Create a [VelocityPluginJson] and configure it with the given [configure] block.
@@ -31,7 +32,7 @@ import xyz.jpenilla.resourcefactory.util.validate
  * @return the created and configured [VelocityPluginJson]
  */
 fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullAction()): VelocityPluginJson {
-    val json = VelocityPluginJson(objects)
+    val json = objects.newInstance<VelocityPluginJson>()
     json.setConventionsFromProjectMeta(this)
     configure.execute(json)
     return json
@@ -46,7 +47,7 @@ fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullActio
  * @see [velocityPluginJson]
  * @see [ResourceFactoryExtension.velocityPluginJson]
  */
-class VelocityPluginJson constructor(
+abstract class VelocityPluginJson @Inject constructor(
     @Transient
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {

@@ -12,6 +12,8 @@ import xyz.jpenilla.resourcefactory.bungeecord.BungeeCordPluginYaml
 import xyz.jpenilla.resourcefactory.bungeecord.bungeePluginYaml
 import xyz.jpenilla.resourcefactory.fabric.FabricModJson
 import xyz.jpenilla.resourcefactory.fabric.fabricModJson
+import xyz.jpenilla.resourcefactory.neoforge.NeoForgeModsToml
+import xyz.jpenilla.resourcefactory.neoforge.neoForgeModsToml
 import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 import xyz.jpenilla.resourcefactory.paper.paperPluginYaml
 import xyz.jpenilla.resourcefactory.velocity.VelocityPluginJson
@@ -136,6 +138,18 @@ abstract class ResourceFactoryExtension @Inject constructor(
      */
     fun fabricModJson(configure: Action<FabricModJson>): FabricModJson {
         val config = project.fabricModJson(configure)
+        factory(config.resourceFactory())
+        return config
+    }
+
+    /**
+     * Create a [NeoForgeModsToml] and add it to the source set, configured with the given [configure] block.
+     *
+     * @param configure the block to configure the [NeoForgeModsToml] with
+     * @return the created and configured [NeoForgeModsToml]
+     */
+    fun neoForgeModsToml(configure: Action<NeoForgeModsToml>): NeoForgeModsToml {
+        val config = project.neoForgeModsToml(configure)
         factory(config.resourceFactory())
         return config
     }

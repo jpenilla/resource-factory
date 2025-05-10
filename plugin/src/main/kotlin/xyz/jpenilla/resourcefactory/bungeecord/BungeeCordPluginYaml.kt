@@ -20,6 +20,7 @@ import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.getValidating
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmptyValidating
+import javax.inject.Inject
 
 /**
  * Create a [BungeeCordPluginYaml] and configure it with the given [configure] block.
@@ -30,7 +31,7 @@ import xyz.jpenilla.resourcefactory.util.nullIfEmptyValidating
  * @return the created and configured [BungeeCordPluginYaml]
  */
 fun Project.bungeePluginYaml(configure: Action<BungeeCordPluginYaml> = nullAction()): BungeeCordPluginYaml {
-    val yaml = BungeeCordPluginYaml(objects)
+    val yaml = objects.newInstance<BungeeCordPluginYaml>()
     yaml.setConventionsFromProjectMeta(this)
     configure.execute(yaml)
     return yaml
@@ -45,7 +46,7 @@ fun Project.bungeePluginYaml(configure: Action<BungeeCordPluginYaml> = nullActio
  * @see [bungeePluginYaml]
  * @see [ResourceFactoryExtension.bungeePluginYaml]
  */
-class BungeeCordPluginYaml constructor(
+abstract class BungeeCordPluginYaml @Inject constructor(
     @Transient
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
