@@ -88,8 +88,7 @@ fabricModJson {
 neoForgeModsToml {
     loaderVersion = "*"
     apache2License()
-    mod("tester") {
-        setConventionsFromProjectMeta(project)
+    conventionMod {
         dependencies {
             required("minecraft", "1.21.5") {
                 reason = "Minecraft"
@@ -107,6 +106,10 @@ neoForgeModsToml {
             )
         )
     }
+    mod("my_mod_id") {
+        setConventionsFromProjectMeta(project)
+    }
+    mods.register("my_other_mod_id")
     accessTransformers("a.cfg", "b.cfg")
     mixin("tester.mixins.json")
     custom.put(

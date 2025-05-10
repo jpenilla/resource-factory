@@ -108,7 +108,8 @@ abstract class NeoForgeModsToml @Inject constructor(
      * @param id the id of the mod
      * @param configure the block to configure the [Mod] with
      */
-    fun mod(id: String, configure: Action<Mod>): NamedDomainObjectProvider<Mod> {
+    @JvmOverloads
+    fun mod(id: String, configure: Action<Mod> = nullAction()): NamedDomainObjectProvider<Mod> {
         return if (id in mods.names) {
             mods.named(id, configure)
         } else {
@@ -119,17 +120,22 @@ abstract class NeoForgeModsToml @Inject constructor(
     /**
      * Register or configure the convention [Mod].
      *
-     * The id will be the project name, lowercased and with disallowed characters replaced by `_`.
+     * If the mod id is omitted, it will be derived from the project name,lowercased and with disallowed characters
+     * replaced by `_`.
      *
      * [Mod.setConventionsFromProjectMeta] will be called with the project before the [configure] block is executed.
      *
+     * @param id the id of the mod, or null to derive from the project name
      * @param configure the block to configure the [Mod] with
      */
-    fun conventionMod(configure: Action<Mod>): NamedDomainObjectProvider<Mod> =
-        mod(project.name.lowercase().replace(Regex("[- .]"), "_")) {
+    @JvmOverloads
+    fun conventionMod(id: String? = null, configure: Action<Mod> = nullAction()): NamedDomainObjectProvider<Mod> {
+        val modId = id ?: project.name.lowercase().replace(Regex("[- .]"), "_")
+        return mod(modId) {
             setConventionsFromProjectMeta(project)
             configure.execute(this)
         }
+    }
 
     open class Mod @Inject constructor(
         private val name: String,
