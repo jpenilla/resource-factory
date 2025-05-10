@@ -329,25 +329,6 @@ abstract class NeoForgeModsToml @Inject constructor(
         val referralUrl: Property<String> = objects.property()
     }
 
-    enum class DependencyType {
-        REQUIRED,
-        OPTIONAL,
-        INCOMPATIBLE,
-        DISCOURAGED,
-    }
-
-    enum class DependencyOrdering {
-        BEFORE,
-        AFTER,
-        NONE,
-    }
-
-    enum class DependencySide {
-        CLIENT,
-        SERVER,
-        BOTH,
-    }
-
     @get:Nested
     val accessTransformers: ListProperty<AccessTransformer> = objects.listProperty()
 
