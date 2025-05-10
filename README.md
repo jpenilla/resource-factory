@@ -33,6 +33,7 @@ Gradle plugin for generating resource files at build time.
 | BukkitPluginYaml     | `xyz.jpenilla.resource-factory-bukkit-convention`   |
 | VelocityPluginJson   | `xyz.jpenilla.resource-factory-velocity-convention` |
 | FabricModJson        | `xyz.jpenilla.resource-factory-fabric-convention`   |
+| NeoForgeModsToml     | `xyz.jpenilla.resource-factory-neoforge-convention` |
 | BungeeCordPluginYaml | `xyz.jpenilla.resource-factory-bungee-convention`   |
 
 The included factories can be used in two ways.
