@@ -53,6 +53,7 @@ abstract class CustomValueFactory {
      *
      * @param V the type of the complex value
      * @param S the type of the serializable value
+     * @param type the type of the serializable value
      * @param value complex value
      * @param mapper mapper from complex value to serializable value
      * @return the created value provider
@@ -75,6 +76,7 @@ abstract class CustomValueFactory {
      * This 'typed' variant is useful when the serialized type has a generic parameter.
      *
      * @param V the type of the complex value
+     * @param type the type of the complex value
      * @param value complex value
      * @return the created value provider
      */
@@ -97,6 +99,7 @@ abstract class CustomValueFactory {
      * This 'typed' variant is useful when the serialized type has a generic parameter.
      *
      * @param T the type of the value
+     * @param type the type of the value
      * @param value the simple value
      * @return the created value provider
      */
@@ -115,6 +118,8 @@ abstract class CustomValueFactory {
      *
      * @param K the type of the map key
      * @param V the type of the map value
+     * @param keyType the type of the map key
+     * @param valueType the type of the map value
      * @param value the simple map
      * @return the created value provider
      * @see [typedSimpleCustomValue]
@@ -138,6 +143,7 @@ abstract class CustomValueFactory {
      * Creates a value provider for a simple list value.
      *
      * @param V the type of the list value
+     * @param valueType the type of the list value
      * @param value the simple list
      * @return the created value provider
      * @see [typedSimpleCustomValue]
