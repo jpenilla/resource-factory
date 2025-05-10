@@ -44,7 +44,7 @@ import javax.inject.Inject
  * @return the created and configured [NeoForgeModsToml]
  */
 fun Project.neoForgeModsToml(configure: Action<NeoForgeModsToml> = nullAction()): NeoForgeModsToml {
-    val toml = NeoForgeModsToml(objects)
+    val toml = objects.newInstance<NeoForgeModsToml>()
     configure.execute(toml)
     return toml
 }
@@ -57,7 +57,7 @@ fun Project.neoForgeModsToml(configure: Action<NeoForgeModsToml> = nullAction())
  * @see [neoForgeModsToml]
  * @see [ResourceFactoryExtension.neoForgeModsToml]
  */
-open class NeoForgeModsToml constructor(
+abstract class NeoForgeModsToml @Inject constructor(
     @Transient
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ResourceFactory.Provider, CustomValueFactory() {

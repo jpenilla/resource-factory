@@ -43,7 +43,7 @@ import javax.inject.Inject
  * @return the created and configured [FabricModJson]
  */
 fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): FabricModJson {
-    val json = FabricModJson(objects)
+    val json = objects.newInstance<FabricModJson>()
     json.setConventionsFromProjectMeta(this)
     configure.execute(json)
     return json
@@ -57,7 +57,7 @@ fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): Fabr
  * @see [fabricModJson]
  * @see [ResourceFactoryExtension.fabricModJson]
  */
-open class FabricModJson constructor(
+abstract class FabricModJson @Inject constructor(
     @Transient
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider, CustomValueFactory() {
