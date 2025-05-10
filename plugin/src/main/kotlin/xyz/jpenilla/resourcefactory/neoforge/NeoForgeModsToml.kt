@@ -33,6 +33,7 @@ import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.orNullValidating
 import xyz.jpenilla.resourcefactory.util.validate
 import javax.inject.Inject
 
@@ -94,7 +95,7 @@ open class NeoForgeModsToml constructor(
 
     @get:Input
     @get:Optional
-    val issueTrackerURL: Property<String> = objects.property()
+    val issueTrackerUrl: Property<String> = objects.property()
 
     @get:Nested
     val mods: NamedDomainObjectContainer<Mod> = objects.domainObjectContainer(Mod::class)
@@ -157,13 +158,13 @@ open class NeoForgeModsToml constructor(
 
         @get:Input
         @get:Optional
-        val updateJSONURL: Property<String> = objects.property()
+        val updateJsonUrl: Property<String> = objects.property()
 
         @get:Input
         val features: MapProperty<String, String> = objects.mapProperty()
 
         @get:Nested
-        val modproperties: MapProperty<String, CustomValueProvider<*>> = objects.mapProperty()
+        val modProperties: MapProperty<String, CustomValueProvider<*>> = objects.mapProperty()
 
         /**
          * Custom values merged into the root TOML table for this mod.
@@ -185,7 +186,7 @@ open class NeoForgeModsToml constructor(
 
         @get:Input
         @get:Optional
-        val displayURL: Property<String> = objects.property()
+        val displayUrl: Property<String> = objects.property()
 
         @get:Input
         @get:Optional
@@ -406,7 +407,7 @@ open class NeoForgeModsToml constructor(
         val showAsResourcePack: Boolean? = modsToml.showAsResourcePack.orNull
         val showAsDataPack: Boolean? = modsToml.showAsDataPack.orNull
         val services: List<String>? = modsToml.services.nullIfEmpty()
-        val issueTrackerURL: String? = modsToml.issueTrackerURL.orNull
+        val issueTrackerURL: String? = modsToml.issueTrackerUrl.orNull
         val mods: List<SerializableMod>? = modsToml.mods.nullIfEmpty()?.values?.map { SerializableMod(it) }
         val accessTransformers: List<SerializableAccessTransformer>? = modsToml.accessTransformers.nullIfEmpty()?.map { SerializableAccessTransformer(it) }
         val mixins: List<SerializableMixin>? = modsToml.mixins.nullIfEmpty()?.map { SerializableMixin(it) }
@@ -421,19 +422,19 @@ open class NeoForgeModsToml constructor(
         val custom: Map<String, CustomValueProvider<*>>? = mod.custom.nullIfEmpty()
 
         val modId: String = mod.modId
-        val namespace: String? = mod.namespace.orNull
+        val namespace: String? = mod::namespace.orNullValidating()
         val version: String? = mod.version.orNull
         val displayName: String? = mod.displayName.orNull
         val description: String? = mod.description.orNull
         val logoFile: String? = mod.logoFile.orNull
         val logoBlur: Boolean? = mod.logoBlur.orNull
-        val updateJSONURL: String? = mod.updateJSONURL.orNull
+        val updateJSONURL: String? = mod.updateJsonUrl.orNull
         val features: Map<String, String>? = mod.features.nullIfEmpty()
-        val modproperties: Map<String, CustomValueProvider<*>>? = mod.modproperties.nullIfEmpty()
+        val modproperties: Map<String, CustomValueProvider<*>>? = mod.modProperties.nullIfEmpty()
         val modUrl: String? = mod.modUrl.orNull
         val credits: String? = mod.credits.orNull
         val authors: String? = mod.authors.orNull
-        val displayURL: String? = mod.displayURL.orNull
+        val displayURL: String? = mod.displayUrl.orNull
         val enumExtensions: String? = mod.enumExtensions.orNull
         val featureFlags: String? = mod.featureFlags.orNull
     }
