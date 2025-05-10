@@ -1,5 +1,6 @@
 package xyz.jpenilla.resourcefactory.neoforge
 
+import io.leangen.geantyref.TypeToken
 import org.gradle.api.Action
 import org.gradle.api.Named
 import org.gradle.api.NamedDomainObjectContainer
@@ -20,10 +21,14 @@ import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import org.spongepowered.configurate.objectmapping.ObjectMapper
+import org.spongepowered.configurate.objectmapping.meta.Setting
 import org.spongepowered.configurate.util.NamingSchemes
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
+import xyz.jpenilla.resourcefactory.util.CustomValueFactory
+import xyz.jpenilla.resourcefactory.util.CustomValueProvider
+import xyz.jpenilla.resourcefactory.util.CustomValueProviderSerializer
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
 import xyz.jpenilla.resourcefactory.util.nullAction
@@ -54,7 +59,7 @@ fun Project.neoForgeModsToml(configure: Action<NeoForgeModsToml> = nullAction())
 open class NeoForgeModsToml constructor(
     @Transient
     private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ResourceFactory.Provider {
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ResourceFactory.Provider, CustomValueFactory() {
 
     companion object {
         private const val MOD_ID_PATTERN: String = "^[a-z0-9_]{2,64}$"
@@ -157,7 +162,14 @@ open class NeoForgeModsToml constructor(
         @get:Input
         val features: MapProperty<String, String> = objects.mapProperty()
 
-        // TODO: modproperties
+        @get:Nested
+        val modproperties: MapProperty<String, CustomValueProvider<*>> = objects.mapProperty()
+
+        /**
+         * Custom values merged into the root TOML table for this mod.
+         */
+        @get:Nested
+        val custom: MapProperty<String, CustomValueProvider<*>> = objects.mapProperty()
 
         @get:Input
         @get:Optional
@@ -202,25 +214,25 @@ open class NeoForgeModsToml constructor(
                 return dep
             }
 
-            fun required(modId: String, versionRange: String? = null, configure: Action<Dependency> = Action {}): Dependency = add(modId) {
+            fun required(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
                 type.set(DependencyType.REQUIRED)
                 versionRange?.let { this.versionRange.set(it) }
                 configure.execute(this)
             }
 
-            fun optional(modId: String, versionRange: String? = null, configure: Action<Dependency> = Action {}): Dependency = add(modId) {
+            fun optional(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
                 type.set(DependencyType.OPTIONAL)
                 versionRange?.let { this.versionRange.set(it) }
                 configure.execute(this)
             }
 
-            fun incompatible(modId: String, versionRange: String? = null, configure: Action<Dependency> = Action {}): Dependency = add(modId) {
+            fun incompatible(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
                 type.set(DependencyType.INCOMPATIBLE)
                 versionRange?.let { this.versionRange.set(it) }
                 configure.execute(this)
             }
 
-            fun discouraged(modId: String, versionRange: String? = null, configure: Action<Dependency> = Action {}): Dependency = add(modId) {
+            fun discouraged(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
                 type.set(DependencyType.DISCOURAGED)
                 versionRange?.let { this.versionRange.set(it) }
                 configure.execute(this)
@@ -350,6 +362,12 @@ open class NeoForgeModsToml constructor(
         val config: Property<String> = objects.property()
     }
 
+    /**
+     * Custom values merged into the root TOML table for the mods toml.
+     */
+    @get:Nested
+    val custom: MapProperty<String, CustomValueProvider<*>> = objects.mapProperty()
+
     override fun resourceFactory(): ResourceFactory {
         val gen = objects.newInstance(ConfigurateSingleFileResourceFactory.Simple::class)
         gen.toml {
@@ -360,6 +378,7 @@ open class NeoForgeModsToml constructor(
                             .defaultNamingScheme(NamingSchemes.PASSTHROUGH)
                             .build()
                     )
+                        .register(object : TypeToken<CustomValueProvider<*>>() {}, CustomValueProviderSerializer)
                 }
             }
         }
@@ -374,6 +393,9 @@ open class NeoForgeModsToml constructor(
 
     @ConfigSerializable
     open class Serializable(modsToml: NeoForgeModsToml) {
+        @Setting(nodeFromParent = true)
+        val custom: Map<String, CustomValueProvider<*>>? = modsToml.custom.nullIfEmpty()
+
         val modLoader: String = modsToml.modLoader.get()
         val loaderVersion: String = modsToml.loaderVersion.get()
         val license: String = modsToml.loaderVersion.get()
@@ -391,6 +413,9 @@ open class NeoForgeModsToml constructor(
 
     @ConfigSerializable
     open class SerializableMod(mod: Mod) {
+        @Setting(nodeFromParent = true)
+        val custom: Map<String, CustomValueProvider<*>>? = mod.custom.nullIfEmpty()
+
         val modId: String = mod.modId
         val namespace: String? = mod.namespace.orNull
         val version: String? = mod.version.orNull
@@ -400,6 +425,7 @@ open class NeoForgeModsToml constructor(
         val logoBlur: Boolean? = mod.logoBlur.orNull
         val updateJSONURL: String? = mod.updateJSONURL.orNull
         val features: Map<String, String>? = mod.features.nullIfEmpty()
+        val modproperties: Map<String, CustomValueProvider<*>>? = mod.modproperties.nullIfEmpty()
         val modUrl: String? = mod.modUrl.orNull
         val credits: String? = mod.credits.orNull
         val authors: String? = mod.authors.orNull

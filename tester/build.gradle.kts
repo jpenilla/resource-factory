@@ -97,9 +97,27 @@ neoForgeModsToml {
             }
             optional("moonrise")
         }
+        custom.put(
+            "ferritecore:disabled_options",
+            simpleCustomValueList(
+                listOf(
+                    "replaceNeighborLookup",
+                    "replacePropertyMap",
+                )
+            )
+        )
     }
     accessTransformers("a.cfg", "b.cfg")
     mixin("tester.mixins.json")
+    custom.put(
+        "lithium:options",
+        simpleCustomValueMap(
+            mapOf(
+                "mixin.ai.poi" to false,
+                "mixin.alloc.deep_passengers" to false,
+            )
+        )
+    )
 }
 
 bungeePluginYaml {
