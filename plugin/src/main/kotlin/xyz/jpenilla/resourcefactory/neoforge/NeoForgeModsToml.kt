@@ -71,7 +71,7 @@ open class NeoForgeModsToml constructor(
     val modLoader: Property<String> = objects.property<String>().convention("javafml")
 
     @get:Input
-    val loaderVersion: Property<String> = objects.property()
+    val loaderVersion: Property<String> = objects.property<String>().convention("[1,)")
 
     @get:Input
     val license: Property<String> = objects.property()
@@ -94,7 +94,7 @@ open class NeoForgeModsToml constructor(
 
     @get:Input
     @get:Optional
-    val issueTrackerUrl: Property<String> = objects.property()
+    val issueTrackerURL: Property<String> = objects.property()
 
     @get:Nested
     val mods: NamedDomainObjectContainer<Mod> = objects.domainObjectContainer(Mod::class)
@@ -402,11 +402,11 @@ open class NeoForgeModsToml constructor(
 
         val modLoader: String = modsToml.modLoader.get()
         val loaderVersion: String = modsToml.loaderVersion.get()
-        val license: String = modsToml.loaderVersion.get()
+        val license: String = modsToml.license.get()
         val showAsResourcePack: Boolean? = modsToml.showAsResourcePack.orNull
         val showAsDataPack: Boolean? = modsToml.showAsDataPack.orNull
         val services: List<String>? = modsToml.services.nullIfEmpty()
-        val issueTrackerUrl: String? = modsToml.issueTrackerUrl.orNull
+        val issueTrackerURL: String? = modsToml.issueTrackerURL.orNull
         val mods: List<SerializableMod>? = modsToml.mods.nullIfEmpty()?.values?.map { SerializableMod(it) }
         val accessTransformers: List<SerializableAccessTransformer>? = modsToml.accessTransformers.nullIfEmpty()?.map { SerializableAccessTransformer(it) }
         val mixins: List<SerializableMixin>? = modsToml.mixins.nullIfEmpty()?.map { SerializableMixin(it) }
