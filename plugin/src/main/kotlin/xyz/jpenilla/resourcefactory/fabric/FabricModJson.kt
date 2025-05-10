@@ -81,15 +81,19 @@ abstract class FabricModJson @Inject constructor(
     @get:Nested
     val entrypoints: ListProperty<Entrypoint> = objects.listProperty()
 
+    @JvmOverloads
     fun mainEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) =
         entrypoint("main", value, configure)
 
+    @JvmOverloads
     fun clientEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) =
         entrypoint("client", value, configure)
 
+    @JvmOverloads
     fun serverEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) =
         entrypoint("server", value, configure)
 
+    @JvmOverloads
     fun entrypoint(type: String, value: String, configure: Action<Entrypoint> = nullAction()): Entrypoint {
         val ep = objects.newInstance(Entrypoint::class)
         ep.type.set(type)
@@ -105,6 +109,7 @@ abstract class FabricModJson @Inject constructor(
     @get:Nested
     val mixins: ListProperty<MixinConfig> = objects.listProperty()
 
+    @JvmOverloads
     fun mixin(name: String, configure: Action<MixinConfig> = nullAction()): MixinConfig {
         val mixin = objects.newInstance(MixinConfig::class)
         mixin.config.set(name)
@@ -153,11 +158,13 @@ abstract class FabricModJson @Inject constructor(
     @get:Nested
     val authors: ListProperty<Person> = objects.listProperty()
 
+    @JvmOverloads
     fun author(name: String, configure: Action<Person> = nullAction()) = authors.add(person(name, configure))
 
     @get:Nested
     val contributors: ListProperty<Person> = objects.listProperty()
 
+    @JvmOverloads
     fun contributor(name: String, configure: Action<Person> = nullAction()) = contributors.add(person(name, configure))
 
     @get:Nested
@@ -231,6 +238,7 @@ abstract class FabricModJson @Inject constructor(
         val icons: Map<String, String>
     ) : Icon
 
+    @JvmOverloads
     fun person(name: String, configure: Action<Person> = nullAction()): Person = objects.newInstance<Person>().apply {
         this.name.set(name)
         configure.execute(this)
