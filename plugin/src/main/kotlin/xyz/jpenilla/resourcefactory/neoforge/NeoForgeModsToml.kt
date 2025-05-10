@@ -7,6 +7,7 @@ import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
+import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
@@ -14,6 +15,7 @@ import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.Optional
 import org.gradle.kotlin.dsl.domainObjectContainer
 import org.gradle.kotlin.dsl.listProperty
+import org.gradle.kotlin.dsl.mapProperty
 import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.property
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
@@ -152,7 +154,10 @@ open class NeoForgeModsToml constructor(
         @get:Optional
         val updateJSONURL: Property<String> = objects.property()
 
-        // TODO: features, modproperties
+        @get:Input
+        val features: MapProperty<String, String> = objects.mapProperty()
+
+        // TODO: modproperties
 
         @get:Input
         @get:Optional
@@ -278,6 +283,8 @@ open class NeoForgeModsToml constructor(
         val referralUrl: Property<String> = objects.property()
     }
 
+    // TODO: Serialize names lowercase
+
     enum class DependencyType {
         REQUIRED,
         OPTIONAL,
@@ -394,6 +401,7 @@ open class NeoForgeModsToml constructor(
         val logoFile: String? = mod.logoFile.orNull
         val logoBlur: Boolean? = mod.logoBlur.orNull
         val updateJSONURL: String? = mod.updateJSONURL.orNull
+        val features: Map<String, String>? = mod.features.nullIfEmpty()
         val modUrl: String? = mod.modUrl.orNull
         val credits: String? = mod.credits.orNull
         val authors: String? = mod.authors.orNull
