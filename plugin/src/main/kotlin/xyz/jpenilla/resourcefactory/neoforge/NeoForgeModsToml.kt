@@ -44,7 +44,7 @@ import javax.inject.Inject
  * @return the created and configured [NeoForgeModsToml]
  */
 fun Project.neoForgeModsToml(configure: Action<NeoForgeModsToml> = nullAction()): NeoForgeModsToml {
-    val toml = objects.newInstance<NeoForgeModsToml>()
+    val toml = objects.newInstance<NeoForgeModsToml>(this)
     configure.execute(toml)
     return toml
 }
@@ -59,7 +59,9 @@ fun Project.neoForgeModsToml(configure: Action<NeoForgeModsToml> = nullAction())
  */
 abstract class NeoForgeModsToml @Inject constructor(
     @Transient
-    private val objects: ObjectFactory
+    private val objects: ObjectFactory,
+    @Transient
+    private val project: Project,
 ) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ResourceFactory.Provider, CustomValueFactory() {
 
     companion object {
@@ -100,6 +102,12 @@ abstract class NeoForgeModsToml @Inject constructor(
     @get:Nested
     val mods: NamedDomainObjectContainer<Mod> = objects.domainObjectContainer(Mod::class)
 
+    /**
+     * Register or configure a [Mod] with the given [id].
+     *
+     * @param id the id of the mod
+     * @param configure the block to configure the [Mod] with
+     */
     fun mod(id: String, configure: Action<Mod>): NamedDomainObjectProvider<Mod> {
         return if (id in mods.names) {
             mods.named(id, configure)
@@ -107,6 +115,21 @@ abstract class NeoForgeModsToml @Inject constructor(
             mods.register(id, configure)
         }
     }
+
+    /**
+     * Register or configure the convention [Mod].
+     *
+     * The id will be the project name, lowercased and with disallowed characters replaced by `_`.
+     *
+     * [Mod.setConventionsFromProjectMeta] will be called with the project before the [configure] block is executed.
+     *
+     * @param configure the block to configure the [Mod] with
+     */
+    fun conventionMod(configure: Action<Mod>): NamedDomainObjectProvider<Mod> =
+        mod(project.name.lowercase().replace(Regex("[- .]"), "_")) {
+            setConventionsFromProjectMeta(project)
+            configure.execute(this)
+        }
 
     open class Mod @Inject constructor(
         private val name: String,
