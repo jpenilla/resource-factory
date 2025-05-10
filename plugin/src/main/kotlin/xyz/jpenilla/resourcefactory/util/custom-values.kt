@@ -31,7 +31,7 @@ abstract class CustomValueFactory {
      * @param mapper mapper from complex value to serializable value
      * @return the created value provider
      */
-    fun <V : Any, S : Any> complexCustomValue(value: V, mapper: java.util.function.Function<V, S>): CustomValueProvider<S> =
+    fun <V : Any, S : Any> complexCustomValue(value: V, mapper: Function<V, S>): CustomValueProvider<S> =
         typedComplexCustomValue(null, value, mapper)
 
     /**
@@ -119,8 +119,31 @@ abstract class CustomValueFactory {
      * @return the created value provider
      * @see [typedSimpleCustomValue]
      */
+    fun <K : Any, V : Any> simpleCustomValueMap(keyType: Type, valueType: Type, value: Map<K, V>): CustomValueProvider<Map<K, V>> =
+        typedSimpleCustomValue(TypeFactory.parameterizedClass(Map::class.java, keyType, valueType), value)
+
+    /**
+     * Creates a value provider for a simple map value.
+     *
+     * @param K the type of the map key
+     * @param V the type of the map value
+     * @param value the simple map
+     * @return the created value provider
+     * @see [typedSimpleCustomValue]
+     */
     inline fun <reified K : Any, reified V : Any> simpleCustomValueMap(value: Map<K, V>): CustomValueProvider<Map<K, V>> =
-        typedSimpleCustomValue(TypeFactory.parameterizedClass(Map::class.java, K::class.java, V::class.java), value)
+        simpleCustomValueMap(K::class.java, V::class.java, value)
+
+    /**
+     * Creates a value provider for a simple list value.
+     *
+     * @param V the type of the list value
+     * @param value the simple list
+     * @return the created value provider
+     * @see [typedSimpleCustomValue]
+     */
+    fun <V : Any> simpleCustomValueList(valueType: Type, value: List<V>): CustomValueProvider<List<V>> =
+        typedSimpleCustomValue(TypeFactory.parameterizedClass(List::class.java, valueType), value)
 
     /**
      * Creates a value provider for a simple list value.
@@ -131,7 +154,7 @@ abstract class CustomValueFactory {
      * @see [typedSimpleCustomValue]
      */
     inline fun <reified V : Any> simpleCustomValueList(value: List<V>): CustomValueProvider<List<V>> =
-        typedSimpleCustomValue(TypeFactory.parameterizedClass(List::class.java, V::class.java), value)
+        simpleCustomValueList(V::class.java, value)
 }
 
 object CustomValueProviderSerializer : TypeSerializer<CustomValueProvider<*>> {

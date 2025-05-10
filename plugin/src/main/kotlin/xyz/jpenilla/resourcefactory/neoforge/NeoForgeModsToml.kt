@@ -214,24 +214,28 @@ open class NeoForgeModsToml constructor(
                 return dep
             }
 
+            @JvmOverloads
             fun required(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
                 type.set(DependencyType.REQUIRED)
                 versionRange?.let { this.versionRange.set(it) }
                 configure.execute(this)
             }
 
+            @JvmOverloads
             fun optional(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
                 type.set(DependencyType.OPTIONAL)
                 versionRange?.let { this.versionRange.set(it) }
                 configure.execute(this)
             }
 
+            @JvmOverloads
             fun incompatible(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
                 type.set(DependencyType.INCOMPATIBLE)
                 versionRange?.let { this.versionRange.set(it) }
                 configure.execute(this)
             }
 
+            @JvmOverloads
             fun discouraged(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
                 type.set(DependencyType.DISCOURAGED)
                 versionRange?.let { this.versionRange.set(it) }
