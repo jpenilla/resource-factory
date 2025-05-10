@@ -12,6 +12,7 @@ plugins {
     id("xyz.jpenilla.resource-factory-bungee-convention")
     id("xyz.jpenilla.resource-factory-velocity-convention")
     id("xyz.jpenilla.resource-factory-fabric-convention")
+    id("xyz.jpenilla.resource-factory-neoforge-convention")
 }
 
 version = "0.0.1-test"
@@ -80,6 +81,44 @@ fabricModJson {
         typedComplexCustomValue(
             typeOf<Map<String, CustomData>>().javaType,
             mapOf("steve" to CustomData("Steve", 123), "bob" to CustomData("Bob", 456))
+        )
+    )
+}
+
+neoForgeModsToml {
+    loaderVersion = "*"
+    apache2License()
+    conventionMod {
+        dependencies {
+            required("minecraft", "1.21.5") {
+                reason = "Minecraft"
+                after()
+            }
+            optional("moonrise")
+        }
+        custom.put(
+            "ferritecore:disabled_options",
+            simpleCustomValueList(
+                listOf(
+                    "replaceNeighborLookup",
+                    "replacePropertyMap",
+                )
+            )
+        )
+    }
+    mod("my_mod_id") {
+        setConventionsFromProjectMeta(project)
+    }
+    mods.register("my_other_mod_id")
+    accessTransformers("a.cfg", "b.cfg")
+    mixin("tester.mixins.json")
+    custom.put(
+        "lithium:options",
+        simpleCustomValueMap(
+            mapOf(
+                "mixin.ai.poi" to false,
+                "mixin.alloc.deep_passengers" to false,
+            )
         )
     )
 }

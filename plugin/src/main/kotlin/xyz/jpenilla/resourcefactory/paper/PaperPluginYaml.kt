@@ -39,7 +39,7 @@ import javax.inject.Inject
  * @return the created and configured [PaperPluginYaml]
  */
 fun Project.paperPluginYaml(configure: Action<PaperPluginYaml> = nullAction()): PaperPluginYaml {
-    val yaml = PaperPluginYaml(objects)
+    val yaml = objects.newInstance<PaperPluginYaml>()
     yaml.setConventionsFromProjectMeta(this)
     configure.execute(yaml)
     return yaml
@@ -53,7 +53,7 @@ fun Project.paperPluginYaml(configure: Action<PaperPluginYaml> = nullAction()): 
  * @see [paperPluginYaml]
  * @see [ResourceFactoryExtension.paperPluginYaml]
  */
-class PaperPluginYaml constructor(
+abstract class PaperPluginYaml @Inject constructor(
     @Transient
     private val objects: ObjectFactory
 ) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
