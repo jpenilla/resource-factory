@@ -120,7 +120,7 @@ abstract class NeoForgeModsToml @Inject constructor(
     /**
      * Register or configure the convention [Mod].
      *
-     * If the mod id is omitted, it will be derived from the project name,lowercased and with disallowed characters
+     * If the mod id is omitted, it will be derived from the project name, lowercased and with disallowed characters
      * replaced by `_`.
      *
      * [Mod.setConventionsFromProjectMeta] will be called with the project before the [configure] block is executed.
