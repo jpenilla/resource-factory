@@ -423,7 +423,7 @@ abstract class NeoForgeModsToml @Inject constructor(
         val mixins: List<SerializableMixin>? = modsToml.mixins.nullIfEmpty()?.map { SerializableMixin(it) }
         val dependencies: Map<String, List<SerializableDependency>>? = modsToml.mods.nullIfEmpty()?.mapValues { (_, mod) ->
             mod.dependencies.dependencies.get().map { SerializableDependency(it) }
-        }
+        }?.filterValues { it.isNotEmpty() }
     }
 
     @ConfigSerializable
