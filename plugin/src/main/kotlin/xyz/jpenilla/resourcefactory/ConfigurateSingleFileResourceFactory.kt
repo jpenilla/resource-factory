@@ -1,5 +1,8 @@
 package xyz.jpenilla.resourcefactory
 
+import io.github.wasabithumb.jtoml.configurate.TomlConfigurationLoader
+import io.github.wasabithumb.jtoml.option.JTomlOption
+import io.github.wasabithumb.jtoml.option.prop.LineSeparator
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
@@ -10,7 +13,6 @@ import org.spongepowered.configurate.gson.GsonConfigurationLoader
 import org.spongepowered.configurate.loader.AbstractConfigurationLoader
 import org.spongepowered.configurate.loader.ConfigurationLoader
 import org.spongepowered.configurate.yaml.YamlConfigurationLoader
-import xyz.jpenilla.resourcefactory.util.TomlConfigurationWriter
 import xyz.jpenilla.resourcefactory.util.nullAction
 import java.nio.file.Path
 import javax.inject.Inject
@@ -67,8 +69,12 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
      * @param configure the configuration of the loader
      */
     @ApiStatus.Experimental
-    fun toml(configure: Action<GsonConfigurationLoader.Builder> = nullAction()) {
-        loaderFactory.set(TomlConfigurationWriter.Factory(configure))
+    fun toml(configure: Action<TomlConfigurationLoader.Builder> = nullAction()) {
+        val builderFactory = {
+            TomlConfigurationLoader.builder()
+                .set(JTomlOption.LINE_SEPARATOR, LineSeparator.LF)
+        }
+        loaderFactory.set(BuilderConfiguringLoaderFactory(builderFactory, configure))
     }
 
     override fun generateSingleFile(outputFile: Path) {

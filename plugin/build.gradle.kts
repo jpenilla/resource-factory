@@ -19,11 +19,10 @@ repositories {
 }
 
 dependencies {
+    implementation(platform(libs.configurateBom))
     implementation(libs.configurateYaml)
     implementation(libs.configurateGson)
-    implementation(libs.jtoml)
-    implementation(libs.jtomlGson)
-    implementation(libs.gson)
+    implementation(libs.configurateToml)
 }
 
 kotlin {
