@@ -73,6 +73,7 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
         val builderFactory = {
             TomlConfigurationLoader.builder()
                 .set(JTomlOption.LINE_SEPARATOR, LineSeparator.LF)
+                .set(JTomlOption.WRITE_EMPTY_TABLES, true)
         }
         loaderFactory.set(BuilderConfiguringLoaderFactory(builderFactory, configure))
     }
