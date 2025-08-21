@@ -1,5 +1,6 @@
 import org.spongepowered.configurate.objectmapping.ConfigSerializable
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
+import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.fabric.Environment
 import kotlin.reflect.jvm.javaType
@@ -21,6 +22,7 @@ description = "Resource Factory tester"
 paperPluginYaml {
     main = "test"
     apiVersion = "1.20"
+    load = BukkitPluginYaml.PluginLoadOrder.POSTWORLD
     dependencies {
         server("squaremap")
     }

@@ -19,6 +19,7 @@ import org.spongepowered.configurate.yaml.NodeStyle
 import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactory
 import xyz.jpenilla.resourcefactory.ResourceFactoryExtension
+import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.util.Pattern
 import xyz.jpenilla.resourcefactory.util.ProjectMetaConventions
@@ -90,6 +91,10 @@ abstract class PaperPluginYaml @Inject constructor(
     @get:Input
     @get:Optional
     val description: Property<String> = objects.property()
+
+    @get:Input
+    @get:Optional
+    val load: Property<BukkitPluginYaml.PluginLoadOrder> = objects.property()
 
     @get:Input
     @get:Optional
@@ -218,6 +223,7 @@ abstract class PaperPluginYaml @Inject constructor(
         val loader = yaml::loader.orNullValidating()
         val bootstrapper = yaml::bootstrapper.orNullValidating()
         val description = yaml.description.orNull
+        val load = yaml.load.orNull
         val author = yaml.author.orNull
         val authors = yaml.authors.nullIfEmpty()
         val contributors = yaml.contributors.nullIfEmpty()
