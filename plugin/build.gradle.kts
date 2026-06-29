@@ -117,6 +117,13 @@ indraPluginPublishing {
         tags("bungee", "bungeecord")
     )
     plugin(
+        "resource-factory-waterdog-convention",
+        "xyz.jpenilla.resourcefactory.waterdog.WaterdogConvention",
+        "Resource Factory Waterdog Convention",
+        "Convention for xyz.jpenilla.resource-factory, registers a WaterdogPluginYaml to the main source set and adds it as the waterdogPluginYaml extension",
+        tags("waterdog", "waterdogpe")
+    )
+    plugin(
         "resource-factory-velocity-convention",
         "xyz.jpenilla.resourcefactory.velocity.VelocityConvention",
         "Resource Factory Velocity Convention",

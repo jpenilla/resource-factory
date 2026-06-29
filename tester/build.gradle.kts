@@ -11,6 +11,7 @@ plugins {
     id("xyz.jpenilla.resource-factory-paper-convention")
     id("xyz.jpenilla.resource-factory-bukkit-convention")
     id("xyz.jpenilla.resource-factory-bungee-convention")
+    id("xyz.jpenilla.resource-factory-waterdog-convention")
     id("xyz.jpenilla.resource-factory-velocity-convention")
     id("xyz.jpenilla.resource-factory-fabric-convention")
     id("xyz.jpenilla.resource-factory-neoforge-convention")
@@ -127,6 +128,12 @@ neoForgeModsToml {
 
 bungeePluginYaml {
     main = "test"
+}
+
+waterdogPluginYaml {
+    main = "test"
+    author = "MyName"
+    depends.add("SomeDependency")
 }
 
 sourceSets.main {

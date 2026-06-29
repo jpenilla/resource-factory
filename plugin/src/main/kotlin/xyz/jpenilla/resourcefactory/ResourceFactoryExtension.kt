@@ -34,6 +34,8 @@ import xyz.jpenilla.resourcefactory.paper.PaperPluginYaml
 import xyz.jpenilla.resourcefactory.paper.paperPluginYaml
 import xyz.jpenilla.resourcefactory.velocity.VelocityPluginJson
 import xyz.jpenilla.resourcefactory.velocity.velocityPluginJson
+import xyz.jpenilla.resourcefactory.waterdog.WaterdogPluginYaml
+import xyz.jpenilla.resourcefactory.waterdog.waterdogPluginYaml
 import javax.inject.Inject
 import kotlin.reflect.KClass
 
@@ -180,6 +182,20 @@ abstract class ResourceFactoryExtension @Inject constructor(
      */
     fun bungeePluginYaml(configure: Action<BungeeCordPluginYaml>): BungeeCordPluginYaml {
         val config = project.bungeePluginYaml(configure)
+        factory(config.resourceFactory())
+        return config
+    }
+
+    /**
+     * Create a [WaterdogPluginYaml] and add it to the source set, configured with the given [configure] block.
+     *
+     * The created [WaterdogPluginYaml] will inherit the project's name and version.
+     *
+     * @param configure the block to configure the [WaterdogPluginYaml] with
+     * @return the created and configured [WaterdogPluginYaml]
+     */
+    fun waterdogPluginYaml(configure: Action<WaterdogPluginYaml>): WaterdogPluginYaml {
+        val config = project.waterdogPluginYaml(configure)
         factory(config.resourceFactory())
         return config
     }
