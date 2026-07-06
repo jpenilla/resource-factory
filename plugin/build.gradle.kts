@@ -51,7 +51,6 @@ tasks {
 indra {
     apache2License()
     github("jpenilla", "resource-factory")
-    publishSnapshotsTo("jmp", "https://repo.jpenilla.xyz/snapshots")
     configurePublications {
         pom {
             developers {
@@ -63,6 +62,19 @@ indra {
         }
     }
     signWithKeyFromProperties("signingKey", "signingPassword")
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/" + (System.getenv("GITHUB_REPOSITORY") ?: "SenseiJu/resource-factory"))
+            credentials {
+                username = System.getenv("GITHUB_ACTOR")
+                password = System.getenv("GITHUB_TOKEN")
+            }
+        }
+    }
 }
 
 indraSpotlessLicenser {
