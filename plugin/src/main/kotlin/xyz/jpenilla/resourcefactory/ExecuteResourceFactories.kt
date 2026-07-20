@@ -24,9 +24,20 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
+import org.gradle.work.DisableCachingByDefault
 import javax.inject.Inject
 import kotlin.io.path.createDirectories
 
+/**
+ * Executes configured [ResourceFactory]s.
+ *
+ * Caching is disabled by default because resource generation is generally inexpensive, making cache storage and
+ * retrieval overhead unlikely to be worthwhile. Custom factories may also perform arbitrary work or rely on undeclared
+ * inputs. This conservative default does not imply that the task cannot be cached: the built-in factories are
+ * cache-compatible, and builds using only cache-compatible factories may opt in using
+ * [org.gradle.api.tasks.TaskOutputs.cacheIf].
+ */
+@DisableCachingByDefault(because = "Resource generation is inexpensive and may perform arbitrary user-defined work")
 abstract class ExecuteResourceFactories : DefaultTask() {
     /**
      * The [ResourceFactory]s to execute.
