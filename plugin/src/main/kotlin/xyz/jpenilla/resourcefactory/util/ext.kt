@@ -39,9 +39,9 @@ fun <T, C : Collection<T>> Provider<C>.nullIfEmpty(): C? = get().let {
     }
 } as C?
 
-fun <A, B> MapProperty<A, B>.nullIfEmpty(): Map<A, B>? = if (get().isEmpty()) null else get().toMap()
+fun <A : Any, B : Any> MapProperty<A, B>.nullIfEmpty(): Map<A, B>? = if (get().isEmpty()) null else get().toMap()
 
-fun <A> NamedDomainObjectContainer<A>.nullIfEmpty(): Map<String, A>? = if (isEmpty()) null else asMap.toMap()
+fun <A : Any> NamedDomainObjectContainer<A>.nullIfEmpty(): Map<String, A>? = if (isEmpty()) null else asMap.toMap()
 
 fun KProperty<String>.validate(): String =
     orNullValidating { it } ?: throw NullPointerException()
@@ -51,7 +51,7 @@ fun KProperty<Property<String>>.getValidating(): String =
 
 fun KProperty<Property<String>>.orNullValidating(): String? = orNullValidating { it.orNull }
 
-private fun <T : Any?> KProperty<T>.orNullValidating(
+private fun <T : Any> KProperty<T>.orNullValidating(
     stringGetter: (T) -> String?,
 ): String? {
     val value = stringGetter(getter.call())

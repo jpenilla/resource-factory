@@ -32,4 +32,4 @@ object NullAction : Action<Any> {
  * @return an action that does nothing
  */
 @Suppress("UNCHECKED_CAST")
-fun <T> nullAction(): Action<T> = NullAction as Action<T>
+fun <T : Any> nullAction(): Action<T> = NullAction as Action<T>
