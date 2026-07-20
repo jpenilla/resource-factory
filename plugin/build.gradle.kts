@@ -8,10 +8,6 @@ plugins {
     alias(libs.plugins.indra.licenser.spotless)
 }
 
-group = "xyz.jpenilla"
-version = "1.3.2-SNAPSHOT"
-description = "Gradle plugin for generating resources at build time"
-
 repositories {
     mavenCentral()
     gradlePluginPortal()
