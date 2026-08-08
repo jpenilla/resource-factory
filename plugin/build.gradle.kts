@@ -1,3 +1,4 @@
+import org.gradle.plugin.compatibility.compatibility
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
@@ -133,4 +134,20 @@ indraPluginPublishing {
         "Convention for xyz.jpenilla.resource-factory, registers a NeoForgeModsToml to the main source set and adds it as the neoForgeModsToml extension",
         tags("neoforge")
     )
+}
+
+gradlePlugin {
+    plugins {
+        configureEach {
+            compatibility {
+                features {
+                    configurationCache = true
+                }
+            }
+        }
+    }
+}
+
+configurations.runtimeElements {
+    attributes.attribute(GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE, objects.named(GradleVersion.current().version))
 }
