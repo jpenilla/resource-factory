@@ -81,8 +81,8 @@ abstract class NeoForgeModsToml @Inject constructor(
 ) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ResourceFactory.Provider, CustomValueFactory() {
 
     companion object {
-        private const val MOD_ID_PATTERN: String = "^[a-z0-9_]{2,64}$"
-        private const val NAMESPACE_PATTERN: String = "^[a-z0-9_.-]{2,64}$"
+        private const val MOD_ID_PATTERN: String = "^(?=.{2,64}$)[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$"
+        private const val NAMESPACE_PATTERN: String = "^[a-z][a-z0-9_.-]{1,63}$"
         private const val FILE_NAME: String = "META-INF/neoforge.mods.toml"
     }
 

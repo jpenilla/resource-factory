@@ -91,6 +91,7 @@ neoForgeModsToml {
     loaderVersion = "*"
     apache2License()
     conventionMod {
+        namespace = "tester_namespace"
         features.put("javaVersion", "[25,)")
         modProperties.put("test_property", simpleCustomValue("test_value"))
         dependencies {
@@ -99,6 +100,7 @@ neoForgeModsToml {
                 after()
             }
             optional("moonrise")
+            optional("example.dotted_mod")
         }
         custom.put(
             "ferritecore:disabled_options",
@@ -113,7 +115,7 @@ neoForgeModsToml {
     mod("my_mod_id") {
         setConventionsFromProjectMeta(project)
     }
-    mod("example_mod") {
+    mod("example.dotted_mod") {
         setConventionsFromProjectMeta(project)
         features.put("javaVersion", "[25,)")
         modProperties.put("enabled", simpleCustomValue(false))
@@ -121,6 +123,9 @@ neoForgeModsToml {
         modProperties.put("labels", simpleCustomValueList(listOf("first", "second")))
         modProperties.put("options", simpleCustomValueMap(mapOf("literal.dotted.key" to true)))
         modProperties.put("person", complexCustomValue(CustomData("Steve", 123)))
+        dependencies {
+            required("tester")
+        }
     }
     mods.register("my_other_mod_id")
     accessTransformers("a.cfg", "b.cfg")
