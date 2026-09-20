@@ -128,6 +128,22 @@ abstract class NeoForgeModsToml @Inject constructor(
     @get:Optional
     val issueTrackerUrl: Property<String> = objects.property()
 
+    /**
+     * Default logo for mods in this file. Deprecated by NeoForge since 26.2 in favor of [bannerFile] and
+     * [iconFile]. Use this when targeting older NeoForge versions.
+     */
+    @get:Input
+    @get:Optional
+    val logoFile: Property<String> = objects.property()
+
+    /**
+     * Default logo filtering for mods in this file. Has no effect on NeoForge since 26.2. Use this when
+     * targeting older NeoForge versions.
+     */
+    @get:Input
+    @get:Optional
+    val logoBlur: Property<Boolean> = objects.property()
+
     /** Default banner for mods in this file. Introduced in NeoForge 26.2. */
     @get:Input
     @get:Optional
@@ -498,6 +514,8 @@ abstract class NeoForgeModsToml @Inject constructor(
         val showAsDataPack: Boolean? = modsToml.showAsDataPack.orNull
         val services: List<String>? = modsToml.services.nullIfEmpty()
         val issueTrackerURL: String? = modsToml.issueTrackerUrl.orNull
+        val logoFile: String? = modsToml.logoFile.orNull
+        val logoBlur: Boolean? = modsToml.logoBlur.orNull
         val bannerFile: String? = modsToml.bannerFile.orNull
         val iconFile: String? = modsToml.iconFile.orNull
         val iconBlur: Boolean? = modsToml.iconBlur.orNull

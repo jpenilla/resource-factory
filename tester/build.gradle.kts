@@ -94,6 +94,8 @@ neoForgeModsToml {
     showAsDataPack = true
     services.add("example.TestService")
     issueTrackerUrl = "https://example.com/issues"
+    logoFile = "default-legacy-logo.png"
+    logoBlur = false
     bannerFile = "default-banner.png"
     iconFile = "icon.png"
     iconBlur = false
