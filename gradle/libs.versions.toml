@@ -8,7 +8,7 @@ gradle-plugin-publish = { id = "com.gradle.plugin-publish", version = "2.2.1" }
 ktlint = "0.49.0"
 indra = "4.0.0"
 configurate = "4.2.0"
-jtoml = "1.5.2"
+jtoml = "1.7.0"
 
 [libraries]
 configurateBom = { group = "org.spongepowered", name = "configurate-bom", version.ref = "configurate" }
