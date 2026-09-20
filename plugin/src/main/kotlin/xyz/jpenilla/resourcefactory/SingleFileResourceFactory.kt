@@ -47,7 +47,7 @@ abstract class SingleFileResourceFactory : ResourceFactory {
         /**
          * Fail the build if a file already exists at the path.
          */
-        FAIL
+        FAIL,
     }
 
     init {

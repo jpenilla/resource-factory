@@ -64,7 +64,7 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
      */
     fun yaml(configure: Action<YamlConfigurationLoader.Builder> = nullAction()) {
         loaderFactory.set(
-            BuilderConfiguringLoaderFactory({ YamlConfigurationLoader.builder() }, configure)
+            BuilderConfiguringLoaderFactory({ YamlConfigurationLoader.builder() }, configure),
         )
     }
 
@@ -75,7 +75,7 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
      */
     fun json(configure: Action<GsonConfigurationLoader.Builder> = nullAction()) {
         loaderFactory.set(
-            BuilderConfiguringLoaderFactory({ GsonConfigurationLoader.builder() }, configure)
+            BuilderConfiguringLoaderFactory({ GsonConfigurationLoader.builder() }, configure),
         )
     }
 
@@ -153,14 +153,12 @@ abstract class ConfigurateSingleFileResourceFactory : SingleFileResourceFactory(
 
         data class ConstantValueProvider(
             @get:Nested
-            val value: Any
+            val value: Any,
         ) : ValueProvider {
             override fun asConfigSerializable(): Any = value
         }
 
-        override fun toString(): String {
-            return Simple::class.java.name + "(path=${path.orNull}, value=${value.orNull})"
-        }
+        override fun toString(): String = Simple::class.java.name + "(path=${path.orNull}, value=${value.orNull})"
     }
 
     private class BuilderConfiguringLoaderFactory<L : AbstractConfigurationLoader<*>, B : AbstractConfigurationLoader.Builder<B, L>>(

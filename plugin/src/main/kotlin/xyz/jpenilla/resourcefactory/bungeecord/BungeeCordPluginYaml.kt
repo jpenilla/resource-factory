@@ -64,8 +64,10 @@ fun Project.bungeePluginYaml(configure: Action<BungeeCordPluginYaml> = nullActio
  */
 abstract class BungeeCordPluginYaml @Inject constructor(
     @Transient
-    private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+    private val objects: ObjectFactory,
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider,
+    ProjectMetaConventions,
+    ResourceFactory.Provider {
 
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
@@ -99,9 +101,7 @@ abstract class BungeeCordPluginYaml @Inject constructor(
     @Pattern(PLUGIN_NAME_PATTERN, "BungeeCord plugin name (of soft dependency)")
     val softDepends: SetProperty<String> = objects.setProperty()
 
-    override fun asConfigSerializable(): Any {
-        return Serializable(this)
-    }
+    override fun asConfigSerializable(): Any = Serializable(this)
 
     override fun setConventionsFromProjectMeta(project: Project) {
         name.convention(project.name)

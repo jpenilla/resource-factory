@@ -30,7 +30,7 @@ abstract class ResourceFactoryConventionPlugin<E : Any>(
     private val extensionName: String,
     private val extensionFactory: (Project) -> E,
     private val sourceSetName: String = "main",
-    private val configureFactoryExt: (ResourceFactoryExtension, E) -> Unit
+    private val configureFactoryExt: (ResourceFactoryExtension, E) -> Unit,
 ) : Plugin<Project> {
     abstract class Provider<E : ResourceFactory.Provider>(
         extensionName: String,
@@ -40,7 +40,7 @@ abstract class ResourceFactoryConventionPlugin<E : Any>(
         extensionName,
         extensionFactory,
         sourceSetName,
-        { factoryExt, ext -> factoryExt.factory(ext.resourceFactory()) }
+        { factoryExt, ext -> factoryExt.factory(ext.resourceFactory()) },
     )
 
     override fun apply(target: Project) {

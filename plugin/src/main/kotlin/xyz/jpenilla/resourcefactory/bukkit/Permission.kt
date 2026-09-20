@@ -52,12 +52,11 @@ class Permission(objects: ObjectFactory, @Input val name: String) {
         TRUE("true"),
         FALSE("false"),
         OP("op"),
-        NOT_OP("not op");
+        NOT_OP("not op"),
+        ;
 
         object Serializer : TypeSerializer<Default> {
-            override fun deserialize(type: Type?, node: ConfigurationNode?): Default {
-                throw UnsupportedOperationException()
-            }
+            override fun deserialize(type: Type?, node: ConfigurationNode?): Default = throw UnsupportedOperationException()
 
             override fun serialize(type: Type, obj: Default?, node: ConfigurationNode) {
                 node.set(obj?.serialized)

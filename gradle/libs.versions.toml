@@ -1,16 +1,21 @@
 [plugins]
 indra = { id = "net.kyori.indra", version.ref = "indra" }
 indra-publishing-gradle-plugin = { id = "net.kyori.indra.publishing.gradle-plugin", version.ref = "indra" }
-indra-licenser-spotless = { id = "net.kyori.indra.licenser.spotless", version.ref = "indra" }
 gradle-plugin-publish = { id = "com.gradle.plugin-publish", version = "2.2.1" }
+ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlintGradle" }
+levelHeadered = { id = "net.octyl.level-headered", version.ref = "levelHeadered" }
 
 [versions]
-ktlint = "1.0.0"
+ktlint = "1.6.0"
+ktlintGradle = "14.2.0"
+levelHeadered = "0.1.2"
 indra = "4.1.0"
 configurate = "4.2.0"
 jtoml = "1.7.0"
 
 [libraries]
+# Not used directly; pins the ktlint version in a form Renovate can track.
+ktlintCli = { group = "com.pinterest.ktlint", name = "ktlint-cli", version.ref = "ktlint" }
 configurateBom = { group = "org.spongepowered", name = "configurate-bom", version.ref = "configurate" }
 configurateYaml = { group = "org.spongepowered", name = "configurate-yaml", version.ref = "configurate" }
 configurateGson = { group = "org.spongepowered", name = "configurate-gson", version.ref = "configurate" }

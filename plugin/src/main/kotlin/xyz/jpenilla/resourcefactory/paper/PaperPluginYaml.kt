@@ -72,8 +72,10 @@ fun Project.paperPluginYaml(configure: Action<PaperPluginYaml> = nullAction()): 
  */
 abstract class PaperPluginYaml @Inject constructor(
     @Transient
-    private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+    private val objects: ObjectFactory,
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider,
+    ProjectMetaConventions,
+    ResourceFactory.Provider {
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
         private const val PLUGIN_CLASS_PATTERN: String = "^(?!io\\.papermc\\.)([a-zA-Z_$][a-zA-Z\\d_$]*\\.)*[a-zA-Z_$][a-zA-Z\\d_$]*$"
@@ -164,7 +166,7 @@ abstract class PaperPluginYaml @Inject constructor(
     enum class Load {
         BEFORE,
         AFTER,
-        OMIT
+        OMIT,
     }
 
     abstract class Dependencies @Inject constructor(objects: ObjectFactory) {
@@ -178,7 +180,7 @@ abstract class PaperPluginYaml @Inject constructor(
             name: String,
             load: Load = Load.OMIT,
             required: Boolean = true,
-            joinClasspath: Boolean = true
+            joinClasspath: Boolean = true,
         ): NamedDomainObjectProvider<Dependency> = bootstrap.register(name) {
             this.load.set(load)
             this.required.set(required)
@@ -189,7 +191,7 @@ abstract class PaperPluginYaml @Inject constructor(
             name: String,
             load: Load = Load.OMIT,
             required: Boolean = true,
-            joinClasspath: Boolean = true
+            joinClasspath: Boolean = true,
         ): NamedDomainObjectProvider<Dependency> = server.register(name) {
             this.load.set(load)
             this.required.set(required)
@@ -200,7 +202,7 @@ abstract class PaperPluginYaml @Inject constructor(
     class Dependency(
         objects: ObjectFactory,
         @get:Input
-        val name: String
+        val name: String,
     ) {
         @get:Input
         val load: Property<Load> = objects.property<Load>().convention(Load.OMIT)
@@ -226,9 +228,7 @@ abstract class PaperPluginYaml @Inject constructor(
         return gen
     }
 
-    override fun asConfigSerializable(): Any {
-        return Serializable(this)
-    }
+    override fun asConfigSerializable(): Any = Serializable(this)
 
     @ConfigSerializable
     class Serializable(yaml: PaperPluginYaml) {
@@ -262,7 +262,7 @@ abstract class PaperPluginYaml @Inject constructor(
     @ConfigSerializable
     data class SerializableDependencies(
         val bootstrap: Map<String, SerializableDependency>?,
-        val server: Map<String, SerializableDependency>?
+        val server: Map<String, SerializableDependency>?,
     ) {
         companion object {
             fun from(deps: Dependencies): SerializableDependencies? {

@@ -67,8 +67,10 @@ fun Project.bukkitPluginYaml(configure: Action<BukkitPluginYaml> = nullAction())
  */
 abstract class BukkitPluginYaml @Inject constructor(
     @Transient
-    private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+    private val objects: ObjectFactory,
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider,
+    ProjectMetaConventions,
+    ResourceFactory.Provider {
 
     companion object {
         private const val PLUGIN_NAME_PATTERN: String = "^[A-Za-z0-9_\\.-]+$"
@@ -144,10 +146,14 @@ abstract class BukkitPluginYaml @Inject constructor(
     val libraries: ListProperty<String> = objects.listProperty()
 
     @get:Nested
-    val commands: NamedDomainObjectContainer<Command> = objects.domainObjectContainer(Command::class.java) { objects.newInstance<Command>(it) }
+    val commands: NamedDomainObjectContainer<Command> = objects.domainObjectContainer(Command::class.java) {
+        objects.newInstance<Command>(it)
+    }
 
     @get:Nested
-    val permissions: NamedDomainObjectContainer<Permission> = objects.domainObjectContainer(Permission::class.java) { Permission(objects, it) }
+    val permissions: NamedDomainObjectContainer<Permission> = objects.domainObjectContainer(Permission::class.java) {
+        Permission(objects, it)
+    }
 
     @get:Input
     @get:Optional
@@ -164,7 +170,7 @@ abstract class BukkitPluginYaml @Inject constructor(
 
     enum class PluginLoadOrder {
         STARTUP,
-        POSTWORLD
+        POSTWORLD,
     }
 
     override fun setConventionsFromProjectMeta(project: Project) {
@@ -175,7 +181,7 @@ abstract class BukkitPluginYaml @Inject constructor(
 
     abstract class Command @Inject constructor(
         @Input
-        val name: String
+        val name: String,
     ) {
         @get:Input
         @get:Optional
@@ -221,9 +227,7 @@ abstract class BukkitPluginYaml @Inject constructor(
         return gen
     }
 
-    override fun asConfigSerializable(): Any {
-        return Serializable(this)
-    }
+    override fun asConfigSerializable(): Any = Serializable(this)
 
     @ConfigSerializable
     class Serializable(yaml: BukkitPluginYaml) {

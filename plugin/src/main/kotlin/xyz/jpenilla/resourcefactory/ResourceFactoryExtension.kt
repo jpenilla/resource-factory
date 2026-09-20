@@ -40,10 +40,7 @@ import kotlin.reflect.KClass
 /**
  * [SourceSet] extension for configuring [ResourceFactory]s.
  */
-abstract class ResourceFactoryExtension @Inject constructor(
-    private val objects: ObjectFactory,
-    private val project: Project
-) {
+abstract class ResourceFactoryExtension @Inject constructor(private val objects: ObjectFactory, private val project: Project) {
     /**
      * The [ResourceFactory]s for the default [ExecuteResourceFactories] task of the source set.
      */
@@ -76,10 +73,8 @@ abstract class ResourceFactoryExtension @Inject constructor(
      * @param configure the block to configure the [ResourceFactory] with
      * @return the created and configured [ResourceFactory]
      */
-    inline fun <reified T : ResourceFactory> factory(
-        vararg constructionParams: Any,
-        configure: Action<T>
-    ): T = factory(T::class, constructionParams = constructionParams, configure = configure)
+    inline fun <reified T : ResourceFactory> factory(vararg constructionParams: Any, configure: Action<T>): T =
+        factory(T::class, constructionParams = constructionParams, configure = configure)
 
     /**
      * Create a [ResourceFactory] of type [T] with the given [constructionParams],
@@ -91,11 +86,7 @@ abstract class ResourceFactoryExtension @Inject constructor(
      * @param configure the block to configure the [ResourceFactory] with
      * @return the created and configured [ResourceFactory]
      */
-    fun <T : ResourceFactory> factory(
-        generatorType: KClass<T>,
-        vararg constructionParams: Any,
-        configure: Action<T>
-    ): T {
+    fun <T : ResourceFactory> factory(generatorType: KClass<T>, vararg constructionParams: Any, configure: Action<T>): T {
         val o = objects.newInstance(generatorType, *constructionParams)
         configure.execute(o)
         factory(o)

@@ -43,17 +43,13 @@ fun <A : Any, B : Any> MapProperty<A, B>.nullIfEmpty(): Map<A, B>? = if (get().i
 
 fun <A : Any> NamedDomainObjectContainer<A>.nullIfEmpty(): Map<String, A>? = if (isEmpty()) null else asMap.toMap()
 
-fun KProperty<String>.validate(): String =
-    orNullValidating { it } ?: throw NullPointerException()
+fun KProperty<String>.validate(): String = orNullValidating { it } ?: throw NullPointerException()
 
-fun KProperty<Property<String>>.getValidating(): String =
-    orNullValidating { it.get() } ?: throw NullPointerException()
+fun KProperty<Property<String>>.getValidating(): String = orNullValidating { it.get() } ?: throw NullPointerException()
 
 fun KProperty<Property<String>>.orNullValidating(): String? = orNullValidating { it.orNull }
 
-private fun <T : Any> KProperty<T>.orNullValidating(
-    stringGetter: (T) -> String?,
-): String? {
+private fun <T : Any> KProperty<T>.orNullValidating(stringGetter: (T) -> String?): String? {
     val value = stringGetter(getter.call())
     val annotation = patternAnnotation()
     return value?.validate(annotation.pattern, annotation.description.takeIf { it.isNotBlank() } ?: fallbackDescription())

@@ -35,7 +35,7 @@ import java.util.function.Function
  */
 abstract class CustomValueProvider<T : Any>(
     @get:Internal
-    val type: Type?
+    val type: Type?,
 ) {
     /**
      * Returns the serializable value.
@@ -80,8 +80,7 @@ abstract class CustomValueFactory {
      * @param value complex value
      * @return the created value provider
      */
-    fun <V : Any> complexCustomValue(value: V): CustomValueProvider<V> =
-        typedComplexCustomValue(null, value) { it }
+    fun <V : Any> complexCustomValue(value: V): CustomValueProvider<V> = typedComplexCustomValue(null, value) { it }
 
     /**
      * Creates a value provider for a complex value. The value is exposed to Gradle as a nested property,
@@ -118,8 +117,7 @@ abstract class CustomValueFactory {
      * @param value complex value
      * @return the created value provider
      */
-    fun <V : Any> typedComplexCustomValue(type: Type?, value: V): CustomValueProvider<V> =
-        typedComplexCustomValue(type, value) { it }
+    fun <V : Any> typedComplexCustomValue(type: Type?, value: V): CustomValueProvider<V> = typedComplexCustomValue(type, value) { it }
 
     /**
      * Creates a value provider for a simple value. The value is exposed to Gradle as an input property.
@@ -128,8 +126,7 @@ abstract class CustomValueFactory {
      * @param value the simple value
      * @return the created value provider
      */
-    fun <T : Any> simpleCustomValue(value: T): CustomValueProvider<T> =
-        typedSimpleCustomValue(null, value)
+    fun <T : Any> simpleCustomValue(value: T): CustomValueProvider<T> = typedSimpleCustomValue(null, value)
 
     /**
      * Creates a value provider for a simple value. The value is exposed to Gradle as an input property.
@@ -141,15 +138,12 @@ abstract class CustomValueFactory {
      * @param value the simple value
      * @return the created value provider
      */
-    fun <T : Any> typedSimpleCustomValue(type: Type?, value: T): CustomValueProvider<T> =
-        object : CustomValueProvider<T>(type) {
-            @get:Input
-            val value = value
+    fun <T : Any> typedSimpleCustomValue(type: Type?, value: T): CustomValueProvider<T> = object : CustomValueProvider<T>(type) {
+        @get:Input
+        val value = value
 
-            override fun value(): T {
-                return this.value
-            }
-        }
+        override fun value(): T = this.value
+    }
 
     /**
      * Creates a value provider for a simple map value.
@@ -205,9 +199,7 @@ abstract class CustomValueFactory {
  * Configurate serializer for [CustomValueProvider]s.
  */
 object ConfigurateCustomValueProviderSerializer : TypeSerializer<CustomValueProvider<*>> {
-    override fun deserialize(type: Type?, node: ConfigurationNode?): CustomValueProvider<*> {
-        throw UnsupportedOperationException()
-    }
+    override fun deserialize(type: Type?, node: ConfigurationNode?): CustomValueProvider<*> = throw UnsupportedOperationException()
 
     override fun serialize(type: Type, obj: CustomValueProvider<*>?, node: ConfigurationNode) {
         if (obj != null) {

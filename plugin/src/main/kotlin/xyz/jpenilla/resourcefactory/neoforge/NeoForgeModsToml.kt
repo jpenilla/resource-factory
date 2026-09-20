@@ -78,7 +78,9 @@ abstract class NeoForgeModsToml @Inject constructor(
     private val objects: ObjectFactory,
     @Transient
     private val project: Project,
-) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ResourceFactory.Provider, CustomValueFactory() {
+) : CustomValueFactory(),
+    ConfigurateSingleFileResourceFactory.Simple.ValueProvider,
+    ResourceFactory.Provider {
 
     companion object {
         private const val MOD_ID_PATTERN: String = "^(?=.{2,64}$)[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)*$"
@@ -151,12 +153,10 @@ abstract class NeoForgeModsToml @Inject constructor(
      * @param configure the block to configure the [Mod] with
      */
     @JvmOverloads
-    fun mod(id: String, configure: Action<Mod> = nullAction()): NamedDomainObjectProvider<Mod> {
-        return if (id in mods.names) {
-            mods.named(id, configure)
-        } else {
-            mods.register(id, configure)
-        }
+    fun mod(id: String, configure: Action<Mod> = nullAction()): NamedDomainObjectProvider<Mod> = if (id in mods.names) {
+        mods.named(id, configure)
+    } else {
+        mods.register(id, configure)
     }
 
     /**
@@ -182,8 +182,9 @@ abstract class NeoForgeModsToml @Inject constructor(
     open class Mod @Inject constructor(
         private val name: String,
         @Transient
-        private val objects: ObjectFactory
-    ) : Named, ProjectMetaConventions {
+        private val objects: ObjectFactory,
+    ) : Named,
+        ProjectMetaConventions {
         init {
             name.validate(MOD_ID_PATTERN, "NeoForge mod id")
         }
@@ -194,9 +195,7 @@ abstract class NeoForgeModsToml @Inject constructor(
          * @return [modId]
          */
         @Internal
-        override fun getName(): String {
-            return name
-        }
+        override fun getName(): String = name
 
         @get:Input
         val modId: String
@@ -309,32 +308,36 @@ abstract class NeoForgeModsToml @Inject constructor(
             }
 
             @JvmOverloads
-            fun required(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
-                type.set(DependencyType.REQUIRED)
-                versionRange?.let { this.versionRange.set(it) }
-                configure.execute(this)
-            }
+            fun required(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency =
+                add(modId) {
+                    type.set(DependencyType.REQUIRED)
+                    versionRange?.let { this.versionRange.set(it) }
+                    configure.execute(this)
+                }
 
             @JvmOverloads
-            fun optional(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
-                type.set(DependencyType.OPTIONAL)
-                versionRange?.let { this.versionRange.set(it) }
-                configure.execute(this)
-            }
+            fun optional(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency =
+                add(modId) {
+                    type.set(DependencyType.OPTIONAL)
+                    versionRange?.let { this.versionRange.set(it) }
+                    configure.execute(this)
+                }
 
             @JvmOverloads
-            fun incompatible(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
-                type.set(DependencyType.INCOMPATIBLE)
-                versionRange?.let { this.versionRange.set(it) }
-                configure.execute(this)
-            }
+            fun incompatible(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency =
+                add(modId) {
+                    type.set(DependencyType.INCOMPATIBLE)
+                    versionRange?.let { this.versionRange.set(it) }
+                    configure.execute(this)
+                }
 
             @JvmOverloads
-            fun discouraged(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency = add(modId) {
-                type.set(DependencyType.DISCOURAGED)
-                versionRange?.let { this.versionRange.set(it) }
-                configure.execute(this)
-            }
+            fun discouraged(modId: String, versionRange: String? = null, configure: Action<Dependency> = nullAction()): Dependency =
+                add(modId) {
+                    type.set(DependencyType.DISCOURAGED)
+                    versionRange?.let { this.versionRange.set(it) }
+                    configure.execute(this)
+                }
         }
 
         override fun setConventionsFromProjectMeta(project: Project) {
@@ -346,7 +349,7 @@ abstract class NeoForgeModsToml @Inject constructor(
 
     open class Dependency(
         @Transient
-        private val objects: ObjectFactory
+        private val objects: ObjectFactory,
     ) {
         @get:Input
         @Pattern(MOD_ID_PATTERN, "NeoForge mod id")
@@ -411,7 +414,7 @@ abstract class NeoForgeModsToml @Inject constructor(
 
     open class AccessTransformer(
         @Transient
-        private val objects: ObjectFactory
+        private val objects: ObjectFactory,
     ) {
         @get:Input
         val file: Property<String> = objects.property()
@@ -441,7 +444,7 @@ abstract class NeoForgeModsToml @Inject constructor(
 
     open class Mixin(
         @Transient
-        private val objects: ObjectFactory
+        private val objects: ObjectFactory,
     ) {
         @get:Input
         val config: Property<String> = objects.property()
@@ -469,7 +472,7 @@ abstract class NeoForgeModsToml @Inject constructor(
                     s.registerAnnotatedObjects(
                         ObjectMapper.factoryBuilder()
                             .defaultNamingScheme(NamingSchemes.PASSTHROUGH)
-                            .build()
+                            .build(),
                     )
                         .register(object : TypeToken<CustomValueProvider<*>>() {}, ConfigurateCustomValueProviderSerializer)
                 }
@@ -480,9 +483,7 @@ abstract class NeoForgeModsToml @Inject constructor(
         return gen
     }
 
-    override fun asConfigSerializable(): Any {
-        return Serializable(this)
-    }
+    override fun asConfigSerializable(): Any = Serializable(this)
 
     @ConfigSerializable
     open class Serializable(modsToml: NeoForgeModsToml) {
@@ -507,7 +508,9 @@ abstract class NeoForgeModsToml @Inject constructor(
         val modproperties: Map<String, Map<String, CustomValueProvider<*>>>? = modsToml.mods.nullIfEmpty()?.mapValues { (_, mod) ->
             mod.modProperties.get()
         }?.filterValues { it.isNotEmpty() }
-        val accessTransformers: List<SerializableAccessTransformer>? = modsToml.accessTransformers.nullIfEmpty()?.map { SerializableAccessTransformer(it) }
+        val accessTransformers: List<SerializableAccessTransformer>? = modsToml.accessTransformers.nullIfEmpty()?.map {
+            SerializableAccessTransformer(it)
+        }
         val mixins: List<SerializableMixin>? = modsToml.mixins.nullIfEmpty()?.map { SerializableMixin(it) }
         val dependencies: Map<String, List<SerializableDependency>>? = modsToml.mods.nullIfEmpty()?.mapValues { (_, mod) ->
             mod.dependencies.dependencies.get().map { SerializableDependency(it) }

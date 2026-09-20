@@ -65,8 +65,10 @@ fun Project.velocityPluginJson(configure: Action<VelocityPluginJson> = nullActio
  */
 abstract class VelocityPluginJson @Inject constructor(
     @Transient
-    private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider {
+    private val objects: ObjectFactory,
+) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider,
+    ProjectMetaConventions,
+    ResourceFactory.Provider {
 
     companion object {
         private const val PLUGIN_ID_PATTERN: String = "[a-z][a-z0-9-_]{0,63}"
@@ -104,9 +106,7 @@ abstract class VelocityPluginJson @Inject constructor(
     @get:Input
     val main: Property<String> = objects.property()
 
-    override fun asConfigSerializable(): Any {
-        return Serializable(this)
-    }
+    override fun asConfigSerializable(): Any = Serializable(this)
 
     override fun setConventionsFromProjectMeta(project: Project) {
         id.convention(project.name)
@@ -129,7 +129,7 @@ abstract class VelocityPluginJson @Inject constructor(
         @get:Input
         val id: String,
         @get:Input
-        val optional: Boolean = false
+        val optional: Boolean = false,
     )
 
     @ConfigSerializable

@@ -75,8 +75,11 @@ fun Project.fabricModJson(configure: Action<FabricModJson> = nullAction()): Fabr
  */
 abstract class FabricModJson @Inject constructor(
     @Transient
-    private val objects: ObjectFactory
-) : ConfigurateSingleFileResourceFactory.Simple.ValueProvider, ProjectMetaConventions, ResourceFactory.Provider, CustomValueFactory() {
+    private val objects: ObjectFactory,
+) : CustomValueFactory(),
+    ConfigurateSingleFileResourceFactory.Simple.ValueProvider,
+    ProjectMetaConventions,
+    ResourceFactory.Provider {
 
     companion object {
         private const val MOD_ID_PATTERN: String = "^[a-z][a-z0-9-_]{1,63}$"
@@ -98,16 +101,13 @@ abstract class FabricModJson @Inject constructor(
     val entrypoints: ListProperty<Entrypoint> = objects.listProperty()
 
     @JvmOverloads
-    fun mainEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) =
-        entrypoint("main", value, configure)
+    fun mainEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) = entrypoint("main", value, configure)
 
     @JvmOverloads
-    fun clientEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) =
-        entrypoint("client", value, configure)
+    fun clientEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) = entrypoint("client", value, configure)
 
     @JvmOverloads
-    fun serverEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) =
-        entrypoint("server", value, configure)
+    fun serverEntrypoint(value: String, configure: Action<Entrypoint> = nullAction()) = entrypoint("server", value, configure)
 
     @JvmOverloads
     fun entrypoint(type: String, value: String, configure: Action<Entrypoint> = nullAction()): Entrypoint {
@@ -230,9 +230,7 @@ abstract class FabricModJson @Inject constructor(
 
     interface Icon {
         object Serializer : TypeSerializer<Icon> {
-            override fun deserialize(type: Type?, node: ConfigurationNode?): Icon {
-                throw UnsupportedOperationException()
-            }
+            override fun deserialize(type: Type?, node: ConfigurationNode?): Icon = throw UnsupportedOperationException()
 
             override fun serialize(type: Type, obj: Icon?, node: ConfigurationNode) {
                 when (obj) {
@@ -246,12 +244,12 @@ abstract class FabricModJson @Inject constructor(
 
     class SingleIcon(
         @get:Input
-        val path: String
+        val path: String,
     ) : Icon
 
     class IconMap(
         @get:Input
-        val icons: Map<String, String>
+        val icons: Map<String, String>,
     ) : Icon
 
     @JvmOverloads
@@ -336,7 +334,7 @@ abstract class FabricModJson @Inject constructor(
                         .registerAnnotatedObjects(
                             ObjectMapper.factoryBuilder()
                                 .defaultNamingScheme(NamingSchemes.PASSTHROUGH)
-                                .build()
+                                .build(),
                         )
                         .register(object : TypeToken<CustomValueProvider<*>>() {}, ConfigurateCustomValueProviderSerializer)
                         .register(Icon::class.java, Icon.Serializer)
@@ -348,9 +346,7 @@ abstract class FabricModJson @Inject constructor(
         return gen
     }
 
-    override fun asConfigSerializable(): Any {
-        return Serializable(this)
-    }
+    override fun asConfigSerializable(): Any = Serializable(this)
 
     @ConfigSerializable
     open class Serializable(fmj: FabricModJson) {
@@ -384,20 +380,11 @@ abstract class FabricModJson @Inject constructor(
     }
 
     @ConfigSerializable
-    class SerializableEntrypoint(
-        val adapter: String?,
-        val value: String
-    )
+    class SerializableEntrypoint(val adapter: String?, val value: String)
 
     @ConfigSerializable
-    class SerializableMixinConfig(
-        val config: String,
-        val environment: Environment?
-    )
+    class SerializableMixinConfig(val config: String, val environment: Environment?)
 
     @ConfigSerializable
-    class SerializablePerson(
-        val name: String,
-        val contact: Map<String, String>?
-    )
+    class SerializablePerson(val name: String, val contact: Map<String, String>?)
 }

@@ -28,5 +28,5 @@ import org.intellij.lang.annotations.Language
 annotation class Pattern(
     @Language("RegExp")
     val pattern: String,
-    val description: String = ""
+    val description: String = "",
 )

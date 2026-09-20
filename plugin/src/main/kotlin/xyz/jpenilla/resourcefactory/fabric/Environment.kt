@@ -23,12 +23,11 @@ import java.lang.reflect.Type
 enum class Environment(private val serialized: String) {
     CLIENT("client"),
     SERVER("server"),
-    ANY("*");
+    ANY("*"),
+    ;
 
     object Serializer : TypeSerializer<Environment> {
-        override fun deserialize(type: Type?, node: ConfigurationNode?): Environment {
-            throw UnsupportedOperationException()
-        }
+        override fun deserialize(type: Type?, node: ConfigurationNode?): Environment = throw UnsupportedOperationException()
 
         override fun serialize(type: Type, obj: Environment?, node: ConfigurationNode) {
             node.set(obj?.serialized)

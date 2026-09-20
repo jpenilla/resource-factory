@@ -70,7 +70,7 @@ abstract class ExecuteResourceFactories : DefaultTask() {
             } catch (ex: Exception) {
                 throw GradleException(
                     "Exception executing factory $index $factory: ${ex.message}\nFactories:\n${printFactories(resourceFactories)}",
-                    ex
+                    ex,
                 )
             }
         }
