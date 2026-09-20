@@ -90,17 +90,43 @@ fabricModJson {
 neoForgeModsToml {
     loaderVersion = "*"
     apache2License()
+    showAsResourcePack = true
+    showAsDataPack = true
+    services.add("example.TestService")
+    issueTrackerUrl = "https://example.com/issues"
+    bannerFile = "default-banner.png"
+    iconFile = "icon.png"
+    iconBlur = false
     conventionMod {
         namespace = "tester_namespace"
+        logoFile = "legacy-logo.png"
+        logoBlur = true
+        bannerFile = "banner.png"
+        iconFile = "tester-icon.png"
+        iconBlur = true
+        updateJsonUrl = "https://example.com/updates.json"
+        modUrl = "https://example.com/mod"
+        displayUrl = "https://example.com/display"
+        credits = "Test contributors"
+        authors = "Test author"
+        enumExtensions = "META-INF/enumextensions.json"
+        featureFlags = "META-INF/feature_flags.json"
         features.put("javaVersion", "[25,)")
         modProperties.put("test_property", simpleCustomValue("test_value"))
         dependencies {
             required("minecraft", "1.21.5") {
                 reason = "Minecraft"
                 after()
+                client()
+                referralUrl = "https://www.minecraft.net"
             }
             optional("moonrise")
             optional("example.dotted_mod")
+            incompatible("incompatible_mod", "[1,2)") {
+                before()
+                server()
+            }
+            discouraged("discouraged_mod")
         }
         custom.put(
             "ferritecore:disabled_options",
@@ -129,7 +155,11 @@ neoForgeModsToml {
     }
     mods.register("my_other_mod_id")
     accessTransformers("a.cfg", "b.cfg")
-    mixin("tester.mixins.json")
+    mixin("tester.mixins.json") {
+        requiredMods.add("moonrise")
+        behaviorVersion = "0.17.1"
+    }
+    mixin("unconditional.mixins.json")
     custom.put(
         "lithium:options",
         simpleCustomValueMap(

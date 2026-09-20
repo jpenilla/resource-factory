@@ -95,9 +95,20 @@ abstract class NeoForgeModsToml @Inject constructor(
     @get:Input
     val license: Property<String> = objects.property()
 
-    fun apache2License() = license.set("Apache-2.0")
+    /** License link used by the mod list. Introduced in NeoForge 26.2. */
+    @get:Input
+    @get:Optional
+    val licenseUrl: Property<String> = objects.property()
 
-    fun mitLicense() = license.set("MIT")
+    fun apache2License() {
+        license.convention("Apache-2.0")
+        licenseUrl.convention("https://www.apache.org/licenses/LICENSE-2.0")
+    }
+
+    fun mitLicense() {
+        license.convention("MIT")
+        licenseUrl.convention("https://opensource.org/license/mit")
+    }
 
     @get:Input
     @get:Optional
@@ -114,6 +125,21 @@ abstract class NeoForgeModsToml @Inject constructor(
     @get:Input
     @get:Optional
     val issueTrackerUrl: Property<String> = objects.property()
+
+    /** Default banner for mods in this file. Introduced in NeoForge 26.2. */
+    @get:Input
+    @get:Optional
+    val bannerFile: Property<String> = objects.property()
+
+    /** Default icon for mods in this file. Introduced in NeoForge 26.2. */
+    @get:Input
+    @get:Optional
+    val iconFile: Property<String> = objects.property()
+
+    /** Default icon filtering for mods in this file. Introduced in NeoForge 26.2. */
+    @get:Input
+    @get:Optional
+    val iconBlur: Property<Boolean> = objects.property()
 
     @get:Nested
     val mods: NamedDomainObjectContainer<Mod> = objects.domainObjectContainer(Mod::class)
@@ -193,13 +219,35 @@ abstract class NeoForgeModsToml @Inject constructor(
         @get:Optional
         val description: Property<String> = objects.property()
 
+        /**
+         * Deprecated by NeoForge since 26.2 in favor of [bannerFile] and [iconFile]. Use this when targeting older
+         * NeoForge versions.
+         */
         @get:Input
         @get:Optional
         val logoFile: Property<String> = objects.property()
 
+        /**
+         * Has no effect on NeoForge since 26.2. Use this when targeting older NeoForge versions.
+         */
         @get:Input
         @get:Optional
         val logoBlur: Property<Boolean> = objects.property()
+
+        /** Mod-specific banner overriding [NeoForgeModsToml.bannerFile]. Introduced in NeoForge 26.2. */
+        @get:Input
+        @get:Optional
+        val bannerFile: Property<String> = objects.property()
+
+        /** Mod-specific icon overriding [NeoForgeModsToml.iconFile]. Introduced in NeoForge 26.2. */
+        @get:Input
+        @get:Optional
+        val iconFile: Property<String> = objects.property()
+
+        /** Mod-specific icon filtering overriding [NeoForgeModsToml.iconBlur]. Introduced in NeoForge 26.2. */
+        @get:Input
+        @get:Optional
+        val iconBlur: Property<Boolean> = objects.property()
 
         @get:Input
         @get:Optional
@@ -379,6 +427,12 @@ abstract class NeoForgeModsToml @Inject constructor(
         return mixin
     }
 
+    fun mixin(config: String, configure: Action<Mixin>): Mixin {
+        val mixin = mixin(config)
+        configure.execute(mixin)
+        return mixin
+    }
+
     fun mixins(vararg configs: String) {
         for (config in configs) {
             mixin(config)
@@ -391,6 +445,14 @@ abstract class NeoForgeModsToml @Inject constructor(
     ) {
         @get:Input
         val config: Property<String> = objects.property()
+
+        @get:Input
+        @get:Optional
+        val requiredMods: ListProperty<String> = objects.listProperty()
+
+        @get:Input
+        @get:Optional
+        val behaviorVersion: Property<String> = objects.property()
     }
 
     /**
@@ -430,10 +492,14 @@ abstract class NeoForgeModsToml @Inject constructor(
         val modLoader: String = modsToml.modLoader.get()
         val loaderVersion: String = modsToml.loaderVersion.get()
         val license: String = modsToml.license.get()
+        val licenseURL: String? = modsToml.licenseUrl.orNull
         val showAsResourcePack: Boolean? = modsToml.showAsResourcePack.orNull
         val showAsDataPack: Boolean? = modsToml.showAsDataPack.orNull
         val services: List<String>? = modsToml.services.nullIfEmpty()
         val issueTrackerURL: String? = modsToml.issueTrackerUrl.orNull
+        val bannerFile: String? = modsToml.bannerFile.orNull
+        val iconFile: String? = modsToml.iconFile.orNull
+        val iconBlur: Boolean? = modsToml.iconBlur.orNull
         val mods: List<SerializableMod>? = modsToml.mods.nullIfEmpty()?.values?.map { SerializableMod(it) }
         val features: Map<String, Map<String, String>>? = modsToml.mods.nullIfEmpty()?.mapValues { (_, mod) ->
             mod.features.get()
@@ -460,6 +526,9 @@ abstract class NeoForgeModsToml @Inject constructor(
         val description: String? = mod.description.orNull
         val logoFile: String? = mod.logoFile.orNull
         val logoBlur: Boolean? = mod.logoBlur.orNull
+        val bannerFile: String? = mod.bannerFile.orNull
+        val iconFile: String? = mod.iconFile.orNull
+        val iconBlur: Boolean? = mod.iconBlur.orNull
         val updateJSONURL: String? = mod.updateJsonUrl.orNull
         val modUrl: String? = mod.modUrl.orNull
         val credits: String? = mod.credits.orNull
@@ -477,6 +546,8 @@ abstract class NeoForgeModsToml @Inject constructor(
     @ConfigSerializable
     open class SerializableMixin(mixin: Mixin) {
         val config: String = mixin.config.get()
+        val requiredMods: List<String>? = mixin.requiredMods.nullIfEmpty()
+        val behaviorVersion: String? = mixin.behaviorVersion.orNull
     }
 
     @ConfigSerializable
