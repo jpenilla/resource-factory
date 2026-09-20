@@ -435,6 +435,12 @@ abstract class NeoForgeModsToml @Inject constructor(
         val services: List<String>? = modsToml.services.nullIfEmpty()
         val issueTrackerURL: String? = modsToml.issueTrackerUrl.orNull
         val mods: List<SerializableMod>? = modsToml.mods.nullIfEmpty()?.values?.map { SerializableMod(it) }
+        val features: Map<String, Map<String, String>>? = modsToml.mods.nullIfEmpty()?.mapValues { (_, mod) ->
+            mod.features.get()
+        }?.filterValues { it.isNotEmpty() }
+        val modproperties: Map<String, Map<String, CustomValueProvider<*>>>? = modsToml.mods.nullIfEmpty()?.mapValues { (_, mod) ->
+            mod.modProperties.get()
+        }?.filterValues { it.isNotEmpty() }
         val accessTransformers: List<SerializableAccessTransformer>? = modsToml.accessTransformers.nullIfEmpty()?.map { SerializableAccessTransformer(it) }
         val mixins: List<SerializableMixin>? = modsToml.mixins.nullIfEmpty()?.map { SerializableMixin(it) }
         val dependencies: Map<String, List<SerializableDependency>>? = modsToml.mods.nullIfEmpty()?.mapValues { (_, mod) ->
@@ -455,8 +461,6 @@ abstract class NeoForgeModsToml @Inject constructor(
         val logoFile: String? = mod.logoFile.orNull
         val logoBlur: Boolean? = mod.logoBlur.orNull
         val updateJSONURL: String? = mod.updateJsonUrl.orNull
-        val features: Map<String, String>? = mod.features.nullIfEmpty()
-        val modproperties: Map<String, CustomValueProvider<*>>? = mod.modProperties.nullIfEmpty()
         val modUrl: String? = mod.modUrl.orNull
         val credits: String? = mod.credits.orNull
         val authors: String? = mod.authors.orNull
