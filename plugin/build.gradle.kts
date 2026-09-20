@@ -71,7 +71,8 @@ spotless {
         "ktlint_standard_filename" to "disabled",
         "ktlint_standard_trailing-comma-on-call-site" to "disabled",
         "ktlint_standard_trailing-comma-on-declaration-site" to "disabled",
-        "ktlint_standard_comment-wrapping" to "disabled", // allow block comments in between elements on the same line
+        // allow block comments in between elements on the same line
+        "ktlint_standard_comment-wrapping" to "disabled",
     )
     kotlin {
         ktlint(libs.versions.ktlint.get()).editorConfigOverride(overrides)
