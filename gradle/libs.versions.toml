@@ -11,7 +11,7 @@ ktlintGradle = "14.2.0"
 levelHeadered = "0.1.2"
 indra = "4.1.0"
 configurate = "4.2.0"
-jtoml = "1.7.0"
+jtoml = "1.8.0"
 
 [libraries]
 # Not used directly; pins the ktlint version in a form Renovate can track.
