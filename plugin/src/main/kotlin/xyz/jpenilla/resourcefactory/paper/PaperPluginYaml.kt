@@ -142,6 +142,10 @@ abstract class PaperPluginYaml @Inject constructor(
     @get:Optional
     val foliaSupported: Property<Boolean> = objects.property()
 
+    @get:Input
+    @get:Optional
+    val canvasSupported: Property<Boolean> = objects.property()
+
     @get:Nested
     var dependencies: Dependencies = objects.newInstance(Dependencies::class)
 
@@ -247,6 +251,7 @@ abstract class PaperPluginYaml @Inject constructor(
         val prefix = yaml.prefix.orNull
         val defaultPermission = yaml.defaultPermission.orNull
         val foliaSupported = yaml.foliaSupported.orNull
+        val canvasSupported = yaml.canvasSupported.orNull
         val dependencies = SerializableDependencies.from(yaml.dependencies)
         val provides = yaml::provides.nullIfEmptyValidating()
         val permissions = yaml.permissions.nullIfEmpty()?.mapValues { Permission.Serializable(it.value) }
