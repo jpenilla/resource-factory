@@ -53,6 +53,11 @@ abstract class ModMenu @Inject constructor(
     @get:Nested
     abstract val badges: SetProperty<ModMenuBadge>
 
+    /**
+     * Adds the given [badges].
+     *
+     * @param badges the badges to add
+     */
     fun badge(vararg badges: ModMenuBadge) = this.badges.addAll(*badges)
 
     /**
@@ -143,8 +148,19 @@ abstract class ModMenu @Inject constructor(
         configure.execute(this)
     }
 
+    /**
+     * A Mod Menu parent.
+     *
+     * @see [ParentId]
+     * @see [DummyParent]
+     */
     interface Parent
 
+    /**
+     * A Mod Menu parent referenced by mod id.
+     *
+     * @property id the parent mod id
+     */
     class ParentId(
         @get:Input
         val id: Provider<String>,
@@ -154,13 +170,22 @@ abstract class ModMenu @Inject constructor(
      * A Mod Menu dummy parent.
      */
     abstract class DummyParent : Parent {
+        /**
+         * The dummy parent's mod id.
+         */
         @get:Input
         abstract val id: Property<String>
 
+        /**
+         * The dummy parent's name.
+         */
         @get:Input
         @get:Optional
         abstract val name: Property<String>
 
+        /**
+         * The dummy parent's description.
+         */
         @get:Input
         @get:Optional
         abstract val description: Property<String>
@@ -174,9 +199,17 @@ abstract class ModMenu @Inject constructor(
         @get:Optional
         abstract val icon: Property<String>
 
+        /**
+         * The dummy parent's badges.
+         */
         @get:Nested
         abstract val badges: SetProperty<ModMenuBadge>
 
+        /**
+         * Adds the given [badges].
+         *
+         * @param badges the badges to add
+         */
         fun badge(vararg badges: ModMenuBadge) = this.badges.addAll(*badges)
 
         /**

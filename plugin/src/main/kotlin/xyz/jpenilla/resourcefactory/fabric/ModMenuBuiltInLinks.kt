@@ -24,6 +24,8 @@ import org.gradle.api.provider.MapProperty
  * Mod Menu uses a link's key as the translation key for its label, so other keys are valid too
  * when the mod provides the translation itself. Without a translation, the raw key is shown.
  *
+ * The keys track the current Mod Menu release, older versions may not have translations for newer keys.
+ *
  * There are no helpers for `modmenu.website` and `modmenu.issues`: Mod Menu already shows Website and
  * Issues buttons from the `fabric.mod.json` contact information, so set those with [FabricModJson.contact] instead.
  *
