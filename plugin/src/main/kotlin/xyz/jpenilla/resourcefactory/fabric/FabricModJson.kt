@@ -16,7 +16,6 @@
  */
 package xyz.jpenilla.resourcefactory.fabric
 
-import io.leangen.geantyref.TypeFactory
 import io.leangen.geantyref.TypeToken
 import org.gradle.api.Action
 import org.gradle.api.GradleException
@@ -88,7 +87,6 @@ abstract class FabricModJson @Inject constructor(
         const val MOD_ID_PATTERN: String = "^[a-z][a-z0-9-_]{1,63}$"
         private const val FILE_NAME: String = "fabric.mod.json"
         private const val MOD_MENU_KEY: String = "modmenu"
-        private const val INJECTED_INTERFACES_KEY: String = "loom:injected_interfaces"
     }
 
     @Pattern(MOD_ID_PATTERN, "Fabric mod id")
@@ -221,20 +219,6 @@ abstract class FabricModJson @Inject constructor(
     val custom: MapProperty<String, CustomValueProvider<*>> = objects.mapProperty()
 
     fun <T : Any> custom(name: String, value: CustomValueProvider<T>) = custom.put(name, value)
-
-    /**
-     * Loom interface injection, written to `custom` as `loom:injected_interfaces`.
-     *
-     * Setting `loom:injected_interfaces` with [custom] as well as using this is an error.
-     *
-     * Loom reads the project's own `fabric.mod.json` at configuration time, so the generated file may
-     * need to exist from an earlier run before Loom applies the injections in this project. See
-     * [fabric-loom#1675](https://github.com/FabricMC/fabric-loom/issues/1675).
-     */
-    @get:Nested
-    val injectedInterfaces: InjectedInterfaces = objects.newInstance()
-
-    fun injectedInterfaces(configure: Action<InjectedInterfaces>) = injectedInterfaces.apply { configure.execute(this) }
 
     /**
      * Mod Menu metadata, written to `custom` as `modmenu`. Omitted when nothing is set.
@@ -421,14 +405,6 @@ abstract class FabricModJson @Inject constructor(
         }
         modMenu.asSerializable()?.let {
             putHelper(MOD_MENU_KEY, "modMenu", CustomValues.simpleCustomValue(it))
-        }
-        injectedInterfaces.asMap()?.let {
-            val type = TypeFactory.parameterizedClass(
-                Map::class.java,
-                String::class.java,
-                TypeFactory.parameterizedClass(List::class.java, String::class.java),
-            )
-            putHelper(INJECTED_INTERFACES_KEY, "injectedInterfaces", CustomValues.typedSimpleCustomValue(type, it))
         }
         return custom.takeIf { it.isNotEmpty() }
     }

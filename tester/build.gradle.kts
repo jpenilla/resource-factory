@@ -97,12 +97,6 @@ fabricModJson {
         )
     )
 
-    injectedInterfaces {
-        inject("net/minecraft/world/entity/Entity", "com/example/MyInterface", "com/example/Other\$Nested")
-        inject("net/minecraft/world/entity/Entity", "com/example/Third")
-        inject("net/minecraft/world/level/Level", listOf("com/example/LevelInterface", "com/example/OtherLevelInterface"))
-    }
-
     modMenu {
         badges.add(ModMenuBadge.DEPRECATED)
         builtInLinks.discord("https://discord.gg/example")
