@@ -34,6 +34,7 @@ import org.spongepowered.configurate.objectmapping.meta.Setting
 import org.spongepowered.configurate.serialize.TypeSerializer
 import xyz.jpenilla.resourcefactory.util.nullAction
 import xyz.jpenilla.resourcefactory.util.nullIfEmpty
+import xyz.jpenilla.resourcefactory.util.validate
 import java.lang.reflect.Type
 import javax.inject.Inject
 
@@ -196,9 +197,9 @@ abstract class ModMenu @Inject constructor(
             updateChecker.orNull,
             when (val p = parent.orNull) {
                 null -> null
-                is ParentId -> SerializableParentId(p.id.get())
+                is ParentId -> SerializableParentId(p.id.get().validate(FabricModJson.MOD_ID_PATTERN, "Fabric mod id (of Mod Menu parent)"))
                 is DummyParent -> SerializableDummyParent(
-                    p.id.get(),
+                    p.id.get().validate(FabricModJson.MOD_ID_PATTERN, "Fabric mod id (of Mod Menu dummy parent)"),
                     p.name.orNull,
                     p.description.orNull,
                     p.icon.orNull,

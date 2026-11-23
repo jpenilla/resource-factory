@@ -85,7 +85,7 @@ abstract class FabricModJson @Inject constructor(
     ResourceFactory.Provider {
 
     companion object {
-        private const val MOD_ID_PATTERN: String = "^[a-z][a-z0-9-_]{1,63}$"
+        const val MOD_ID_PATTERN: String = "^[a-z][a-z0-9-_]{1,63}$"
         private const val FILE_NAME: String = "fabric.mod.json"
         private const val MOD_MENU_KEY: String = "modmenu"
         private const val INJECTED_INTERFACES_KEY: String = "loom:injected_interfaces"
@@ -226,6 +226,10 @@ abstract class FabricModJson @Inject constructor(
      * Loom interface injection, written to `custom` as `loom:injected_interfaces`.
      *
      * Setting `loom:injected_interfaces` with [custom] as well as using this is an error.
+     *
+     * Loom reads the project's own `fabric.mod.json` at configuration time, so the generated file may
+     * need to exist from an earlier run before Loom applies the injections in this project. See
+     * [fabric-loom#1675](https://github.com/FabricMC/fabric-loom/issues/1675).
      */
     @get:Nested
     val injectedInterfaces: InjectedInterfaces = objects.newInstance()
