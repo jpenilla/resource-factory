@@ -24,6 +24,9 @@ import org.gradle.api.provider.MapProperty
  * Mod Menu uses a link's key as the translation key for its label, so other keys are valid too
  * when the mod provides the translation itself. Without a translation, the raw key is shown.
  *
+ * There are no helpers for `modmenu.website` and `modmenu.issues`: Mod Menu already shows Website and
+ * Issues buttons from the `fabric.mod.json` contact information, so set those with [FabricModJson.contact] instead.
+ *
  * @see ModMenu.links
  * @see ModMenu.builtInLinks
  */
@@ -58,9 +61,6 @@ class ModMenuBuiltInLinks(private val links: MapProperty<String, String>) {
     /** Adds a link with the [GITHUB_SPONSORS] key ("GitHub Sponsors"). */
     fun githubSponsors(url: String) = links.put(GITHUB_SPONSORS, url)
 
-    /** Adds a link with the [ISSUES] key ("Issues"). */
-    fun issues(url: String) = links.put(ISSUES, url)
-
     /** Adds a link with the [KOFI] key ("Ko-fi"). */
     fun kofi(url: String) = links.put(KOFI, url)
 
@@ -90,9 +90,6 @@ class ModMenuBuiltInLinks(private val links: MapProperty<String, String>) {
 
     /** Adds a link with the [TWITTER] key ("X (Twitter)"). */
     fun twitter(url: String) = links.put(TWITTER, url)
-
-    /** Adds a link with the [WEBSITE] key ("Website"). */
-    fun website(url: String) = links.put(WEBSITE, url)
 
     /** Adds a link with the [WIKI] key ("Wiki"). */
     fun wiki(url: String) = links.put(WIKI, url)
@@ -131,9 +128,6 @@ class ModMenuBuiltInLinks(private val links: MapProperty<String, String>) {
         /** `modmenu.github_sponsors`, shown as "GitHub Sponsors". */
         const val GITHUB_SPONSORS: String = "modmenu.github_sponsors"
 
-        /** `modmenu.issues`, shown as "Issues". */
-        const val ISSUES: String = "modmenu.issues"
-
         /** `modmenu.kofi`, shown as "Ko-fi". */
         const val KOFI: String = "modmenu.kofi"
 
@@ -163,9 +157,6 @@ class ModMenuBuiltInLinks(private val links: MapProperty<String, String>) {
 
         /** `modmenu.twitter`, shown as "X (Twitter)". */
         const val TWITTER: String = "modmenu.twitter"
-
-        /** `modmenu.website`, shown as "Website". */
-        const val WEBSITE: String = "modmenu.website"
 
         /** `modmenu.wiki`, shown as "Wiki". */
         const val WIKI: String = "modmenu.wiki"

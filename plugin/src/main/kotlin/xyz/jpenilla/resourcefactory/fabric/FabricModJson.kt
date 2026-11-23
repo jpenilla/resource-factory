@@ -409,7 +409,9 @@ abstract class FabricModJson @Inject constructor(
         val custom = LinkedHashMap(this.custom.get())
         fun putHelper(key: String, helper: String, value: CustomValueProvider<*>) {
             if (custom.containsKey(key)) {
-                throw GradleException("Fabric mod json custom value '$key' is set by both custom(...) and $helper { }. Use only one.")
+                throw GradleException(
+                    "Fabric mod json custom value '$key' is set by both custom(...) and the $helper helper. Use only one.",
+                )
             }
             custom[key] = value
         }
