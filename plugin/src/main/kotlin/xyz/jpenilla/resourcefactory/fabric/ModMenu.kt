@@ -230,7 +230,9 @@ abstract class ModMenu @Inject constructor(
             updateChecker.orNull,
             when (val p = parent.orNull) {
                 null -> null
+
                 is ParentId -> SerializableParentId(p.id.get().validate(FabricModJson.MOD_ID_PATTERN, "Fabric mod id (of Mod Menu parent)"))
+
                 is DummyParent -> SerializableDummyParent(
                     p.id.get().validate(FabricModJson.MOD_ID_PATTERN, "Fabric mod id (of Mod Menu dummy parent)"),
                     p.name.orNull,
@@ -238,6 +240,7 @@ abstract class ModMenu @Inject constructor(
                     p.icon.orNull,
                     p.badges.nullIfEmpty()?.map { it.key },
                 )
+
                 else -> throw UnsupportedOperationException("Cannot serialize $p")
             },
         )
