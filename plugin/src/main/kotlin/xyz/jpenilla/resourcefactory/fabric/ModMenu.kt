@@ -18,10 +18,10 @@ package xyz.jpenilla.resourcefactory.fabric
 
 import org.gradle.api.Action
 import org.gradle.api.model.ObjectFactory
-import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.MapProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
+import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.api.tasks.Nested
@@ -51,7 +51,7 @@ abstract class ModMenu @Inject constructor(
      * The mod's badges.
      */
     @get:Nested
-    abstract val badges: ListProperty<ModMenuBadge>
+    abstract val badges: SetProperty<ModMenuBadge>
 
     fun badge(vararg badges: ModMenuBadge) = this.badges.addAll(*badges)
 
@@ -175,7 +175,7 @@ abstract class ModMenu @Inject constructor(
         abstract val icon: Property<String>
 
         @get:Nested
-        abstract val badges: ListProperty<ModMenuBadge>
+        abstract val badges: SetProperty<ModMenuBadge>
 
         fun badge(vararg badges: ModMenuBadge) = this.badges.addAll(*badges)
 
