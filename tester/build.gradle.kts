@@ -3,6 +3,8 @@ import xyz.jpenilla.resourcefactory.ConfigurateSingleFileResourceFactory
 import xyz.jpenilla.resourcefactory.bukkit.BukkitPluginYaml
 import xyz.jpenilla.resourcefactory.bukkit.Permission
 import xyz.jpenilla.resourcefactory.fabric.Environment
+import xyz.jpenilla.resourcefactory.fabric.ModMenuBadge
+import xyz.jpenilla.resourcefactory.fabric.fabricModJson as newFabricModJson
 import kotlin.reflect.jvm.javaType
 import kotlin.reflect.typeOf
 
@@ -52,6 +54,15 @@ velocityPluginJson {
     dependency("luckperms")
 }
 
+val parentFabricModJson = newFabricModJson {
+    id = "example-api"
+    name = "Example API"
+    description = "Modular example library"
+    modMenu {
+        library()
+    }
+}
+
 fabricModJson {
     environment = Environment.ANY
     clientEntrypoint("client.Entry")
@@ -85,6 +96,26 @@ fabricModJson {
             mapOf("steve" to CustomData("Steve", 123), "bob" to CustomData("Bob", 456))
         )
     )
+
+    injectedInterfaces {
+        inject("net/minecraft/world/entity/Entity", "com/example/MyInterface", "com/example/Other\$Nested")
+        inject("net/minecraft/world/entity/Entity", "com/example/Third")
+        inject("net/minecraft/world/level/Level", "com/example/LevelInterface")
+    }
+
+    modMenu {
+        badges.add(ModMenuBadge.DEPRECATED)
+        builtInLinks.discord("https://discord.gg/example")
+        builtInLinks {
+            modrinth("https://modrinth.com/mod/example")
+        }
+        links.put("tester.link.forum", "https://forum.example.com")
+        updateChecker = false
+        dummyParent(parentFabricModJson) {
+            description = "Overridden description"
+            icon = "inherit"
+        }
+    }
 }
 
 neoForgeModsToml {
