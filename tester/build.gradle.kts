@@ -100,7 +100,7 @@ fabricModJson {
     injectedInterfaces {
         inject("net/minecraft/world/entity/Entity", "com/example/MyInterface", "com/example/Other\$Nested")
         inject("net/minecraft/world/entity/Entity", "com/example/Third")
-        inject("net/minecraft/world/level/Level", "com/example/LevelInterface")
+        inject("net/minecraft/world/level/Level", listOf("com/example/LevelInterface", "com/example/OtherLevelInterface"))
     }
 
     modMenu {

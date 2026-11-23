@@ -38,9 +38,21 @@ abstract class InjectedInterfaces {
      * @param target the class to inject into
      * @param interfaces the interfaces to inject
      */
-    fun inject(target: String, vararg interfaces: String) {
-        require(interfaces.isNotEmpty()) { "No interfaces given to inject into '$target'" }
-        injections.add(Injection(target, interfaces.toList()))
+    fun inject(target: String, vararg interfaces: String) = inject(target, interfaces.asList())
+
+    /**
+     * Injects [interfaces] into [target]. Repeated calls for the same target add to its list.
+     *
+     * Names are passed through unchanged, so they must be in Loom's form
+     * (`/` separators, `$` for nested classes, e.g. `com/example/Outer$Inner`).
+     *
+     * @param target the class to inject into
+     * @param interfaces the interfaces to inject
+     */
+    fun inject(target: String, interfaces: Iterable<String>) {
+        val list = interfaces.toList()
+        require(list.isNotEmpty()) { "No interfaces given to inject into '$target'" }
+        injections.add(Injection(target, list))
     }
 
     class Injection(
